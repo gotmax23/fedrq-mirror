@@ -1,0 +1,68 @@
+# SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+
+[project]
+name = "fedrq"
+authors = [{ name = "Maxwell G", email = "gotmax@e.email" }]
+license = { file = "LICENSES/GPL-2.0-or-later.txt" }
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: POSIX :: Linux",
+    "Development Status :: 2 - Pre-Alpha",
+]
+dependencies = [
+    # This cannot be installed from PyPI
+    # "dnf"
+    "pydantic",
+]
+requires-python = ">=3.9"
+version = "0.0.1"
+description = "fedrq is a tool to query the Fedora and EPEL repositories"
+
+[project.scripts]
+fedrq = "fedrq.cli:main"
+# fedrq-whatrequires = "fedrq.cli:Whatrequires.standalone"
+# fedrq-subpkgs = "fedrq.cli:Subpkgs.standalone"
+
+[project.optional-dependencies]
+lint = [
+    "black",
+    "isort",
+    "flake8",
+    "mypy",
+    # Optional dependency
+    "tomli-w",
+]
+test = ["pytest", "pytest-mock"]
+dev = ["fedrq[test]", "fedrq[lint]"]
+
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["dnf.*", "hawkey.*"]
+ignore_missing_imports = true
+
+
+[tool.pytest.ini_options]
+markers = ["no_rpm_mock: Tests that cannot be run in a mock chroot w/o networking"]
+addopts = [
+    "--import-mode=importlib",
+]
+
+
+[tool.isort]
+profile = "black"
+add_imports = "from __future__ import annotations"

@@ -1,0 +1,11 @@
+[fedrq-koji-rawhide]
+name = fedrq Rawhide Buildroot Repository
+baseurl = https://kojipkgs.fedoraproject.org/repos/rawhide/latest/$basearch/
+gpgcheck = False
+enabled = False
+
+[fedrq-koji-rawhide-source]
+name = fedrq Rawhide Buildroot Repository Sources
+baseurl = https://kojipkgs.fedoraproject.org/repos/rawhide/latest/src/
+gpgcheck = False
+enabled = False

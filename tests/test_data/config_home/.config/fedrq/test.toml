@@ -1,0 +1,4 @@
+[releases.testrepo1]
+matcher = "^(tester)$"
+defs.base = ["testrepo1"]
+defpaths = ["testrepo1.repo"]

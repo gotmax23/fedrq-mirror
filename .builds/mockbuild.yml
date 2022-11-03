@@ -1,0 +1,28 @@
+---
+image: fedora/rawhide
+packages:
+  - mock
+  - mock-core-configs
+  - /usr/bin/sd
+  - /usr/bin/spectool
+  - fedpkg
+  - rpmautospec
+  - shadow-utils
+environment:
+  RELEASE: rawhide
+artifacts:
+  - fedrq/results_fedrq.tar.gz
+tasks:
+  - archive: |
+      cd fedrq
+      archivename="$(spectool -s0 fedrq.spec | sd '^.*#/(\S+)\.tar.gz$' '$1')"
+      git archive -o "${archivename}.tar.gz" --prefix "${archivename}/" HEAD
+
+  - build: |
+      cd fedrq
+      fedpkg --name fedrq --release "${RELEASE}" srpm
+      r=0
+      sudo usermod -aG mock $USER
+      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after || r=1
+      tar cvf results_fedrq.tar.gz results_fedrq
+      exit $r
