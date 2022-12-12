@@ -30,20 +30,14 @@ def data_path():
     return TEST_DATA
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def repo_test_repo():
     assert TEST_DATA.is_dir()
     assert (buildsh := TEST_DATA / "build.sh").exists()
-    subprocess.run([buildsh], check=True)
+    subprocess.run(("bash", buildsh), check=True)
 
 
-@pytest.fixture(scope="session")
-def repo_test_tmpdir(tmp_path_factory):
-    b = tmp_path_factory.mktemp("testrepo")
-    return str(b)
-
-
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def repo_test_config():
     try:
         path = TEST_REPO_DIR / "testrepo1.repo"
@@ -53,6 +47,12 @@ def repo_test_config():
         path.unlink()
 
 
+@pytest.fixture(scope="session")
+def repo_test_tmpdir(tmp_path_factory):
+    b = tmp_path_factory.mktemp("testrepo")
+    return str(b)
+
+
 @pytest.fixture
 def patch_config_dirs(monkeypatch):
     config_dirs = (FEDRQ_CONFIG_HOME,)
@@ -60,7 +60,7 @@ def patch_config_dirs(monkeypatch):
 
 
 @pytest.fixture
-def repo_test_rq(repo_test_tmpdir, repo_test_config, patch_config_dirs):
+def repo_test_rq(repo_test_tmpdir, patch_config_dirs):
     config = rqconfig.get_config()
     release = config.get_release("tester", "base")
     base = release.make_base(fill_sack=False)

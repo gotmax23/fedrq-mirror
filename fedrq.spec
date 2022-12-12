@@ -48,7 +48,6 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 
 
 %check
-bash -x ./tests/test_data/build.sh
 %pytest -v -m "not no_rpm_mock"
 
 
