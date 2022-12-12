@@ -14,7 +14,7 @@ tasks:
       python3 -m venv "${venv}"  --system-site-packages
       source "${venv}/bin/activate"
       pip3 install '.[lint]'
-      check=true ./lint.sh
+      ./lint.sh --check
   - pytest: |
       cd fedrq
       venv="$(mktemp -d)"
