@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 [build-system]
@@ -41,7 +40,8 @@ lint = [
     "isort",
     "flake8",
     "mypy",
-    # Optional dependency
+    "reuse",
+    # Optional fedrq runtime dependency
     "tomli-w",
 ]
 test = ["pytest", "pytest-mock"]
