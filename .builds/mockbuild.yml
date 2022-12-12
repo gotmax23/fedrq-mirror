@@ -4,28 +4,22 @@
 ---
 image: fedora/rawhide
 packages:
+  - fedpkg
   - mock
   - mock-core-configs
-  - /usr/bin/sd
-  - /usr/bin/spectool
-  - fedpkg
   - rpmautospec
+  - rpmdevtools
   - shadow-utils
 environment:
   RELEASE: rawhide
 artifacts:
   - fedrq/results_fedrq.tar.gz
 tasks:
-  - archive: |
-      cd fedrq
-      archivename="$(spectool -s0 fedrq.spec | sd '^.*#/(\S+)\.tar.gz$' '$1')"
-      git archive -o "${archivename}.tar.gz" --prefix "${archivename}/" HEAD
-
+  - setup-add-mock-group: |
+      sudo usermod -aG mock $USER
   - build: |
       cd fedrq
-      fedpkg --name fedrq --release "${RELEASE}" srpm
-      r=0
-      sudo usermod -aG mock $USER
-      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after || r=1
+      ./srpm.sh
+      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after || r=$?
       tar cvf results_fedrq.tar.gz results_fedrq
       exit $r
