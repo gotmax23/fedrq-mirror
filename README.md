@@ -57,7 +57,10 @@ This project is in alpha and has no released version.
 
 ## Documentaion
 
-WIP. See `fedrq --help` for now.
+WIP. See `fedrq --help` and [fedrq(1)][fedrq1] ([source][fedrq1-source]).
+
+[fedrq1]: https://gotmax23.srht.site/fedrq/fedrq.1.html
+[fedrq1-source]: https://git.sr.ht/~gotmax23/fedrq/tree/main/doc/fedrq.1.scd
 
 
 ## Contributing
@@ -71,6 +74,7 @@ See [CONTRIBUTING.md].
 ## Credits
 Thank you to the dnf maintainers. This tool is inspired by `dnf repoquery` and
 uses the `dnf` python bindings.
+
 
 ## License
 

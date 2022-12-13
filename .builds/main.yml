@@ -10,8 +10,13 @@ packages:
   # Needed to build the test packages
   - rpm-build
   - createrepo_c
+  #
+  - scdoc
+  - pandoc
+  - hut
 secrets:
   - 759db354-8651-427c-b00a-0755164c8cae
+oauth: pages.sr.ht/PAGES:RW
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
 tasks:
@@ -22,12 +27,33 @@ tasks:
         echo "Not submitting copr build. Secrets are disbaled."
         exit
       fi
-      if ! [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]
+      if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]
       then
         echo "Not submitting copr-build. Branch is not main."
         exit
       fi
       ~/.copr-hook
+  - submit-man: |
+      cd fedrq
+      set +x
+      if [ -z "${OAUTH2_TOKEN-}" ]
+      then
+        echo "Not submitting manpage build. Secrets are disabled"
+        exit
+      fi
+      set -x
+      if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]
+      then
+        echo "Not submitting manpage build. Branch is not main."
+        exit
+      fi
+
+      cd doc
+      scdoc < fedrq.1.scd | pandoc -f man -o fedrq.1.html
+      # TODO: Write fedrq(5)
+      # scdoc < fedrq.5.scdoc | pandoc -f man -o fedrq.5.html
+      tar czvf fedrq.tar.gz *.html
+      hut pages publish fedrq.tar.gz -d gotmax23.srht.site -s fedrq
   - lint: |
       cd fedrq
       venv="$(mktemp -d)"

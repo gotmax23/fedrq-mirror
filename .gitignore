@@ -9,3 +9,5 @@ __pycache__
 /results_fedrq/
 *.src.rpm
 /.old
+/doc/fedrq.*.html
+/doc/fedrq*.tar.gz
