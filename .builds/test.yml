@@ -10,7 +10,22 @@ packages:
   # Needed to build the test packages
   - rpm-build
   - createrepo_c
+secrets:
+  - 759db354-8651-427c-b00a-0755164c8cae
 tasks:
+  - copr-webhook: |
+      cd fedrq/
+      if ! [ -x "${HOME}/.copr-hook" ]
+      then
+        echo "Not submitting copr build. Secrets are disbaled."
+        exit
+      fi
+      if ! [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]
+      then
+        echo "Not submitting copr-build. Branch is not main."
+        exit
+      fi
+      ~/.copr-hook
   - lint: |
       cd fedrq
       venv="$(mktemp -d)"
