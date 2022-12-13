@@ -24,6 +24,9 @@ dependencies = [
     # This cannot be installed from PyPI
     # "dnf"
     "pydantic",
+    "tomli; python_version<'3.11'",
+    # Optional dependency for `fedrq check-config --dump`
+    # "tomli-w",
 ]
 requires-python = ">=3.9"
 version = "0.0.1"
