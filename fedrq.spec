@@ -20,6 +20,7 @@ BuildRequires:  python3-devel
 BuildRequires:  python3-dnf
 BuildRequires:  python3-tomli-w
 BuildRequires:  rpmdevtools
+BuildRequires:  scdoc
 
 Requires:       python3-dnf
 Requires:       fedora-repos-rawhide
@@ -42,11 +43,13 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 
 %build
 %pyproject_wheel
+scdoc < doc/fedrq.1.scd > fedrq.1
 
 
 %install
 %pyproject_install
 %pyproject_save_files fedrq
+install -Dpm 0644 fedrq.1 -t %{buildroot}%{_mandir}/man1/
 
 
 %check
@@ -57,6 +60,7 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 %license LICENSES/GPL-2.0-or-later.txt
 %license LICENSES/Unlicense.txt
 %{_bindir}/fedrq*
+%{_mandir}/man1/fedrq.1*
 
 
 %changelog
