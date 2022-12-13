@@ -24,7 +24,7 @@ Contributions are always welcome!
 It is recommended that you send a message to the mailing list before working on
 a larger change.
 
-Patches can be sent to [~gotmax23/fedrq@lists.sr.ht][mailto])
+Patches can be sent to [~gotmax23/fedrq@lists.sr.ht][mailto]
 using [`git send-email`][1].
 No Sourcehut account is required!
 
