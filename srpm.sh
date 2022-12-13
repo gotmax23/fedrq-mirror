@@ -16,7 +16,7 @@ find "${outdir}" -maxdepth 1 -type f -name '*.src.rpm' -delete -print
 origversion="$(rpmspec -q --qf '%{version}\n' "${specfile}" | sed 's|~1$||')"
 newversion="$(printf '%s~%s.%s\n' \
                 "${origversion}" \
-                "$(git log --oneline "${lastref}..HEAD" | wc -l)" \
+                "$(( $(git log --oneline "${lastref}..HEAD" | wc -l) + 1 ))" \
                 "$(git show -s --pretty=%cs.%h | sed 's|-||g')"
             )"
 archivename="fedrq-${newversion}"

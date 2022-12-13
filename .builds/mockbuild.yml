@@ -21,7 +21,7 @@ tasks:
       sudo usermod -aG mock $USER
   - build: |
       cd fedrq
-      ./srpm.sh
+      keep_spec=1 ./srpm.sh
       fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after || r=$?
       tar cvf results_fedrq.tar.gz results_fedrq
       exit $r
