@@ -84,6 +84,9 @@ This project follows the REUSE specification. In general:
 - fedrq.spec is licensed under MIT to match Fedora
 - Configuration and repo files in fedrq/data/ are `UNLICENSE`ed
 
+```
+SPDX-License-Identifier: GPL-2.0-or-later AND Unlicense AND MIT
+```
 
 
 [CONTRIBUTING.md]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/CONTRIBUTING.md
