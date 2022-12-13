@@ -259,7 +259,7 @@ class CheckConfig(Command):
         return parser
 
     def run(self):
-        if not HAS_TOMLI_W:
+        if self.args.dump and not HAS_TOMLI_W:
             sys.exit("tomli-w is required for --dump.")
         if not self.args.dump:
             print("Validating config...")
