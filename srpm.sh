@@ -16,13 +16,17 @@ find "${outdir}" -maxdepth 1 -type f -name '*.src.rpm' -delete -print
 origversion="$(rpmspec -q --qf '%{version}\n' "${specfile}" | sed 's|~1$||')"
 newversion="$(printf '%s~%s.%s\n' \
                 "${origversion}" \
-                "$(git show -s --pretty=%cs.%h | sed 's|-||g')" \
-                "$(git log --oneline "${lastref}..HEAD" | wc -l)")"
+                "$(git log --oneline "${lastref}..HEAD" | wc -l)" \
+                "$(git show -s --pretty=%cs.%h | sed 's|-||g')"
+            )"
 archivename="fedrq-${newversion}"
 
+cp "${specfile}" "${specfile}.bak"
 sed "s|^\(Version: *\)[^ ]*$|\1${newversion}|" -i "${specfile}"
 
 git archive -o "${archivename}.tar.gz" --prefix "${archivename}/" HEAD
 
 fedpkg --name fedrq --release rawhide srpm
 cp -p *.src.rpm "${outdir}"
+
+[ -z "${keep_spec-}" ] && mv "${specfile}.bak" "${specfile}" || :
