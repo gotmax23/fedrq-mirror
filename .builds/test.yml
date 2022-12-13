@@ -12,6 +12,8 @@ packages:
   - createrepo_c
 secrets:
   - 759db354-8651-427c-b00a-0755164c8cae
+sources:
+  - https://git.sr.ht/~gotmax23/fedrq
 tasks:
   - copr-webhook: |
       cd fedrq/
