@@ -35,11 +35,13 @@ After configuring git-send-email as explained at [git-send-email.io][1]:
 [1]: https://git-send-email.io
 
 ```
-# First time only
 git clone https://git.sr.ht/~gotmax23/fedrq
-git config sendemail.to "~gotmax23/fedrq@lists.sr.ht"
-
 cd fedrq
+
+# First time only
+git config sendemail.to "~gotmax23/fedrq@lists.sr.ht"
+git config format.subjectprefix "PATCH fedrq"
+
 $EDITOR ...
 git commit -a
 
