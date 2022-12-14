@@ -5,3 +5,4 @@
 matcher = "^(tester)$"
 defs.base = ["testrepo1"]
 defpaths = ["testrepo1.repo"]
+system_repos = false

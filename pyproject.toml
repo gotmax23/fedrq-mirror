@@ -47,7 +47,11 @@ lint = [
     # Optional fedrq runtime dependency
     "tomli-w",
 ]
-test = ["pytest", "pytest-mock"]
+test = [
+    "pytest",
+    "pytest-mock",
+    "tomli-w",
+]
 dev = ["fedrq[test]", "fedrq[lint]"]
 
 
