@@ -6,73 +6,50 @@ import pytest
 import fedrq.cli
 
 
-def run_command2(args, capsys, *, return_tuples=False, cachedir=None):
-    if cachedir:
-        args.append(f"--cachedir={cachedir}")
-    fedrq.cli.main(["whatrequires", "-b", "tester", *args])
-    stdin, stdout = capsys.readouterr()
-    result = stdin.splitlines(), stdout.splitlines()
-    if return_tuples:
-        result = tuple(tuple(r) for r in result)
-    return result
+@pytest.fixture
+def run_command(capsys, repo_test_tmpdir, patch_config_dirs):
+    def runner(args, *, return_tuples=False):
+        fedrq.cli.main(
+            ["whatrequires", "--cachedir", repo_test_tmpdir, "-b", "tester", *args]
+        )
+        stdout, stderr = capsys.readouterr()
+        result = stdout.splitlines(), stderr.splitlines()
+        if return_tuples:
+            result = tuple(tuple(r) for r in result)
+        return result
+
+    return runner
 
 
-def test_whatrequires_exact(
-    capsys,
-    repo_test_tmpdir,
-    patch_config_dirs,
-):
-    output = run_command2(["package(b)"], capsys, cachedir=repo_test_tmpdir)
-    output2 = run_command2(["package(b)", "-E"], capsys, cachedir=repo_test_tmpdir)
+def test_whatrequires_exact(run_command):
+    output = run_command(["package(b)"])
+    output2 = run_command(["package(b)", "-E"])
     assert output == output2
     assert output[0] == ["packageb-sub-11111:2-1.fc36.noarch"]
     assert not output[1]
 
 
-def test_whatrequires_name(
-    capsys,
-    repo_test_tmpdir,
-    patch_config_dirs,
-):
-    output = run_command2(
-        ["packageb", "-l", "a", "-F", "name"], capsys, cachedir=repo_test_tmpdir
-    )
+def test_whatrequires_name(run_command):
+    output = run_command(["packageb", "-l", "a", "-F", "name"])
     assert output[0] == ["packagea"] * 2 + ["packageb-sub"] * 2
     assert not output[1]
 
 
-def test_whatrequires_resolve_b(
-    capsys,
-    repo_test_tmpdir,
-    patch_config_dirs,
-):
-    output = run_command2(
+def test_whatrequires_resolve_b(run_command):
+    output = run_command(
         ["package(b)", "-l", "a", "-P"],
-        capsys,
         return_tuples=True,
-        cachedir=repo_test_tmpdir,
     )
-    output1 = run_command2(
+    output1 = run_command(
         ["vpackage(b)", "-l", "a", "-P"],
-        capsys,
         return_tuples=True,
-        cachedir=repo_test_tmpdir,
     )
-    output2 = run_command2(
+    output2 = run_command(
         ["packageb", "-l", "a", "-P"],
-        capsys,
         return_tuples=True,
-        cachedir=repo_test_tmpdir,
     )
-    output3 = run_command2(
-        ["packageb", "-l", "a"], capsys, return_tuples=True, cachedir=repo_test_tmpdir
-    )
-    output4 = run_command2(
-        ["/usr/share/packageb", "-l", "a", "-P"],
-        capsys,
-        return_tuples=True,
-        cachedir=repo_test_tmpdir,
-    )
+    output3 = run_command(["packageb", "-l", "a"], return_tuples=True)
+    output4 = run_command(["/usr/share/packageb", "-l", "a", "-P"], return_tuples=True)
     outputs = {output[0], output1[0], output2[0], output3[0], output4[0]}
     assert output[0] == (
         "packagea-1-1.fc36.noarch",
@@ -94,22 +71,20 @@ def test_whatrequires_resolve_b(
         (["/usr/share/packagea", "-P"]),
     ),
 )
-def test_whatrequires_resolve_a(capsys, repo_test_tmpdir, patch_config_dirs, args):
-    output = run_command2(args + ["-F", "nv"], capsys, cachedir=repo_test_tmpdir)
+def test_whatrequires_resolve_a(run_command, args):
+    output = run_command(args + ["-F", "nv"])
     assert output[0] == ["packagea-sub-1"]
     assert not output[1]
 
 
-def test_whatrequires_versioned_resolve(capsys, repo_test_tmpdir, patch_config_dirs):
-    output = run_command2(
+def test_whatrequires_versioned_resolve(run_command):
+    output = run_command(
         [
             "vpackage(b) = 11111:2-1.fc36",
             "-P",
             "-l",
             "all",
-        ],
-        capsys,
-        cachedir=repo_test_tmpdir,
+        ]
     )
     assert output[0] == [
         "packagea-1-1.fc36.noarch",
@@ -134,22 +109,20 @@ def test_whatrequires_versioned_resolve(capsys, repo_test_tmpdir, patch_config_d
         (["packageb.x86_64", "-F", "na"], False),
     ),
 )
-def test_exact_no_result(
-    args, exact_optional, capsys, repo_test_tmpdir, patch_config_dirs
-):
+def test_exact_no_result(args, exact_optional, run_command):
     """
     These work with -P, but should not print any results
     with --exact.
     """
     expected = ([], [])
-    output = run_command2(args + ["-E"], capsys, cachedir=repo_test_tmpdir)
+    output = run_command(args + ["-E"])
     assert output == expected
     if exact_optional:
-        output2 = run_command2(args, capsys, cachedir=repo_test_tmpdir)
+        output2 = run_command(args)
         assert output2 == expected
 
 
-def test_whatrequires_breakdown(capsys, repo_test_tmpdir, patch_config_dirs):
+def test_whatrequires_breakdown(run_command):
     expected = """\
 Runtime:
 packagea
@@ -164,8 +137,6 @@ All SRPM names:
 packagea
 packageb
     2 total SRPMs""".splitlines()
-    output = run_command2(
-        ["-F", "breakdown", "packageb"], capsys, cachedir=repo_test_tmpdir
-    )
+    output = run_command(["-F", "breakdown", "packageb"])
     assert output[0] == expected
     assert not output[1]

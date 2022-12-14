@@ -6,22 +6,27 @@ import pytest
 import fedrq.cli
 
 
-def run_command2(args, capsys):
-    fedrq.cli.main(["subpkgs", "-b", "tester", *args])
-    stdin, stdout = capsys.readouterr()
-    return stdin.splitlines(), stdout.splitlines()
+@pytest.fixture
+def run_command(capsys, repo_test_tmpdir, patch_config_dirs):
+    def runner(args):
+        fedrq.cli.main(
+            ["subpkgs", "--cachedir", repo_test_tmpdir, "-b", "tester", *args]
+        )
+        stdout, stderr = capsys.readouterr()
+        result = stdout.splitlines(), stderr.splitlines()
+        return result
+
+    return runner
 
 
-def test_subpkgs_basic(capsys: pytest.CaptureFixture, patch_config_dirs):
-    out = run_command2(["packagea", "-F", "name"], capsys)
+def test_subpkgs_basic(run_command):
+    out = run_command(["packagea", "-F", "name"])
     assert out[0] == ["packagea", "packagea-sub"]
     assert not out[1]
 
 
-def test_subpkgs_specific_version(
-    capsys: pytest.CaptureFixture, patch_config_dirs, target_cpu
-):
-    out = run_command2(["packageb-11111:2-1.fc36.src"], capsys)
+def test_subpkgs_specific_version(run_command, target_cpu):
+    out = run_command(["packageb-11111:2-1.fc36.src"])
     expected = [
         f"packageb-11111:2-1.fc36.{target_cpu}",
         "packageb-sub-11111:2-1.fc36.noarch",
@@ -31,11 +36,11 @@ def test_subpkgs_specific_version(
     assert not out[1]
 
 
-def test_subpkg_latest(capsys: pytest.CaptureFixture, patch_config_dirs):
+def test_subpkg_latest(run_command):
     """
     --latest=1 is the default, but let's test it anyways
     """
-    out = run_command2(["packageb", "--latest", "1", "-F", "nv"], capsys)
+    out = run_command(["packageb", "--latest", "1", "-F", "nv"])
     expected1 = [
         "packageb-2",
         "packageb-sub-2",
@@ -51,24 +56,20 @@ def test_subpkg_latest(capsys: pytest.CaptureFixture, patch_config_dirs):
         ["--latest=all"],
     ),
 )
-def test_subpkg_all(
-    largs: list[str], capsys: pytest.CaptureFixture, patch_config_dirs, target_cpu
-):
+def test_subpkg_all(largs: list[str], run_command, target_cpu):
     expected2 = [
         f"packageb-1-1.fc36.{target_cpu}",
         f"packageb-11111:2-1.fc36.{target_cpu}",
         "packageb-sub-1-1.fc36.noarch",
         "packageb-sub-11111:2-1.fc36.noarch",
     ]
-    out2 = run_command2([*largs, "packageb"], capsys)
+    out2 = run_command([*largs, "packageb"])
     assert out2[0] == expected2
     assert not out2[1]
 
 
-def test_subpkg_noarch(capsys: pytest.CaptureFixture, patch_config_dirs):
-    out = run_command2(
-        ["packagea.src", "packageb.src", "-l=a", "--arch=noarch"], capsys
-    )
+def test_subpkg_noarch(run_command):
+    out = run_command(["packagea.src", "packageb.src", "-l=a", "--arch=noarch"])
     expected = [
         "packagea-1-1.fc36.noarch",
         "packagea-sub-1-1.fc36.noarch",
@@ -79,8 +80,8 @@ def test_subpkg_noarch(capsys: pytest.CaptureFixture, patch_config_dirs):
     assert not out[1]
 
 
-def test_subpkg_x86_64(capsys: pytest.CaptureFixture, patch_config_dirs, target_cpu):
-    out = run_command2(["packagea", "packageb", "-A", "x86_64", "-l", "ALL"], capsys)
+def test_subpkg_x86_64(run_command, target_cpu):
+    out = run_command(["packagea", "packageb", "-A", "x86_64", "-l", "ALL"])
     expected = [
         f"packageb-1-1.fc36.{target_cpu}",
         f"packageb-11111:2-1.fc36.{target_cpu}",
