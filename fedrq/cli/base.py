@@ -23,7 +23,7 @@ else:
 from pydantic import ValidationError
 
 from fedrq._dnf import HAS_DNF, dnf, hawkey
-from fedrq._utils import filter_latest
+from fedrq._utils import filter_latest, mklog
 from fedrq.cli.formatters import FormatterContainer
 from fedrq.config import ConfigError
 from fedrq.config import Release as Release3
@@ -238,6 +238,22 @@ class CheckConfig(Command):
         self.args = args
         self.v_logging()
 
+    @staticmethod
+    def _strip_nones(dct: dict[t.Any, t.Any], level=0) -> dict[t.Any, t.Any]:
+        """
+        Recurisvely remove None values from a dictionary so they can be TOML
+        serialized
+        """
+        flog = mklog("fedrq.cli.CheckConfig", "_strip_nones_")
+        for k in tuple(dct):
+            if dct[k] is None:
+                flog.debug("%s: Strip %s key", level, k)
+                del dct[k]
+            elif isinstance(dct[k], dict):
+                flog.debug("%s: Recursing through %s dict", level, k)
+                CheckConfig._strip_nones(dct[k], level + 1)
+        return dct
+
     @classmethod
     def make_parser(
         cls,
@@ -259,6 +275,7 @@ class CheckConfig(Command):
         return parser
 
     def run(self):
+        flog = mklog("fedrq.cli.CheckConfig")
         if self.args.dump and not HAS_TOMLI_W:
             sys.exit("tomli-w is required for --dump.")
         if not self.args.dump:
@@ -270,4 +287,6 @@ class CheckConfig(Command):
         if not self.args.dump:
             print("No validation errors found!")
         else:
-            tomli_w.dump(json.loads(self.config.json()), sys.stdout.buffer)
+            flog.debug("Removing Nones from configuration dict")
+            data_dict = self._strip_nones(json.loads(self.config.json()))
+            tomli_w.dump(data_dict, sys.stdout.buffer)
