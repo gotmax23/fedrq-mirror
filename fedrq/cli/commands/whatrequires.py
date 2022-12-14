@@ -155,7 +155,7 @@ class WhatCommand(Command):
                 resolved_packages if self.args.resolve_packages else None
             )
 
-        for p in sorted(self.formatter.format(self.query, self.args.formatter)):
+        for p in self.formatter.format(self.query, self.args.formatter):
             print(p)
 
 

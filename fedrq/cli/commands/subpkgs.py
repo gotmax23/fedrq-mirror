@@ -52,7 +52,7 @@ class Subpkgs(Command):
         subpackages = self.rq.multi_get_subpackages(
             srpms, latest=self.args.latest, arch=self.args.arch
         )
-        for p in sorted(self.formatter.format(subpackages, self.args.formatter)):
+        for p in self.formatter.format(subpackages, self.args.formatter):
             print(p)
 
     @Command._v_add_errors
