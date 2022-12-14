@@ -113,15 +113,18 @@ These options have the same meaning across multiple subcommands.
 :[
 |  Fedora Stable/Branched
 :  fXX
-:  _base_, testing
-: 
+:  _base_, testing, release, updates, testing-only
+:  *testing* is a superset of base.
+   *release* only contains *fedora* and *fedora-source*.
+   *updates* only includes *updates* and *updates-source*.
+   *testing-only* only includes *updates-testing* and *updates-testing-source*.
 |  EPEL
 :  epelX
-:  _base_, testing
+:  _base_, testing, testing-only
 : 
 |  EPEL Next
 :  epelX-next
-:  _base_, testing
+:  _base_, testing, next-only, next-testing-only
 :  Superset of *epelX*. Includes _both_ EPEL and EPEL Next.
 
 *NOTE*: Buildroot repositories are available for stable Fedora releases, but

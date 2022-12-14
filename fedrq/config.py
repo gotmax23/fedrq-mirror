@@ -39,7 +39,7 @@ class ReleaseConfig(BaseModel):
     koschei_collection: t.Optional[str] = None
     copr_chroot_fmt: t.Optional[str] = None
     system_repos: bool = True
-    full_def_paths: t.ClassVar[list[importlib.abc.Traversable]]
+    full_def_paths: t.ClassVar[list[importlib.abc.Traversable]] = []
 
     @validator("defpaths")
     def v_defpaths(cls, value, values) -> dict[str, t.Any]:

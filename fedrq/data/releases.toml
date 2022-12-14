@@ -17,8 +17,10 @@ copr_chroot_fmt = "fedora-{version}-{arch}"
 
 defs.base = ["fedora", "fedora-source", "updates", "updates-source"]
 defs.release = ["fedora", "fedora-source"]
+defs.updates = ["updates", "updates-source"]
 defs.testing =  ["fedora", "fedora-source", "updates", "updates-source",
                  "updates-testing", "updates-testing-source"]
+defs.testing-only =  ["updates-testing", "updates-testing-source"]
 
 [releases.epel]
 matcher = "^epel(\\d{1,2})$"
@@ -30,6 +32,7 @@ system_repos = false
 defs.base = ["fedrq-epel", "fedrq-epel-source"]
 defs.testing = ["fedrq-epel", "fedrq-epel-source",
                 "fedrq-epel-testing", "fedrq-epel-testing-source"]
+defs.testing-only = ["fedrq-epel-testing", "fedrq-epel-testing-source"]
 
 [releases.epel_next]
 matcher = "^epel(\\d{1,2})-next$"
@@ -45,3 +48,9 @@ defs.testing = ["fedrq-epel", "fedrq-epel-source",
                 "fedrq-epel-next", "fedrq-epel-next-source",
                 "fedrq-epel-testing", "fedrq-epel-testing-source",
                 "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
+defs.next-only = ["fedrq-epel", "fedrq-epel-source",
+                "fedrq-epel-next", "fedrq-epel-next-source",
+                "fedrq-epel-testing", "fedrq-epel-testing-source",
+                "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
+defs.next-testing-only = ["fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
+
