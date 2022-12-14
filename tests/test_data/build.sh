@@ -30,7 +30,7 @@ for repo in repos/*; do
         while read -r spec; do
             specdir="$(dirname "${spec}")"
             base_specdir="$(basename "${specdir}")"
-            rpmbuild -ba \
+            rpmbuild -ba --nodeps \
                 -D "_srcrpmdir %(pwd)/repo/SRPMS/${base_specdir}" \
                 -D "_rpmdir %(pwd)/repo/RPMS/${base_specdir}" \
                 -D '_build_name_fmt %%{NAME}-%{?EPOCH:%%{EPOCH}:}%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm' \

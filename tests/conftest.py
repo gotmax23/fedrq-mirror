@@ -20,6 +20,7 @@ FEDRQ_CONFIG_HOME = CONFIG_HOME / ".config" / "fedrq"
 TEST_REPO_DIR = FEDRQ_CONFIG_HOME / "repos"
 TEST_REPO_1 = f"""
 [testrepo1]
+name = testrepo1
 baseurl = file://{TEST_DATA / 'repos' / 'repo1' / 'repo'}/
 gpgcheck = False
 """

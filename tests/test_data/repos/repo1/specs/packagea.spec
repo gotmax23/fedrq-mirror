@@ -10,6 +10,8 @@ License:        Unlicense
 URL:            ...
 
 BuildArch:      noarch
+BuildRequires:  vpackage(b) > 0
+
 Provides:       package(a)
 Provides:       vpackage(a) = %{version}-%{release}
 Requires:       vpackage(b)
