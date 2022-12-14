@@ -9,15 +9,12 @@ if [ "${1-}" == "--check" ]; then
 else
   c=""
 fi
-r=0
 
+r=0
 run() {
-    local r
-    r=0
     echo "**** Running: $@ ****"
     "$@" || { r=$?; echo "**** Failed: $r ****" ; }
     echo
-    return $r
 }
 
 
