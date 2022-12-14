@@ -155,7 +155,7 @@ class Release:
         self, base: dnf.Base | None = None, fill_sack: bool = True
     ) -> dnf.Base:
         needs_dnf()
-        flog = mklog(__name__, "make_base")
+        flog = mklog(__name__, self.__class__.__name__, "make_base")
         base = base or dnf.Base()
         flog.debug("self.release = %s", self.version)
         base.conf.substitutions["releasever"] = self.version
@@ -168,6 +168,7 @@ class Release:
                 rr = dnf.conf.read.RepoReader(base.conf, None)
                 for repo in rr._get_repos(str(fp)):
                     base.repos.add(repo)
+        flog.debug("Enabling repos: %s", self.repos)
         base_enable_repos(self.repos, base)
         if fill_sack:
             base.fill_sack(load_system_repo=False)
