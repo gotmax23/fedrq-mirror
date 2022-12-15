@@ -95,7 +95,7 @@ These options have the same meaning across multiple subcommands.
 		  *python-setuptools*, but *python-setuptools* won't be
 		  duplicated in the output.
 		- *-F breakdown*: Only supported by *fedrq --whatrequires*.
-		Shows a breakdown of runtime and buildtime dependencies.
+		  Shows a breakdown of runtime and buildtime dependencies.
 
 	*NOTE*: *--formatter* is provisional and may be removed or have its
 	interface changed in the near future.
