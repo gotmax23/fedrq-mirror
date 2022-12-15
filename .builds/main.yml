@@ -11,8 +11,6 @@ packages:
   - rpm-build
   - createrepo_c
   #
-  - scdoc
-  - pandoc
   - hut
 secrets:
   - 759db354-8651-427c-b00a-0755164c8cae
@@ -34,7 +32,11 @@ tasks:
       fi
       ~/.copr-hook
   - submit-man: |
-      cd fedrq
+      sudo dnf copr enable -y gotmax23/scd2html
+      sudo dnf install -y scd2html
+      cd fedrq/doc
+      scd2html < fedrq.1.scd > fedrq.1.html
+
       set +x
       if [ -z "${OAUTH2_TOKEN-}" ]
       then
@@ -48,10 +50,6 @@ tasks:
         exit
       fi
 
-      cd doc
-      scdoc < fedrq.1.scd | pandoc -f man -o fedrq.1.html
-      # TODO: Write fedrq(5)
-      # scdoc < fedrq.5.scdoc | pandoc -f man -o fedrq.5.html
       tar czvf fedrq.tar.gz *.html
       hut pages publish fedrq.tar.gz -d gotmax23.srht.site -s fedrq
   - lint: |

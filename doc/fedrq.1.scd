@@ -19,6 +19,28 @@ python -m fedrq check-config [--dump] [--debug]
 
 fedrq is a tool to simplify querying the Fedora and EPEL repositories.
 
+# SUBCOMMANDS
+
+[[ check-config
+:[ Verify fedrq configuration. Only has *--debug* and *--dump* to dump the
+   config. *--dump* requires *tomli-w*.
+|  pkgs
+:  Find the packages that match a list of package specs. Allows
+   *--whatprovides* like functionality with *--resolve-packages*.
+|  subpkgs
+:  Find the subpackages provided by a list of SRPMs.
+   Doesn't have *--src*, because subpkgs aren't SRPMs.
+|  whatenhances
+:  Find the packages that Enhance *[package...]*
+|  whatrecommends
+:  Find the packages that Recommend *[package...]*
+|  whatrequires
+:  Find the packages that Require *[package...]*
+|  whatsuggests
+:  Find the packages that Suggest *[package...]*
+|  whatsupplements
+:  Find the packages that Supplement *[package...]*
+
 # OPTIONS
 
 ## GLOBAL OPTIONS
@@ -49,7 +71,7 @@ These options have the same meaning across multiple subcommands.
 	Any Package attribute from *dnf repoquery --querytags* is supported
 	here. Some custom formatters are also available. Examples:
 
-	Package attributes:
+	Package attributes (nonexhaustive):
 		- *-F name*: Show package names
 		  (example line: *yt-dlp*)
 		- *-F arch*: Show package arches only.
@@ -106,61 +128,51 @@ These options have the same meaning across multiple subcommands.
 [- Name
 :- Matcher (*--branch*)
 :- Repo classes (*--repo*)
-:- Note
+:- Special cases
 |[ Fedora Rawhide
-:[ _rawhide_
-:[ _base_, buildroot
+:[ rawhide
+:[ base, buildroot
 :[
-|  Fedora Stable/Branched
+|  Fedora stable/branched
 :  fXX
-:  _base_, testing, release, updates, testing-only
-:  *testing* is a superset of base.
-   *release* only contains *fedora* and *fedora-source*.
-   *updates* only includes *updates* and *updates-source*.
-   *testing-only* only includes *updates-testing* and *updates-testing-source*.
+:  base, testing, release, updates, testing-only
+:  *release* only contains *fedora* and *fedora-source* (i.e. no *updates*)
 |  EPEL
 :  epelX
-:  _base_, testing, testing-only
-: 
+:  base, testing, testing-only
+:  does not include any EL distribution
 |  EPEL Next
 :  epelX-next
-:  _base_, testing, next-only, next-testing-only
-:  Superset of *epelX*. Includes _both_ EPEL and EPEL Next.
+:  base, testing, next-only, next-testing-only
+:  *base* and *testing* are supersets of *epelX*.
 
-*NOTE*: Buildroot repositories are available for stable Fedora releases, but
-they don't have corresponding source repos. This causes problems for fedrq, so
-those definitions are not available.
+## SPECIAL REPOS
 
-# SUBCOMMANDS
+The examples are from Fedora stable.
 
-[[ check-config
-:[ Verify fedrq configuration. Only has *--debug* and *--dump* to dump the
-   config. *--dump* requires *tomli-w*.
-|  pkgs
-:  Find the packages that match a list of package specs. Allows
-   *--whatprovides* like functionality with *--resolve-packages*.
-|  subpkgs
-:  Find the subpackages provided by a list of SRPMs.
-   Doesn't have *--src*, because subpkgs aren't SRPMs.
-|  whatenhances
-:  Find the packages that Enhance *[package...]*
-|  whatrecommends
-:  Find the packages that Recommend *[package...]*
-|  whatrequires
-:  Find the packages that Require *[package...]*
-|  whatsuggests
-:  Find the packages that Suggest *[package...]*
-|  whatsupplements
-:  Find the packages that Supplement *[package...]*
+*base*
+	Release repositories enabled by default in the distribution++
+	(e.g. *fedora*, *fedora-source*, *updates*, *updates-source*)
+*testing*
+	Superset of *base* with *-testing* repos enabled.++
+	(e.g. *fedora*, *fedora-source*, *updates*, *updates-source*,
+	*updates-testing-source*)
+*testing-only*
+	Includes *-testing* repositories without *base*++
+	(e.g. *updates-testing*, *updates-testing-source*)
 
-See OPTIONS and *fedrq --help* for more info.
+*buildroot* (rawhide only)
+	Koji buildroot repositories
+	Buildroot repositories are available for stable Fedora releases, but
+	they don't have corresponding source repos. This causes problems for
+	fedrq, so those definitions are not available.
 
 # FILES
 
 ## CONFIGURATION
 
 *PYTHON_SITELIB/fedrq/data/\*.toml* Builtin configuration files. These should not be
-modified directly but may be overriden or used as examples.
+modified directly but may be overridden or used as examples.
 
 */etc/fedrq/\*.toml* System wide configuration files. Has precedence over
 builtin configuration files.
