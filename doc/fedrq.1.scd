@@ -143,8 +143,9 @@ These options have the same meaning across multiple subcommands.
 :  does not include any EL distribution
 |  EPEL Next
 :  epelX-next
-:  base, testing, next-only, next-testing-only
-:  *base* and *testing* are supersets of *epelX*.
+:  base, testing, testing-only, next-base, next-testing, next-testing-only
+:  *base*, *testing*, *testing-only* are supersets of the *epelX* equivalent.
+   *next-base*, *next-testing*, and *next-testing-only* only contain epel-next.
 
 ## SPECIAL REPOS
 

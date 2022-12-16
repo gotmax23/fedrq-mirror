@@ -48,9 +48,11 @@ defs.testing = ["fedrq-epel", "fedrq-epel-source",
                 "fedrq-epel-next", "fedrq-epel-next-source",
                 "fedrq-epel-testing", "fedrq-epel-testing-source",
                 "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
-defs.next-only = ["fedrq-epel", "fedrq-epel-source",
-                "fedrq-epel-next", "fedrq-epel-next-source",
-                "fedrq-epel-testing", "fedrq-epel-testing-source",
-                "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
+def.testing-only = ["fedrq-epel-testing", "fedrq-epel-testing-source",
+                    "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
+
+defs.next-base = ["fedrq-epel-next", "fedrq-epel-next-source"]
+def.next-testing = ["fedrq-epel-next", "fedrq-epel-next-source",
+                    "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
 defs.next-testing-only = ["fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
 
