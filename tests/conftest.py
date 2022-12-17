@@ -2,16 +2,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import subprocess
-import logging
 from pathlib import Path
 
-# import pydantic
 import pytest
 from rpm import expandMacro
 
 from fedrq import config as rqconfig
-
-# from fedrq.releases import Config, FedoraRawhide, RELEASES
 from fedrq.repoquery import Repoquery
 
 TEST_DATA = Path(__file__).parent.resolve() / "test_data"
