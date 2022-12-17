@@ -88,7 +88,6 @@ class Command(abc.ABC):
         parser.add_argument(
             "-b",
             "--branch",
-            default="rawhide",
             help="Fedora or EPEL branch name "
             "(e.g. epel7, rawhide, epel9-next, f37) to query",
         )
@@ -284,6 +283,10 @@ class CheckConfig(Command):
             self.config = get_config()
         except (ValidationError) as exc:
             sys.exit(str(exc))
+        try:
+            self.config.get_release(self.config.default_branch)
+        except ConfigError:
+            sys.exit(f"default_branch '{self.config.default_branch}' is invalid")
         if not self.args.dump:
             print("No validation errors found!")
         else:

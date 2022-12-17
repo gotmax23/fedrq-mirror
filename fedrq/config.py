@@ -177,14 +177,18 @@ class Release:
 
 class RQConfig(BaseModel):
     releases: dict[str, ReleaseConfig]
+    default_branch: str = "rawhide"
 
     class Config:
         json_encoders: dict[t.Any, Callable[[t.Any], str]] = {
             re.Pattern: lambda pattern: pattern.pattern
         }
 
-    def get_release(self, branch: str, repo_name: str = "base") -> Release:
+    def get_release(
+        self, branch: str | None = None, repo_name: str = "base"
+    ) -> Release:
         flog = mklog(__name__, "RQConfig", "get_releases")
+        branch = branch or self.default_branch
         pair = (branch, repo_name)
         for release in self.releases.values():
             try:
