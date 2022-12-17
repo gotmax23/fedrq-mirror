@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from rpm import expandMacro
 
+import fedrq.cli
 from fedrq import config as rqconfig
 from fedrq.repoquery import Repoquery
 
@@ -78,3 +79,14 @@ def target_cpu():
     macro = expandMacro("%{_target_cpu}")
     assert macro != "%{_taget_cpu}"
     return macro
+
+
+@pytest.fixture
+def run_command2(capsys, patch_config_dirs):
+    def runner(args):
+        fedrq.cli.main(args)
+        stdout, stderr = capsys.readouterr()
+        result = stdout.splitlines(), stderr.splitlines(), stdout
+        return result
+
+    return runner
