@@ -184,7 +184,83 @@ See fedrq(5) (TODO) for configuration file syntax.
 
 # EXAMPLES
 
-TODO
+## pkgs
+
+Find a package's runtime dependencies:
+```
+$ fedrq pkgs -S -F requires ansible
+/usr/bin/python3
+/usr/bin/bash
+python(abi) = 3.11
+(python3.11dist(ansible-core) >= 2.14.1 with python3.11dist(ansible-core) < 2.15)
+```
+
+Find a package's runtime dependencies:
+```
+$ fedrq pkgs -S -F requires ansible | fedrq pkgs -iSP
+ansible-core-2.14.1-1.fc38.noarch
+bash-5.2.9-3.fc38.x86_64
+python3-3.11.1-1.fc38.x86_64
+```
+
+Find the package(s) that contain(s) a file on f35
+```
+$ fedrq pkgs -b f35 -P /usr/bin/ansible
+ansible-2.9.27-4.fc35.noarch
+ansible-core-2.12.10-1.fc35.noarch
+```
+
+## whatrequires
+
+Find the packages that require another package, at buildtime or runtime:
+```
+$ fedrq whatrequires yt-dlp
+audiotube-22.11-1.fc38.src
+audiotube-22.11-1.fc38.x86_64
+celluloid-0.24-4.fc38.x86_64
+gpodder-3.11.0-1.fc37.noarch
+media-downloader-2.7.0-2.fc38.x86_64
+persepolis-3.2.0-11.fc37.noarch
+video-downloader-0.10.12-1.fc38.noarch
+yt-dlp-bash-completion-2022.11.11-1.fc38.noarch
+yt-dlp-fish-completion-2022.11.11-1.fc38.noarch
+yt-dlp-zsh-completion-2022.11.11-1.fc38.noarch
+```
+
+Find a package's reverse dependencies, excluding subpackages:
+```
+$ fedrq whatrequires -X yt-dlp
+audiotube-22.11-1.fc38.src
+audiotube-22.11-1.fc38.x86_64
+celluloid-0.24-4.fc38.x86_64
+gpodder-3.11.0-1.fc37.noarch
+media-downloader-2.7.0-2.fc38.x86_64
+persepolis-3.2.0-11.fc37.noarch
+video-downloader-0.10.12-1.fc38.noarch
+```
+
+## subpkgs
+
+Find an epel9 SRPM's subpackages
+```
+$ fedrq subpkgs -b epel9 -F na epel-release
+epel-next-release.noarch
+epel-release.noarch
+```
+
+Find the components that would be directly affected by the removal of pcre:
+```
+$ fedrq subpkgs pcre | fedrq whatrequires -iX -F source
+ClanLib
+Thunar
+adanaxisgpl
+aide
+[...]
+xgrep
+xmlcopyeditor
+yara
+zsh
+```
 
 # AUTHOR
 
