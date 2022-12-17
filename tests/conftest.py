@@ -55,9 +55,10 @@ def repo_test_tmpdir(tmp_path_factory):
 
 
 @pytest.fixture
-def patch_config_dirs(monkeypatch):
-    config_dirs = (FEDRQ_CONFIG_HOME,)
+def patch_config_dirs(monkeypatch, tmp_path):
+    config_dirs = (tmp_path, FEDRQ_CONFIG_HOME,)
     monkeypatch.setattr(rqconfig, "CONFIG_DIRS", config_dirs)
+    return tmp_path
 
 
 @pytest.fixture
