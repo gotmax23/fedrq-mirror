@@ -110,7 +110,7 @@ These options have the same meaning across multiple subcommands.
 	\--forcearch.
 	*NOTE*: Unlike other tools, the -source repositories are always enabled.
 	You need to filter out src packages if you don't want them in the query.
-*--src*
+*-s*, *--src*
 	Equivalent to *--arch=src*.
 	*NOTE*: The semantics of this option are different than *dnf
 	repoquery*'s version. Our *--arch* does not affect the way the input is
@@ -118,7 +118,7 @@ These options have the same meaning across multiple subcommands.
 	for source packages that depend on a virtual Provide of the input
 	packages, because arch filtering is applied when resolving the input
 	packages' virtual Provides and files.
-*--notsrc*
+*-S*, *--notsrc*
 	Equivalent to *--arch=notsrc*. This is a pseudo arch that does not exist
 	in rpm. It includes noarch and the system architecture. It does NOT
 	include multilib.

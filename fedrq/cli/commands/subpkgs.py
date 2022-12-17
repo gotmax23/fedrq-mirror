@@ -36,6 +36,7 @@ class Subpkgs(Command):
             "-A", "--arch", help="Only show subpackages with this arch"
         )
         arch_group.add_argument(
+            "-S",
             "--notsrc",
             dest="arch",
             action="store_const",

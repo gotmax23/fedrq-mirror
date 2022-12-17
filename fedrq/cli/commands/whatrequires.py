@@ -94,6 +94,7 @@ class WhatCommand(Command):
             "filter out the resulting packages that don't match ARCH",
         )
         arch_group.add_argument(
+            "-S",
             "--notsrc",
             dest="arch",
             action="store_const",
@@ -102,6 +103,7 @@ class WhatCommand(Command):
             "Equivalent to --arch=notsrc",
         )
         arch_group.add_argument(
+            "-s",
             "--src",
             dest="arch",
             action="store_const",
