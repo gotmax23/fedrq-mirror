@@ -12,9 +12,13 @@ from fedrq.repoquery import dnf, hawkey, needs_dnf
 ATTRS = (
     "name",
     "arch",
+    "a",
     "epoch",
+    "e",
     "version",
+    "v",
     "release",
+    "r",
     "from_repo",
     "evr",
     "debug_name",
