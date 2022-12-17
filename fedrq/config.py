@@ -213,7 +213,7 @@ class RQConfig(BaseModel):
 
 
 def get_files(
-    dir: importlib.abc.Traversable, suffix: str
+    dir: importlib.abc.Traversable, suffix: str, reverse: bool = True
 ) -> list[importlib.abc.Traversable]:
     files: list[importlib.abc.Traversable] = []
     if not dir.is_dir():
@@ -221,7 +221,7 @@ def get_files(
     for file in dir.iterdir():
         if file.name.endswith(suffix):
             files.append(file)
-    return sorted(files, key=lambda f: f.name)
+    return sorted(files, key=lambda f: f.name, reverse=reverse)
 
 
 # def get_default_config() -> list[importlib.abc.Traversable]:
