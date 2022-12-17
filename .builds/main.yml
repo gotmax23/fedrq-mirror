@@ -44,14 +44,19 @@ tasks:
         exit
       fi
       set -x
-      if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]
-      then
-        echo "Not submitting manpage build. Branch is not main."
+      if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
+        echo "Submitting build for main branch"
+        site="fedrq"
+      elif [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/_dev)" ]; then
+        echo "Submitting build for _dev branch"
+        site="fedrq_dev"
+      else
+        echo "Not submitting manpage build. Branch is not main or _dev."
         exit
       fi
 
       tar czvf fedrq.tar.gz *.html
-      hut pages publish fedrq.tar.gz -d gotmax23.srht.site -s fedrq
+      hut pages publish fedrq.tar.gz -d gotmax23.srht.site -s "${site}"
   - lint: |
       cd fedrq
       venv="$(mktemp -d)"
