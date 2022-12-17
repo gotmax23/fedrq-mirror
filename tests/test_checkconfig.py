@@ -1,12 +1,15 @@
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+from pathlib import Path
+
 try:
     import tomllib
 except ImportError:
     import tomli as tomllib
 
 import pytest
+import tomli_w
 
 import fedrq.cli
 
@@ -56,3 +59,16 @@ def test_checkconfig_dump_error(capsys, no_tomli_w):
         fedrq.cli.main(["check-config", "--dump"])
     stdout = capsys.readouterr()[0]
     assert not stdout
+
+
+def test_checkconfig_default_branch_error(capsys, patch_config_dirs):
+    dest: Path = patch_config_dirs / "99-default_branch_error.toml"
+    data = {"default_branch": "does-not-exist"}
+    with dest.open("wb") as fp:
+        tomli_w.dump(data, fp)
+    with pytest.raises(
+        SystemExit, match="default_branch 'does-not-exist' is invalid"
+    ):
+        fedrq.cli.main(["check-config"])
+    stdout = capsys.readouterr()[0]
+    assert stdout == "Validating config...\n"

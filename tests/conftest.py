@@ -31,6 +31,11 @@ def data_path():
     return TEST_DATA
 
 
+@pytest.fixture
+def fedrq_config_home():
+    return FEDRQ_CONFIG_HOME
+
+
 @pytest.fixture(scope="session", autouse=True)
 def repo_test_repo():
     assert TEST_DATA.is_dir()

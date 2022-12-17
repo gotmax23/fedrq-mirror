@@ -9,9 +9,7 @@ import fedrq.cli
 @pytest.fixture
 def run_command(capsys, repo_test_tmpdir, patch_config_dirs):
     def runner(args):
-        fedrq.cli.main(
-            ["subpkgs", "--cachedir", repo_test_tmpdir, "-b", "tester", *args]
-        )
+        fedrq.cli.main(["subpkgs", "--cachedir", repo_test_tmpdir, *args])
         stdout, stderr = capsys.readouterr()
         result = stdout.splitlines(), stderr.splitlines()
         return result
