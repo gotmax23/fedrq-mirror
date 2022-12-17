@@ -35,7 +35,6 @@ class Pkgs(Command):
             pargs["help"] = "Find the packages that match a list of package specs"
         parser = parser_func("pkgs", **pargs)
 
-        parser.add_argument("names", metavar="NAME", nargs="+")
         parser.add_argument(
             "-P",
             "--resolve-packages",

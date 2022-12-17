@@ -68,7 +68,6 @@ class WhatCommand(Command):
         if add_help:
             pargs["help"] = f"Find reverse {cls.operator.title()} of a list of packages"
         parser = parser_func(**pargs)
-        parser.add_argument("names", metavar="NAME", nargs="+")
 
         _rp_help = f"""
         Resolve the correct Package when given a virtual Provide. For instance,

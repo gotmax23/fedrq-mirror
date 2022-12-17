@@ -71,6 +71,7 @@ class Command(abc.ABC):
     def __init__(self, args: argparse.Namespace):
         self.args = args
         self.v_logging()
+        self.get_names()
         self.config = get_config()
         self._v_errors: list[str] = []
 
@@ -85,6 +86,12 @@ class Command(abc.ABC):
     @classmethod
     def parent_parser(cls) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument(
+            "names", metavar="NAME", nargs="*", help="Mutually exclusive with --stdin"
+        )
+        parser.add_argument(
+            "-i", "--stdin", help="Read package names from stdin.", action="store_true"
+        )
         parser.add_argument(
             "-b",
             "--branch",
@@ -122,6 +129,14 @@ class Command(abc.ABC):
     def standalone(cls) -> None:
         parser = cls.make_parser(add_help=False)
         return cls(args=parser.parse_args()).run()
+
+    def get_names(self) -> None:
+        if self.args.names and self.args.stdin:
+            sys.exit("Postional NAMEs can not be used with --stdin")
+        if self.args.stdin:
+            self.args.names = [line.strip() for line in sys.stdin.readlines()]
+        if not self.args.names:
+            sys.exit("No package names were passed")
 
     @staticmethod
     def _v_add_errors(

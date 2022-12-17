@@ -31,7 +31,6 @@ class Subpkgs(Command):
         if add_help:
             pargs["help"] = "Find the subpackages of a list of SRPMs"
         parser = parser_func(**pargs)
-        parser.add_argument("names", metavar="NAME", nargs="+")
         arch_group = parser.add_mutually_exclusive_group()
         arch_group.add_argument(
             "-A", "--arch", help="Only show subpackages with this arch"

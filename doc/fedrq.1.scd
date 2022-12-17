@@ -6,14 +6,11 @@ fedrq - Simplified repository querying
 
 # SYNOPSIS
 
-fedrq [subcommand] [options...] [package...]
+\[fedrq \| python -m fedrq] [query type] [options...] [package...]
 
-fedrq check-config [--dump] [--debug]
+\[fedrq \| python -m fedrq] [query type] [options...] [--stdin]
 
-python -m fedrq [subcommand] [options...] [package...]
-
-python -m fedrq check-config [--dump] [--debug]
-
+\[fedrq \| python -m fedrq] check-config [--dump] [--debug]
 
 # DESCRIPTION
 
@@ -53,6 +50,9 @@ fedrq is a tool to simplify querying the Fedora and EPEL repositories.
 
 These options have the same meaning across multiple subcommands.
 
+*-i*, *--stdin*
+	Read package names from stdin. Cannot be used when passing postional
+	*[packages...]*.
 *-b*, *--branch* <branch name> (default: _rawhide_)
 	Distribution release. This matches distgit branch names by convention.
 	See BUILTIN RELEASES for the releases available out of the box. Extra
