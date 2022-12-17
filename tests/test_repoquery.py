@@ -10,6 +10,6 @@ from fedrq import config as rqconfig
 def test_make_base_rawhide_repos():
     config = rqconfig.get_config()
     rawhide = config.get_release("rawhide")
-    base = rawhide.make_base()
+    base = rawhide.make_base(fill_sack=False)
     assert len(tuple(base.repos.iter_enabled())) == len(rawhide.repos)
     assert set(repo.id for repo in base.repos.iter_enabled()) == set(rawhide.repos)
