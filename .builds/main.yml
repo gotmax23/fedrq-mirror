@@ -37,6 +37,7 @@ tasks:
       cd fedrq/doc
       scd2html < fedrq.1.scd > fedrq.1.html
       sed -i 's|\(code{white-space: \)pre-wrap;}|\1pre;}|' fedrq.1.html
+      sed -i '/hyphens: auto;/d' fedrq.1.html
 
       set +x
       if [ -z "${OAUTH2_TOKEN-}" ]

@@ -133,7 +133,7 @@ These options have the same meaning across multiple subcommands.
 :[ rawhide
 :[ base, buildroot
 :[
-|  Fedora stable/branched
+|  Fedora stable and branched
 :  fXX
 :  base, testing, release, updates, testing-only
 :  *release* only contains *fedora* and *fedora-source* (i.e. no *updates*)
