@@ -9,7 +9,6 @@ from collections.abc import Collection, Iterable
 from warnings import warn
 
 from fedrq._dnf import dnf, hawkey, needs_dnf
-from fedrq._utils import mklog
 
 
 def base_read_system_repos(base: dnf.Base | None = None) -> dnf.Base:
@@ -29,11 +28,7 @@ def base_read_repofiles(base: dnf.Base | None = None) -> dnf.Base:
 
 def base_enable_repos(repos: Collection[str], base: dnf.Base | None = None) -> dnf.Base:
     needs_dnf()
-    flog = mklog(__name__, "base_enable_repos")
-    flog.debug("base = %s", base)
     base = base or dnf.Base()
-    flog.debug("base = %s", base)
-    flog.debug("Repos: %s", base.repos)
     for repo in repos:
         if repo_obj := base.repos.get_matching(repo):
             repo_obj.enable()
