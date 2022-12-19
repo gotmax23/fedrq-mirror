@@ -26,9 +26,7 @@ from pydantic import ValidationError
 from fedrq._dnf import HAS_DNF, dnf, hawkey
 from fedrq._utils import filter_latest, mklog
 from fedrq.cli.formatters import FormatterContainer
-from fedrq.config import ConfigError
-from fedrq.config import Release as Release3
-from fedrq.config import RQConfig, get_config
+from fedrq.config import ConfigError, Release, RQConfig, get_config
 from fedrq.repoquery import Repoquery
 
 logger = logging.getLogger("fedrq")
@@ -66,7 +64,7 @@ class Command(abc.ABC):
     _extra_formatters: dict[str, cabc.Callable[..., cabc.Iterable[str]]] = {}
     _create_rq: bool = False
     config: RQConfig
-    release: Release3
+    release: Release
     query: hawkey.Query
 
     def __init__(self, args: argparse.Namespace):
