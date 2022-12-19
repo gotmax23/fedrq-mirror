@@ -181,10 +181,9 @@ class Command(abc.ABC):
     @_v_add_errors
     def v_formatters(self) -> t.Optional[str]:
         if self.args.formatter not in self.formatter.list_all_formatters():
-            # TODO: Properly document formatters
             return (
                 f"{self.args.formatter} is not a valid formatter. "
-                "See PLACEHOLDER for a list."
+                "See fedrq(1) for more information about formatters."
             )
         return None
 
