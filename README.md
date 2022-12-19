@@ -81,12 +81,14 @@ uses the `dnf` python bindings.
 This project follows the REUSE specification. In general:
 
 - Code is licensed under GPL-2.0-or-later. This is the same license as dnf.
-- fedrq.spec is licensed under MIT to match Fedora
 - Configuration and repo files in fedrq/data/ are `UNLICENSE`ed
+- fedrq.spec is licensed under MIT to match Fedora
 
 ```
 SPDX-License-Identifier: GPL-2.0-or-later AND Unlicense AND MIT
 ```
+
+The RPM and Python package metadata doesn't have the `AND MIT` portion, as they don't contain the specfile.
 
 
 [CONTRIBUTING.md]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/CONTRIBUTING.md
