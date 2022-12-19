@@ -66,7 +66,8 @@ class ReleaseConfig(BaseModel):
             if not topdir.is_dir():
                 continue
             for file in topdir.iterdir():
-                yield file
+                if file.is_file():
+                    yield file
 
     @classmethod
     def _get_full_defpaths(
@@ -215,7 +216,7 @@ def _get_files(
     if not dir.is_dir():
         return files
     for file in dir.iterdir():
-        if file.name.endswith(suffix):
+        if file.name.endswith(suffix) and file.is_file():
             files.append(file)
     return sorted(files, key=lambda f: f.name, reverse=reverse)
 
