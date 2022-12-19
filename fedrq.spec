@@ -57,8 +57,9 @@ install -Dpm 0644 fedrq.1 -t %{buildroot}%{_mandir}/man1/
 
 
 %files -f %{pyproject_files}
-%license LICENSES/GPL-2.0-or-later.txt
-%license LICENSES/Unlicense.txt
+# Licenses are included in the wheel
+%license %{_licensedir}/fedrq/
+%doc README.md CONTRIBUTING.md
 %{_bindir}/fedrq*
 %{_mandir}/man1/fedrq.1*
 
