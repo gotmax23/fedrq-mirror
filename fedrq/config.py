@@ -139,10 +139,6 @@ class Release:
     def repos(self) -> tuple[str, ...]:
         return tuple(self.release_config.defs[self.repo_name])
 
-    # @property
-    # def name(self) -> str:
-    #     return self.release_config.name
-
     @property
     def copr_chroot_fmt(self) -> str | None:
         return self.release_config.copr_chroot_fmt
@@ -212,7 +208,7 @@ class RQConfig(BaseModel):
         return [rc.name for rc in self.releases.values()]
 
 
-def get_files(
+def _get_files(
     dir: importlib.abc.Traversable, suffix: str, reverse: bool = True
 ) -> list[importlib.abc.Traversable]:
     files: list[importlib.abc.Traversable] = []
@@ -222,14 +218,6 @@ def get_files(
         if file.name.endswith(suffix):
             files.append(file)
     return sorted(files, key=lambda f: f.name, reverse=reverse)
-
-
-# def get_default_config() -> list[importlib.abc.Traversable]:
-#     return get_files(importlib.resources.files("fedrq.data"), ".toml")
-
-
-# def get_default_repos() -> list[importlib.abc.Traversable]:
-#     return get_files(importlib.resources.files("fedrq.data.repos"), ".repo")
 
 
 def _process_config(
@@ -250,8 +238,8 @@ def get_config() -> RQConfig:
     config: dict[str, t.Any] = {}
     releases: dict[str, t.Any] = {}
     all_files: list[list[importlib.abc.Traversable]] = [
-        get_files(importlib.resources.files("fedrq.data"), ".toml"),
-        *(get_files(p, ".toml") for p in reversed(CONFIG_DIRS)),
+        _get_files(importlib.resources.files("fedrq.data"), ".toml"),
+        *(_get_files(p, ".toml") for p in reversed(CONFIG_DIRS)),
     ]
     flog.debug("all_files = %s", all_files)
     for path in itertools.chain.from_iterable(all_files):
