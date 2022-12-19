@@ -57,9 +57,7 @@ def test_checkconfig_default_branch_error(capsys, patch_config_dirs):
     data = {"default_branch": "does-not-exist"}
     with dest.open("wb") as fp:
         tomli_w.dump(data, fp)
-    with pytest.raises(
-        SystemExit, match="default_branch 'does-not-exist' is invalid"
-    ):
+    with pytest.raises(SystemExit, match="default_branch 'does-not-exist' is invalid"):
         fedrq.cli.main(["check-config"])
     stdout = capsys.readouterr()[0]
     assert stdout == "Validating config...\n"

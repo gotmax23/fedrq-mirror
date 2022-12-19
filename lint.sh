@@ -4,6 +4,8 @@
 
 set -eu
 
+cd "$(dirname "$(readlink -f "$0")")"
+
 if [ "${1-}" == "--check" ]; then
   c="--check"
 else
@@ -17,9 +19,9 @@ run() {
     echo
 }
 
-
-run isort fedrq ${c}
-run black fedrq ${c}
+run isort --add-import "from __future__ import annotations" "${c}" fedrq/
+run isort ${c} tests/*.py
+run black ${c} fedrq tests/*.py
 run flake8 --max-line-length 89 fedrq
 run mypy fedrq
 run reuse lint
