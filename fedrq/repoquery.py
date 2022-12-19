@@ -89,7 +89,7 @@ class Repoquery:
             raise RuntimeError(f"Zero packages found for {name} on {arch}")
         return query[0]
 
-    def multi_get_subpackages(
+    def get_subpackages(
         self,
         packages: hawkey.Query | dnf.package.Package,
         **kwargs,

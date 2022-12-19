@@ -124,7 +124,7 @@ class WhatCommand(Command):
 
         brpm_sourcerpms = [re.sub(r"\.rpm$", "", pkg.sourcerpm) for pkg in brpms]
         brpm_srpm_query = get_packages(self.rq.sack, brpm_sourcerpms)
-        subpackages = self.rq.multi_get_subpackages(brpm_srpm_query.union(srpms))
+        subpackages = self.rq.get_subpackages(brpm_srpm_query.union(srpms))
         self.query.filterm(pkg__neq=subpackages)
         return None
 
