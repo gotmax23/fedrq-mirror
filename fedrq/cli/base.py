@@ -12,6 +12,7 @@ import logging
 import sys
 import typing as t
 from functools import wraps
+from textwrap import dedent
 
 try:
     import tomli_w
@@ -228,9 +229,12 @@ class Command(abc.ABC):
         if HAS_DNF:
             return None
         self._v_handle_errors(False)
-        error = """\
-The dnf and hawkey modules are not available in the current context.
-These modules are only available for the default system Python interpreter."""
+        error = dedent(
+            """
+            The dnf and hawkey modules are not available in the current context.
+            These modules are only available for the default system Python interpreter.
+            """
+        ).strip()
         print("FATAL ERROR:", error, file=sys.stderr)
         sys.exit(1)
 
