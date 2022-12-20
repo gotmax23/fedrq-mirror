@@ -17,7 +17,6 @@ class Pkgs(Command):
     NAMES can be package package name globs or NEVRs.
     """
 
-    # -P: Resolve packages when given a filepath or a virtual Provide.
     def __init__(self, args: argparse.Namespace) -> None:
         super().__init__(args)
         self.v_default()
@@ -72,7 +71,7 @@ class Pkgs(Command):
     def run(self) -> None:
         flog = mklog(__name__, self.__class__.__name__, "run")
         self.query = self.rq.query(empty=True)
-        flog.debug("self.query = %s", tuple(self.query))
+        # flog.debug("self.query = %s", tuple(self.query))
 
         resolved_packages = get_packages(
             self.rq.sack, self.args.names, self.args.resolve_packages
@@ -80,14 +79,14 @@ class Pkgs(Command):
         flog.debug("resolved_packages = %s", tuple(resolved_packages))
         self.query = self.query.union(resolved_packages)
 
-        flog.debug("self.query = %s", tuple(self.query))
+        # flog.debug("self.query = %s", tuple(self.query))
         glob_packages = self.rq.query(name__glob=self.args.names)
         flog.debug("glob_packages = %s", tuple(glob_packages))
         self.query = self.query.union(glob_packages)
 
-        flog.debug("self.query = %s", tuple(self.query))
+        # flog.debug("self.query = %s", tuple(self.query))
         self.query = self.rq.arch_filter(self.query, self.args.arch)
-        flog.debug("self.query = %s", tuple(self.query))
+        # flog.debug("self.query = %s", tuple(self.query))
         filter_latest(self.query, self.args.latest)
         flog.debug("self.query = %s", tuple(self.query))
 

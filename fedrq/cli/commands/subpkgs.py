@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import argparse
-import typing as t
+from collections.abc import Callable
 
 from fedrq.cli.base import Command, get_packages
 
@@ -22,7 +22,7 @@ class Subpkgs(Command):
     @classmethod
     def make_parser(
         cls,
-        parser_func: t.Callable = argparse.ArgumentParser,
+        parser_func: Callable = argparse.ArgumentParser,
         *,
         add_help: bool,
         **kwargs,
@@ -56,7 +56,7 @@ class Subpkgs(Command):
             print(p)
 
     @Command._v_add_errors
-    def v_arch(self) -> t.Optional[str]:
+    def v_arch(self) -> str | None:
         if r := super().v_arch():
             return r
         if (

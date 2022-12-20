@@ -10,9 +10,9 @@ import collections.abc as cabc
 import json
 import logging
 import sys
-import typing as t
 from functools import wraps
 from textwrap import dedent
+from typing import Any
 
 try:
     import tomli_w
@@ -36,12 +36,10 @@ def get_packages(
     sack: dnf.sack.Sack,
     packages: cabc.Collection[str],
     resolve: bool = False,
-    latest: t.Optional[int] = None,
+    latest: int | None = None,
 ) -> hawkey.Query:
-    flog = logging.getLogger(__name__ + ".get_packages()")
-    flog.debug(
-        f"get_packages(sack=..., packages={packages}, resolve={resolve}, latest={latest}"
-    )
+    flog = logging.getLogger(__name__ + ".get_packages")
+    flog.debug(f"sack=..., packages={packages}, resolve={resolve}, latest={latest}")
     packagesq = sack.query().filter(empty=True)
     kwargs = {}
     kwargs["with_provides"] = resolve
@@ -144,12 +142,10 @@ class Command(abc.ABC):
         @wraps(func)
         def wrapper(self, *args, **kwargs) -> None:
             error = func(self, *args, **kwargs)
-            if not error:
-                return None
-            if not isinstance(error, str) and isinstance(error, cabc.Iterable):
-                self._v_errors.append(*error)
-            else:
+            if isinstance(error, str):
                 self._v_errors.append(error)
+            elif isinstance(error, cabc.Iterable):
+                self._v_errors.append(*error)
 
         return wrapper
 
@@ -165,7 +161,7 @@ class Command(abc.ABC):
             logger.setLevel(logging.DEBUG)
 
     @_v_add_errors
-    def v_latest(self) -> t.Optional[str]:
+    def v_latest(self) -> str | None:
         try:
             self.args.latest = int(self.args.latest)
         except ValueError:
@@ -179,7 +175,7 @@ class Command(abc.ABC):
         return None
 
     @_v_add_errors
-    def v_formatters(self) -> t.Optional[str]:
+    def v_formatters(self) -> str | None:
         if self.args.formatter not in self.formatter.list_all_formatters():
             return (
                 f"{self.args.formatter} is not a valid formatter. "
@@ -188,7 +184,7 @@ class Command(abc.ABC):
         return None
 
     @_v_add_errors
-    def v_arch(self) -> t.Optional[str]:
+    def v_arch(self) -> str | None:
         # TODO: Verify that arches are actually valid RPM arches.
         if not self.args.arch:
             return None
@@ -201,7 +197,7 @@ class Command(abc.ABC):
             self.args.arch = [item.strip() for item in self.args.arch.split(",")]
         return None
 
-    def _get_release(self) -> t.Optional[str]:
+    def _get_release(self) -> str | None:
         try:
             self.release = self.config.get_release(self.args.branch, self.args.repos)
         except ConfigError as err:
@@ -209,7 +205,7 @@ class Command(abc.ABC):
         return None
 
     @_v_add_errors
-    def v_rq(self) -> t.Optional[str]:
+    def v_rq(self) -> str | None:
         if gr := self._get_release():
             return gr
         try:
@@ -222,7 +218,7 @@ class Command(abc.ABC):
             return str(exc)
         return None
 
-    def needs_dnf(self) -> t.Optional[str]:
+    def needs_dnf(self) -> str | None:
         if HAS_DNF:
             return None
         self._v_handle_errors(False)
@@ -254,7 +250,7 @@ class CheckConfig(Command):
         self.v_logging()
 
     @staticmethod
-    def _strip_nones(dct: dict[t.Any, t.Any], level=0) -> dict[t.Any, t.Any]:
+    def _strip_nones(dct: dict[Any, Any], level=0) -> dict[Any, Any]:
         """
         Recurisvely remove None values from a dictionary so they can be TOML
         serialized
