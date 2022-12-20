@@ -78,8 +78,8 @@ def test_subpkg_noarch(run_command):
     assert not out[1]
 
 
-def test_subpkg_x86_64(run_command, target_cpu):
-    out = run_command(["packagea", "packageb", "-A", "x86_64", "-l", "ALL"])
+def test_subpkg_arched(run_command, target_cpu):
+    out = run_command(["packagea", "packageb", "-A", target_cpu, "-l", "ALL"])
     expected = [
         f"packageb-1-1.fc36.{target_cpu}",
         f"packageb-11111:2-1.fc36.{target_cpu}",

@@ -104,15 +104,16 @@ def test_whatrequires_versioned_resolve(run_command):
         # fedrq will resolve package names, so we need
         # to explicitly pass -E.
         (["packageb", "-F", "nv"], False),
-        (["packageb.x86_64", "-F", "na"], False),
+        (["packageb.{target_cpu}", "-F", "na"], False),
     ),
 )
-def test_exact_no_result(args, exact_optional, run_command):
+def test_exact_no_result(args, exact_optional, run_command, target_cpu):
     """
     These work with -P, but should not print any results
     with --exact.
     """
     expected = ([], [])
+    args = [arg.format(target_cpu=target_cpu) for arg in args]
     output = run_command(args + ["-E"])
     assert output == expected
     if exact_optional:

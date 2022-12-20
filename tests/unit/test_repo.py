@@ -39,16 +39,16 @@ def test_repo_package_count(repo_test_rq, data_path):
 
 
 # @pytest.mark.parametrize("special_repos", ("repo1",), indirect=["special_repos"])
-def test_plain_formatter(repo_test_rq):
+def test_plain_formatter(repo_test_rq, target_cpu):
     expected = sorted(
         (
             "packagea-1-1.fc36.noarch",
             "packagea-1-1.fc36.src",
             "packagea-sub-1-1.fc36.noarch",
             "packageb-1-1.fc36.src",
-            "packageb-1-1.fc36.x86_64",
+            f"packageb-1-1.fc36.{target_cpu}",
             "packageb-11111:2-1.fc36.src",
-            "packageb-11111:2-1.fc36.x86_64",
+            f"packageb-11111:2-1.fc36.{target_cpu}",
             "packageb-sub-1-1.fc36.noarch",
             "packageb-sub-11111:2-1.fc36.noarch",
         )
