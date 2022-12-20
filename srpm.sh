@@ -10,6 +10,10 @@ specfile="fedrq.spec"
 lastref="v0.0.2"
 RELEASE="${RELEASE-rawhide}"
 
+# Sanity test
+git show "${lastref}" >/dev/null
+git merge-base --is-ancestor "${lastref}" HEAD
+
 mkdir -p "${outdir}"
 find -maxdepth 1 \( -name 'fedrq-*.tar.gz' -o -name '*.src.rpm' \) -delete -print
 find "${outdir}" -maxdepth 1 -type f -name '*.src.rpm' -delete -print
