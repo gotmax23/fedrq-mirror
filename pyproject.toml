@@ -79,6 +79,7 @@ exclude = [
 [tool.flit.external-data]
 # Currently, this just contains share/licenses/fedrq to work around flit's lack
 # of proper support for including these files in dist-info.
+# To comply with the license, its must be included in the wheel.
 directory = ".data"
 
 [tool.mypy]
