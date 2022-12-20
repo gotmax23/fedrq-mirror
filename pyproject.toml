@@ -73,7 +73,7 @@ exclude = [
     "srpm.sh",
     ".builds/",
     # fedrq.spec and its associated license are not wanted in the sdist
-    "fedrq.spec", "LICENSES/MIT.txt",
+    "fedrq.spec", "changelog", "changelog.license", "LICENSES/MIT.txt",
 ]
 
 [tool.flit.external-data]
