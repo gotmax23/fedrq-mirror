@@ -23,7 +23,7 @@ sources:
 tasks:
   - copr-webhook: |
       cd fedrq/
-      if ! [ -x "${HOME}/.copr-hook" ]
+      if ! [ -x "${HOME}/.copr-dev-hook" ]
       then
         echo "Not submitting copr build. Secrets are disbaled."
         exit
