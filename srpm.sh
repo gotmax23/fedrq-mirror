@@ -7,7 +7,7 @@ set -euo pipefail
 outdir="${1:-results_fedrq}"
 projectdir="$(pwd)"
 specfile="fedrq.spec"
-lastref="v0.0.1"
+lastref="v0.0.2"
 RELEASE="${RELEASE-rawhide}"
 
 mkdir -p "${outdir}"
