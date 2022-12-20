@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+---
+image: fedora/rawhide
+packages:
+  - fedpkg
+  - mock
+  - mock-core-configs
+  - rpmautospec
+  - rpmdevtools
+  - shadow-utils
+sources:
+  - https://git.sr.ht/~gotmax23/fedrq
+environment:
+  RELEASE: f36
+artifacts:
+  - fedrq/results_fedrq.tar.gz
+tasks:
+  - setup-add-mock-group: |
+      sudo usermod -aG mock $USER
+  - build: |
+      cd fedrq
+      keep_spec=1 ./srpm.sh
+      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after || r=$?
+      tar cvf results_fedrq.tar.gz results_fedrq
+      exit $r

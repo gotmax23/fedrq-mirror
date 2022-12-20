@@ -8,6 +8,7 @@ outdir="${1:-results_fedrq}"
 projectdir="$(pwd)"
 specfile="fedrq.spec"
 lastref="v0.0.1"
+RELEASE="${RELEASE-rawhide}"
 
 mkdir -p "${outdir}"
 find -maxdepth 1 \( -name 'fedrq-*.tar.gz' -o -name '*.src.rpm' \) -delete -print
@@ -30,7 +31,7 @@ sed "s|^\(Version: *\)[^ ]*$|\1${newversion}|" -i "${specfile}"
 
 git archive -o "${archivename}.tar.gz" --prefix "${archivename}/" HEAD
 
-fedpkg --name fedrq --release rawhide srpm
+fedpkg --name fedrq --release "${RELEASE}" srpm
 cp -p *.src.rpm "${outdir}"
 
 [ -z "${keep_spec-}" ] && mv "${specfile}.bak" "${specfile}" || :
