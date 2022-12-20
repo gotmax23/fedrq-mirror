@@ -14,12 +14,13 @@ Source:         %{url}/archive/%{version}.tar.gz#/fedrq-%{version}.tar.gz
 
 BuildArch:      noarch
 
+BuildRequires:  python3-devel
+# Test deps
 BuildRequires:  createrepo_c
 BuildRequires:  fedora-repos-rawhide
-BuildRequires:  python3-devel
 BuildRequires:  python3-dnf
-BuildRequires:  python3-tomli-w
 BuildRequires:  rpmdevtools
+# Manpage
 BuildRequires:  scdoc
 
 Requires:       python3-dnf
