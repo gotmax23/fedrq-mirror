@@ -19,7 +19,6 @@ BuildRequires:  python3-devel
 BuildRequires:  createrepo_c
 BuildRequires:  fedora-repos-rawhide
 BuildRequires:  python3-dnf
-BuildRequires:  rpmdevtools
 # Manpage
 BuildRequires:  scdoc
 
