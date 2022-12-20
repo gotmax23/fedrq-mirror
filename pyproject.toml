@@ -58,6 +58,11 @@ dev = [
     "fedrq[lint]",
 ]
 
+[project.urls]
+Homepage = "https://sr.ht/~gotmax23/fedrq"
+Source = "https://git.sr.ht/~gotmax23/fedrq"
+"Mailing List" = "https://lists.sr.ht/~gotmax23/fedrq"
+
 [project.scripts]
 fedrq = "fedrq.cli:main"
 
