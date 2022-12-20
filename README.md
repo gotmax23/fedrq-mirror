@@ -14,9 +14,8 @@ Python bindings and does not shell out to `dnf repoquery`. It allows querying
 for reverse dependencies, packages that contain a certain Provide or file,
 subpackages of an SRPM, and package metadata.
 
-The tool doesn't seek to replace every feature of dnf repoquery.
-It seeks to provide a more user friendly interface than `dnf repoquery` for
-certain common tasks.
+The tool doesn't seek to replace every feature of dnf repoquery. It provides a
+more user friendly interface than `dnf repoquery` for certain common tasks.
 
 [![builds.sr.ht status](https://builds.sr.ht/~gotmax23/fedrq/commits/main.svg)](https://builds.sr.ht/~gotmax23/fedrq/commits/main?)
 
