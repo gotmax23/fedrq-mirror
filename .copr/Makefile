@@ -3,5 +3,5 @@
 
 outdir ::= results_fedrq
 srpm:
-	dnf install -y git-core fedpkg rpmdevtools
+	dnf install -y git-core fedpkg rpmdevtools --setopt=install_weak_deps=False
 	./srpm.sh $(outdir)
