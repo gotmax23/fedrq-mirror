@@ -54,7 +54,7 @@ The RPM package weakly depends on `python3-tomli-w`.
 
 
 ## Versioning
-This project is in alpha and has no released version.
+This project is in alpha.
 
 
 ## Documentaion
