@@ -11,30 +11,70 @@ from warnings import warn
 from fedrq._dnf import dnf, hawkey, needs_dnf
 
 
-def base_read_system_repos(base: dnf.Base | None = None) -> dnf.Base:
-    needs_dnf()
-    base = base or dnf.Base()
-    # Read all repository definitions from the local system and then disable them.
-    base.read_all_repos()
-    for repo in base.repos.iter_enabled():
-        repo.disable()
-    return base
+class BaseMaker:
+    """
+    Create a dnf.Base object and load repos
+    """
 
+    def __init__(self, base: dnf.Base | None) -> None:
+        needs_dnf()
+        self.base: dnf.Base = base or dnf.Base()
 
-def base_read_repofiles(base: dnf.Base | None = None) -> dnf.Base:
-    needs_dnf()
-    base = base or dnf.Base()
+    def fill_sack(
+        self,
+        *,
+        from_cache: bool = False,
+        load_system_repo: bool = False,
+        _cachedir: str | None = None,
+    ) -> dnf.Base:
+        """
+        Fill the sack and returns the dnf.Base object.
+        The repository configuration shouldn't be manipulated after this.
 
+        Note that the `_cachedir` arg is private and subject to removal.
+        """
+        if _cachedir:
+            self.base.conf.cachedir = _cachedir
+        if from_cache:
+            self.base.fill_sack_from_repos_in_cache(load_system_repo=load_system_repo)
+        else:
+            self.base.fill_sack(load_system_repo=load_system_repo)
+        return self.base
 
-def base_enable_repos(repos: Collection[str], base: dnf.Base | None = None) -> dnf.Base:
-    needs_dnf()
-    base = base or dnf.Base()
-    for repo in repos:
-        if repo_obj := base.repos.get_matching(repo):
+    def read_system_repos(self, disable: bool = True) -> None:
+        """
+        Load system repositories into the base object.
+        By default, they are all disabled even if 'enabled=1' is in the
+        repository configuration.
+        """
+        self.base.read_all_repos()
+        if not disable:
+            return None
+        for repo in self.base.repos.iter_enabled():
+            repo.disable()
+
+    def enable_repos(self, repos: Collection[str]) -> None:
+        """
+        Enable a list of repositories by their repoid.
+        Raise a ValueError if the repoid is not in `self.base`'s configuration.
+        """
+        for repo in repos:
+            self.enable_repo(repo)
+
+    def enable_repo(self, repo: str) -> None:
+        """
+        Enable a repo by its id.
+        Raise a ValueError if the repoid is not in `self.base`'s configuration.
+        """
+        if repo_obj := self.base.repos.get_matching(repo):
             repo_obj.enable()
         else:
             raise ValueError(f"{repo} repo definition was not found.")
-    return base
+
+    def _read_repofile(self, file: str) -> None:
+        rr = dnf.conf.read.RepoReader(self.base.conf, None)
+        for repo in rr._get_repos(file):
+            self.base.repos.add(repo)
 
 
 class Repoquery:

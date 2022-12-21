@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field, validator
 
 from fedrq._dnf import dnf, needs_dnf
 from fedrq._utils import mklog
-from fedrq.repoquery import Repoquery, base_enable_repos, base_read_system_repos
+from fedrq.repoquery import BaseMaker, Repoquery
 
 CONFIG_DIRS = (Path.home() / ".config/fedrq", Path("/etc/fedrq"))
 logger = logging.getLogger(__name__)
@@ -149,27 +149,34 @@ class Release:
         return self.release_config.koschei_collection
 
     def make_base(
-        self, base: dnf.Base | None = None, fill_sack: bool = True
+        self,
+        base: dnf.Base | None = None,
+        fill_sack: bool = True,
+        *,
+        _cachedir: str | None = None,
     ) -> dnf.Base:
+        """
+        Return a dnf.Base object based on the releases's configuration
+
+        Note that the `_cachedir` arg is private and subject to removal.
+        """
         needs_dnf()
         flog = mklog(__name__, self.__class__.__name__, "make_base")
-        base = base or dnf.Base()
-        flog.debug("self.release = %s", self.version)
-        base.conf.substitutions["releasever"] = self.version
+        base_maker = BaseMaker(base)
+        base = base_maker.base
+        base_maker.base.conf.substitutions["releasever"] = self.version
         if self.release_config.system_repos:
-            base_read_system_repos(base)
-        flog.debug("full_def_paths: %s", self.release_config.full_def_paths)
+            base_maker.read_system_repos()
+        # flog.debug("full_def_paths: %s", self.release_config.full_def_paths)
         for path in self.release_config.full_def_paths:
             with importlib.resources.as_file(path) as fp:
                 flog.debug("Reading %s", fp)
-                rr = dnf.conf.read.RepoReader(base.conf, None)
-                for repo in rr._get_repos(str(fp)):
-                    base.repos.add(repo)
+                base_maker._read_repofile((str(fp)))
         flog.debug("Enabling repos: %s", self.repos)
-        base_enable_repos(self.repos, base)
+        base_maker.enable_repos(self.repos)
         if fill_sack:
-            base.fill_sack(load_system_repo=False)
-        return base
+            base_maker.fill_sack(_cachedir=_cachedir)
+        return base_maker.base
 
 
 class RQConfig(BaseModel):

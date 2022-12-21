@@ -209,13 +209,11 @@ class Command(abc.ABC):
         if gr := self._get_release():
             return gr
         try:
-            config = {}
-            if self.args.cachedir:
-                config["cachedir"] = self.args.cachedir
-            base = self.release.make_base()
-            self.rq = Repoquery(base)
-        except ConfigError as exc:
-            return str(exc)
+            base = self.release.make_base(_cachedir=self.args.cachedir)
+        except dnf.exceptions.RepoError as exc:
+            sys.exit(f"Failed to load repositories: {exc}")
+
+        self.rq = Repoquery(base)
         return None
 
     def needs_dnf(self) -> str | None:
