@@ -14,12 +14,16 @@ fi
 
 r=0
 run() {
-    echo "**** Running: $@ ****"
+    printf "**** Running:"
+    for arg in "$@"; do
+        printf " '%s'" "${arg}"
+    done
+    echo " ****"
     "$@" || { r=$?; echo "**** Failed: $r ****" ; }
     echo
 }
 
-run isort --add-import "from __future__ import annotations" "${c}" fedrq/
+run isort --add-import "from __future__ import annotations" ${c} fedrq/
 run isort ${c} tests/*.py
 run black ${c} fedrq tests/*.py
 run flake8 --max-line-length 89 fedrq
