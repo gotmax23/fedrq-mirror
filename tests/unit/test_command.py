@@ -3,11 +3,15 @@
 """
 Generic tests for fedrq.cli.Command
 """
+import stat
 from textwrap import dedent
+from pathlib import Path
+from unittest.mock import call
 
 import pytest
 
 import fedrq.cli
+import fedrq.config
 
 SUBCOMMANDS = ("pkgs", "whatrequires", "subpkgs")
 
@@ -30,3 +34,62 @@ def test_no_dnf_clean_failure(subcommand, capsys, monkeypatch):
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert stderr == error
+
+
+@pytest.mark.parametrize("subcommand", SUBCOMMANDS)
+def test_smartcache_used(subcommand, mocker, patch_config_dirs, cleanup_smartcache):
+    """
+    Ensure that the smartcache is used when the requested
+    branch's releasever is different the the system's releasever
+    """
+    paths = (
+        Path("/var/tmp/fedrq-of-testuser"),
+        Path("/var/tmp/fedrq-of-testuser/tester"),
+    )
+    get_releasever = mocker.patch(
+        "fedrq.cli.base.get_releasever", return_value="rawhide"
+    )
+    mocker.patch("fedrq.cli.base.getuser", return_value="testuser")
+    _make_cachedir = mocker.patch(
+        "fedrq.cli.base.make_cachedir", wraps=fedrq.cli.base.make_cachedir
+    )
+    bm_fill_sack = mocker.spy(fedrq.config.BaseMaker, "fill_sack")
+
+    fedrq.cli.main([subcommand, "--sc", "packageb"])
+
+    bm_fill_sack.assert_called_once()
+    assert bm_fill_sack.call_args.kwargs == dict(_cachedir=paths[1])
+
+    get_releasever.assert_called_once()
+
+    calls = [call(p) for p in paths]
+    assert _make_cachedir.call_args_list == calls
+
+    for p in paths:
+        assert p.is_dir()
+        assert stat.S_IMODE(p.stat().st_mode) == 0o700
+
+
+@pytest.mark.parametrize("subcommand", SUBCOMMANDS)
+def test_smartcache_not_used(subcommand, mocker, patch_config_dirs):
+    """
+    Ensure that the smartcache is not used when the requested branch's
+    releasever matches the the system's releasever
+    """
+    get_releasever = mocker.patch(
+        "fedrq.cli.base.get_releasever", return_value="tester"
+    )
+    mocker.patch("fedrq.cli.base.getuser", return_value="testuser")
+    _make_cachedir = mocker.patch(
+        "fedrq.cli.base.make_cachedir", wraps=fedrq.cli.base.make_cachedir
+    )
+    bm_fill_sack = mocker.spy(fedrq.config.BaseMaker, "fill_sack")
+
+    fedrq.cli.main([subcommand, "--sc", "packageb"])
+
+    bm_fill_sack.assert_called_once()
+    assert bm_fill_sack.call_args.kwargs == {"_cachedir": None}
+
+    get_releasever.assert_called_once()
+
+    _make_cachedir.assert_not_called()

@@ -11,13 +11,16 @@ from warnings import warn
 from fedrq._dnf import dnf, hawkey, needs_dnf
 from fedrq._utils import filter_latest, mklog
 
+if t.TYPE_CHECKING:
+    from _typeshed import StrPath
+
 
 class BaseMaker:
     """
     Create a dnf.Base object and load repos
     """
 
-    def __init__(self, base: dnf.Base | None) -> None:
+    def __init__(self, base: dnf.Base | None = None) -> None:
         needs_dnf()
         self.base: dnf.Base = base or dnf.Base()
 
@@ -26,7 +29,7 @@ class BaseMaker:
         *,
         from_cache: bool = False,
         load_system_repo: bool = False,
-        _cachedir: str | None = None,
+        _cachedir: StrPath | None = None,
     ) -> dnf.Base:
         """
         Fill the sack and returns the dnf.Base object.
@@ -35,7 +38,7 @@ class BaseMaker:
         Note that the `_cachedir` arg is private and subject to removal.
         """
         if _cachedir:
-            self.base.conf.cachedir = _cachedir
+            self.base.conf.cachedir = str(_cachedir)
         if from_cache:
             self.base.fill_sack_from_repos_in_cache(load_system_repo=load_system_repo)
         else:
@@ -85,6 +88,7 @@ class Repoquery:
         self,
         base: dnf.Base,
     ) -> None:
+        needs_dnf()
         self.base = base
 
     @property
@@ -177,3 +181,8 @@ class Repoquery:
             flog.debug(f"subject query: {tuple(subject)}")
         filter_latest(query, latest)
         return query
+
+
+def get_releasever() -> str:
+    needs_dnf()
+    return dnf.rpm.detect_releasever("/")

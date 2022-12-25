@@ -11,6 +11,8 @@ import json
 import logging
 import sys
 from functools import wraps
+from getpass import getuser
+from pathlib import Path
 from textwrap import dedent
 from typing import Any
 
@@ -24,12 +26,13 @@ else:
 from pydantic import ValidationError
 
 from fedrq._dnf import HAS_DNF, dnf, hawkey
-from fedrq._utils import mklog
+from fedrq._utils import make_cachedir, mklog
 from fedrq.cli.formatters import FormatterContainer
 from fedrq.config import ConfigError, Release, RQConfig, get_config
-from fedrq.repoquery import Repoquery
+from fedrq.repoquery import Repoquery, get_releasever
 
 logger = logging.getLogger("fedrq")
+SMARTCACHE = "__smartcache__"
 
 
 class Command(abc.ABC):
@@ -81,9 +84,17 @@ class Command(abc.ABC):
             help="PROVISIONAL: This option may be removed or have its interface"
             " changed in the near future",
         )
-        # This is private for now; I'm not yet sure how I want to architect
-        # passing extra configuration options.
-        parser.add_argument("--cachedir", help=argparse.SUPPRESS)
+        cachedir_group = parser.add_mutually_exclusive_group()
+        cachedir_group.add_argument(
+            "--sc",
+            "--smartcache",
+            dest="cachedir",
+            action="store_const",
+            const=SMARTCACHE,
+        )
+        # This is mutually exclusive with --smartcache. It's still undocumented
+        # and subject to change.
+        cachedir_group.add_argument("--cachedir", help=argparse.SUPPRESS, type=Path)
         parser.add_argument("--debug", action="store_true")
         return parser
 
@@ -118,10 +129,36 @@ class Command(abc.ABC):
         @wraps(func)
         def wrapper(self, *args, **kwargs) -> None:
             error = func(self, *args, **kwargs)
+            if not error:
+                return None
             if isinstance(error, str):
                 self._v_errors.append(error)
             elif isinstance(error, cabc.Iterable):
                 self._v_errors.append(*error)
+            else:
+                raise TypeError(f"{type(error)} is not a valid return type.")
+
+        return wrapper
+
+    @staticmethod
+    def _v_fatal_error(
+        func: cabc.Callable[..., str | cabc.Iterable | None]
+    ) -> cabc.Callable:
+        def wrapper(self, *args, **kwargs) -> None:
+            error = func(self, *args, **kwargs)
+            if not error:
+                return None
+            fatal: list[str] = []
+            if isinstance(error, str):
+                fatal.append(error)
+            elif isinstance(error, cabc.Iterable):
+                fatal.append(*error)
+            else:
+                raise TypeError(f"{type(error)} is not a valid return type.")
+            self._v_handle_errors(False)
+            for err in fatal:
+                print("FATAL ERROR:", err, file=sys.stderr)
+            sys.exit(1)
 
         return wrapper
 
@@ -130,7 +167,7 @@ class Command(abc.ABC):
             for line in self._v_errors:
                 print("ERROR:", line, file=sys.stderr)
             if should_exit:
-                sys.exit(2)
+                sys.exit(1)
 
     def v_logging(self) -> None:
         if getattr(self.args, "debug", None):
@@ -173,7 +210,27 @@ class Command(abc.ABC):
             self.args.arch = [item.strip() for item in self.args.arch.split(",")]
         return None
 
-    def _get_release(self) -> str | None:
+    @_v_add_errors
+    def v_smartcache(self) -> str | None:
+        if self.args.cachedir != SMARTCACHE:
+            return None
+        if self.release.version == get_releasever():
+            self.args.cachedir = None
+            return None
+        basedir = Path(f"/var/tmp/fedrq-of-{getuser()}")
+        if err := make_cachedir(basedir):
+            return err
+        self.args.cachedir = basedir / self.release.branch
+        return None
+
+    @_v_add_errors
+    def v_cachedir(self) -> str | None:
+        if not self.args.cachedir:
+            return None
+        return make_cachedir(self.args.cachedir)
+
+    @_v_fatal_error
+    def v_release(self) -> str | None:
         try:
             self.release = self.config.get_release(self.args.branch, self.args.repos)
         except ConfigError as err:
@@ -182,8 +239,6 @@ class Command(abc.ABC):
 
     @_v_add_errors
     def v_rq(self) -> str | None:
-        if gr := self._get_release():
-            return gr
         try:
             base = self.release.make_base(_cachedir=self.args.cachedir)
         except dnf.exceptions.RepoError as exc:
@@ -192,24 +247,28 @@ class Command(abc.ABC):
         self.rq = Repoquery(base)
         return None
 
+    @_v_fatal_error
     def needs_dnf(self) -> str | None:
         if HAS_DNF:
             return None
-        self._v_handle_errors(False)
         error = dedent(
             """
             The dnf and hawkey modules are not available in the current context.
             These modules are only available for the default system Python interpreter.
             """
         ).strip()
-        print("FATAL ERROR:", error, file=sys.stderr)
-        sys.exit(1)
+        return error
 
     def v_default(self):
         self.v_formatters()
         self.v_latest()
         self.v_arch()
+        # Fatal
         self.needs_dnf()
+        # Fatal
+        self.v_release()
+        self.v_smartcache()
+        self.v_cachedir()
         self.v_rq()
         self._v_handle_errors()
 

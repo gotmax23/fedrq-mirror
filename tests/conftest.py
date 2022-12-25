@@ -3,12 +3,14 @@
 
 import subprocess
 from pathlib import Path
+from shutil import rmtree
 
 import pytest
 from rpm import expandMacro
 
 import fedrq.cli
 from fedrq import config as rqconfig
+from fedrq.config import SMARTCACHE_BASEDIR
 from fedrq.repoquery import Repoquery
 
 TEST_DATA = Path(__file__).parent.resolve() / "test_data"
@@ -21,6 +23,17 @@ name = testrepo1
 baseurl = file://{TEST_DATA / 'repos' / 'repo1' / 'repo'}/
 gpgcheck = False
 """
+
+
+@pytest.fixture
+def cleanup_smartcache():
+    try:
+        yield
+    finally:
+        try:
+            rmtree(SMARTCACHE_BASEDIR.format(user="testuser"))
+        except FileNotFoundError:
+            pass
 
 
 @pytest.fixture

@@ -10,6 +10,7 @@ import logging
 import re
 import typing as t
 from collections.abc import Callable
+from getpass import getuser
 from pathlib import Path
 
 try:
@@ -20,10 +21,14 @@ except ImportError:
 from pydantic import BaseModel, Field, validator
 
 from fedrq._dnf import dnf, needs_dnf
-from fedrq._utils import mklog
-from fedrq.repoquery import BaseMaker, Repoquery
+from fedrq._utils import make_cachedir, mklog
+from fedrq.repoquery import BaseMaker, Repoquery, get_releasever
+
+if t.TYPE_CHECKING:
+    from _typeshed import StrPath
 
 CONFIG_DIRS = (Path.home() / ".config/fedrq", Path("/etc/fedrq"))
+SMARTCACHE_BASEDIR = "/var/tmp/fedrq-of-{user}"
 logger = logging.getLogger(__name__)
 
 
@@ -153,7 +158,7 @@ class Release:
         base: dnf.Base | None = None,
         fill_sack: bool = True,
         *,
-        _cachedir: str | None = None,
+        _cachedir: StrPath | None = None,
     ) -> dnf.Base:
         """
         Return a dnf.Base object based on the releases's configuration
@@ -216,6 +221,10 @@ class RQConfig(BaseModel):
         return [rc.name for rc in self.releases.values()]
 
 
+def get_smartcache_basedir() -> Path:
+    return Path(SMARTCACHE_BASEDIR.format(user=getuser()))
+
+
 def _get_files(
     dir: importlib.abc.Traversable, suffix: str, reverse: bool = True
 ) -> list[importlib.abc.Traversable]:
@@ -267,13 +276,24 @@ def _get_releases(rdict: dict[str, dict[str, t.Any]]) -> dict[str, t.Any]:
     return releases
 
 
-def get_rq(branch: str = "rawhide", repo: str = "base") -> Repoquery:
+def get_rq(
+    branch: str | None = None, repo: str = "base", *, smart_cache: bool = False
+) -> Repoquery:
     """
     Higher level interface that creates an RQConfig object, finds the Release
     object that mathces {branch} and {repo}, creates a dnf.Base, and finally
     returns a Repoquery object.
     """
+    needs_dnf()
     config = get_config()
+    branch = branch or config.default_branch
     release = config.get_release(branch, repo)
-    rq = Repoquery(release.make_base())
+    cachedir = None
+    if release.version != get_releasever():
+        base_cachedir = get_smartcache_basedir()
+        cachedir = base_cachedir / branch
+        for dir in (base_cachedir, cachedir):
+            if err := make_cachedir(dir):
+                raise RuntimeError(err)
+    rq = Repoquery(release.make_base(_cachedir=cachedir))
     return rq
