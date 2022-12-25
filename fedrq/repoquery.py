@@ -9,6 +9,7 @@ from collections.abc import Collection, Iterable
 from warnings import warn
 
 from fedrq._dnf import dnf, hawkey, needs_dnf
+from fedrq._utils import filter_latest, mklog
 
 
 class BaseMaker:
@@ -157,4 +158,22 @@ class Repoquery:
             for package in packages
         ):
             query = query.union(self.query(sourcerpm=srpm, **kwargs))
+        return query
+
+    def resolve_pkg_specs(
+        self,
+        specs: Collection[str],
+        resolve: bool = False,
+        latest: int | None = None,
+    ) -> hawkey.Query:
+        flog = mklog(__name__, self.__class__.__name__, "resolve_pkg_spec")
+        flog.debug(f"specs={specs}, resolve={resolve}, latest={latest}")
+        query = self.query(empty=True)
+        for p in specs:
+            subject = dnf.subject.Subject(p).get_best_query(
+                self.sack, with_provides=resolve, with_filenames=resolve
+            )
+            query = query.union(subject)
+            flog.debug(f"subject query: {tuple(subject)}")
+        filter_latest(query, latest)
         return query

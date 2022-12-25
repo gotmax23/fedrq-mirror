@@ -10,7 +10,7 @@ import logging
 import typing as t
 
 from fedrq._utils import filter_latest, get_source_name
-from fedrq.cli.base import Command, get_packages
+from fedrq.cli.base import Command
 
 if t.TYPE_CHECKING:
     import hawkey
@@ -118,12 +118,12 @@ class WhatCommand(Command):
     def exclude_subpackages(self, rpms: t.Optional[hawkey.Query]) -> None:
         import re
 
-        rpms = rpms or get_packages(self.rq.sack, self.args.names, resolve=True)
+        rpms = rpms or self.rq.resolve_pkg_specs(self.args.names, resolve=True)
         brpms = rpms.filter(arch__neq="src")
         srpms = rpms.filter(arch="src")
 
         brpm_sourcerpms = [re.sub(r"\.rpm$", "", pkg.sourcerpm) for pkg in brpms]
-        brpm_srpm_query = get_packages(self.rq.sack, brpm_sourcerpms)
+        brpm_srpm_query = self.rq.resolve_pkg_specs(brpm_sourcerpms)
         subpackages = self.rq.get_subpackages(brpm_srpm_query.union(srpms))
         self.query.filterm(pkg__neq=subpackages)
         return None
@@ -134,8 +134,8 @@ class WhatCommand(Command):
         # This makes it so packages that depend on virtual Provides of the
         # names are included.
         if not self.args.exact:
-            resolved_packages = get_packages(
-                self.rq.sack, self.args.names, self.args.resolve_packages
+            resolved_packages = self.rq.resolve_pkg_specs(
+                self.args.names, self.args.resolve_packages
             )
             logger.debug(f"resolved_packages: {tuple(resolved_packages)}")
             operator_kwargs = {self.operator: resolved_packages}

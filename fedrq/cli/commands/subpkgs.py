@@ -7,7 +7,7 @@ from __future__ import annotations
 import argparse
 from collections.abc import Callable
 
-from fedrq.cli.base import Command, get_packages
+from fedrq.cli.base import Command
 
 
 class Subpkgs(Command):
@@ -47,7 +47,7 @@ class Subpkgs(Command):
         return parser
 
     def run(self) -> None:
-        srpms = get_packages(self.rq.sack, self.args.names, latest=self.args.latest)
+        srpms = self.rq.resolve_pkg_specs(self.args.names, latest=self.args.latest)
         srpms.filterm(arch="src")
         subpackages = self.rq.get_subpackages(
             srpms, latest=self.args.latest, arch=self.args.arch

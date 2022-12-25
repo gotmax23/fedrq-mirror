@@ -8,7 +8,6 @@ from collections import abc as cabc
 
 from fedrq._utils import filter_latest, mklog
 from fedrq.cli import Command
-from fedrq.cli.base import get_packages
 
 
 class Pkgs(Command):
@@ -73,8 +72,8 @@ class Pkgs(Command):
         self.query = self.rq.query(empty=True)
         # flog.debug("self.query = %s", tuple(self.query))
 
-        resolved_packages = get_packages(
-            self.rq.sack, self.args.names, self.args.resolve_packages
+        resolved_packages = self.rq.resolve_pkg_specs(
+            self.args.names, self.args.resolve_packages
         )
         flog.debug("resolved_packages = %s", tuple(resolved_packages))
         self.query = self.query.union(resolved_packages)

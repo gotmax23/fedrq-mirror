@@ -24,38 +24,12 @@ else:
 from pydantic import ValidationError
 
 from fedrq._dnf import HAS_DNF, dnf, hawkey
-from fedrq._utils import filter_latest, mklog
+from fedrq._utils import mklog
 from fedrq.cli.formatters import FormatterContainer
 from fedrq.config import ConfigError, Release, RQConfig, get_config
 from fedrq.repoquery import Repoquery
 
 logger = logging.getLogger("fedrq")
-
-
-def get_packages(
-    sack: dnf.sack.Sack,
-    packages: cabc.Collection[str],
-    resolve: bool = False,
-    latest: int | None = None,
-) -> hawkey.Query:
-    flog = logging.getLogger(__name__ + ".get_packages")
-    flog.debug(f"sack=..., packages={packages}, resolve={resolve}, latest={latest}")
-    packagesq = sack.query().filter(empty=True)
-    kwargs = {}
-    kwargs["with_provides"] = resolve
-    kwargs["with_filenames"] = resolve
-    for p in packages:
-        flog.debug(f"dnf.subject.Subject({p}).get_best_query(sack, **{kwargs})")
-        subject = dnf.subject.Subject(p).get_best_query(sack, **kwargs)
-        flog.debug(f"subject query: {tuple(subject)}")
-        packagesq = packagesq.union(subject)
-    if resolve:
-        flog.debug("Resolving provides...")
-        pp = sack.query().filter(provides=packages)
-        flog.debug(f"pp = {tuple(pp)}")
-        packagesq = packagesq.union(pp)
-    filter_latest(packagesq, latest)
-    return packagesq
 
 
 class Command(abc.ABC):
