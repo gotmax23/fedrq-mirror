@@ -80,7 +80,7 @@ def repo_test_rq(repo_test_tmpdir, patch_config_dirs):
 @pytest.fixture(scope="session")
 def target_cpu():
     macro = expandMacro("%{_target_cpu}")
-    assert macro != "%{_taget_cpu}"
+    assert macro != "%{_target_cpu}"
     return macro
 
 
