@@ -34,7 +34,6 @@ logger = logging.getLogger("fedrq")
 
 class Command(abc.ABC):
     _extra_formatters: dict[str, cabc.Callable[..., cabc.Iterable[str]]] = {}
-    _create_rq: bool = False
     config: RQConfig
     release: Release
     query: hawkey.Query
@@ -43,7 +42,10 @@ class Command(abc.ABC):
         self.args = args
         self.v_logging()
         self.get_names()
-        self.config = get_config()
+        try:
+            self.config = get_config()
+        except (ValidationError) as exc:
+            sys.exit(str(exc))
         self._v_errors: list[str] = []
 
     @property
