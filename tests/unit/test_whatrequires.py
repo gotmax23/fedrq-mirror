@@ -139,3 +139,10 @@ packageb
     output = run_command(["-F", "breakdown", "packageb"])
     assert output[0] == expected
     assert not output[1]
+
+
+def test_whatrequires_exclude_subpackages(run_command):
+    expected = ["packagea.noarch", "packagea.src"]
+    stdout, stderr = run_command(["-X", "-F", "na", "packageb"])
+    assert not stderr
+    assert stdout == expected
