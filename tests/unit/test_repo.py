@@ -158,3 +158,25 @@ def test_repo_files_formatter(repo_test_rq):
     query = repo_test_rq.query(name=["packagea", "packageb"], arch="notsrc", latest=1)
     result = formatter(query, "files", attr=True)
     assert result == ["/usr/share/packagea", "/usr/share/packageb"]
+
+
+@pytest.mark.parametrize("attr", formatters.ATTRS)
+def test_formatter_sanity(repo_test_rq, attr):
+    """
+    Sanity test to ensure that supported formatters work at all
+    """
+    query = repo_test_rq.query(
+        name=["packagea", "packagea-sub", "packageb", "packageb-sub"], latest=1
+    )
+    result = formatter(query, attr)
+    if attr not in (
+        "provides",
+        "requires",
+        "obsoletes",
+        "conflicts",
+        "recommends",
+        "suggests",
+        "enhances",
+        "supplements",
+    ):
+        assert len(result) == len(query)
