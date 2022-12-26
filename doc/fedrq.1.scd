@@ -6,11 +6,11 @@ fedrq - Simplified repository querying
 
 # SYNOPSIS
 
-\[fedrq \| python -m fedrq] [query type] [options...] [package...]
+*\[fedrq \| python -m fedrq]* *[query type]* [options...] *[package...]*
 
-\[fedrq \| python -m fedrq] [query type] [options...] [--stdin]
+*\[fedrq \| python -m fedrq]* *[query type]* [options...] *\[-i \| --stdin ]*
 
-\[fedrq \| python -m fedrq] check-config [--dump] [--debug]
+*\[fedrq \| python -m fedrq]* *check-config* [--dump] [--debug]
 
 # DESCRIPTION
 
@@ -61,41 +61,16 @@ These options have the same meaning across multiple subcommands.
 	Special repos may be specified for specific releases.
 	See BUILTIN RELEASES for the releases available out of the box. Extra
 	configurations may be specified by the user.
-*-l*, *--latest* <int|all> (default: 1)
+*-l*, *--latest* <integer|"all"> (default: _1_)
 	How many package versions to show for a given _name.arch_.
-	By default, only the latest is included. ++
+	By default, only the latest is included.
+
 	*NOTE*: *dnf repoquery* includes _all_ by default.
 *-F*, *--formatter* <str> (default: _plain_)
 	How the output should be formatted.
 	This is similar to *dnf repoquery --qf* but more limited.
-	Any Package attribute from *dnf repoquery --querytags* is supported
-	here. Some custom formatters are also available. Examples:
-
-	Package attributes (nonexhaustive):
-		- *-F name*: Show package names
-		  (example line: *yt-dlp*)
-		- *-F arch*: Show package arches only.
-		  (example line : *noarch*)
-		- *-F repoid*: Show package source repo.
-		  (example line: *updates-testing*)
-
-	Custom formatters:
-		- *-F na*: Show package _name_._arch_
-		  (example line: *yt-dlp.noarch*)
-		- *-F nv*: Show package _name_-_version_
-		  (example line: *yt-dlp-2022.11.11*)
-		- *-F nev*: Show package _name_-_epoch_:_version_
-		  (example line: *bind-32:9.18.8*)
-		- *-F source*: Package queries can include source and binary
-		  RPMs. The *source* formatter combines and deduplicates all of
-		  the source names.
-		  For example, if *python3-setuptools.noarch* is in the result,
-		  it'll become *python-setuptools*.
-		  If *python-setuptools.src* is also in the result, it'll become
-		  *python-setuptools*, but *python-setuptools* won't be
-		  duplicated in the output.
-		- *-F breakdown*: Only supported by *fedrq --whatrequires*.
-		  Shows a breakdown of runtime and buildtime dependencies.
+	All Package attributes from *dnf repoquery --querytags* are supported.
+	Some custom formatters are also available. See FORMATTERS for a list.
 
 	*NOTE*: *--formatter* is provisional and may be removed or have its
 	interface changed in the near future.
@@ -106,12 +81,15 @@ These options have the same meaning across multiple subcommands.
 	Resolve the correct Package when given a virtual Provide or file path.
 	For instance, /usr/bin/yt-dlp would resolve to yt-dlp.
 *-A*, *--arch* <str>
-	Only include packages that match this arch. This does not apply
-	\--forcearch.
-	*NOTE*: Unlike other tools, the -source repositories are always enabled.
-	You need to filter out src packages if you don't want them in the query.
+	Only include packages that match this arch.
+	This does not apply \--forcearch.
+
+	*NOTE*: Unlike other tools, the -source repositories are always
+	enabled. You need to filter out src packages if you don't want them in
+	the output.
 *-s*, *--src*
 	Equivalent to *--arch=src*.
+
 	*NOTE*: The semantics of this option are different than *dnf
 	repoquery*'s version. Our *--arch* does not affect the way the input is
 	handled. In dnf repoquery, *--arch=src* effectively disables querying
@@ -122,6 +100,37 @@ These options have the same meaning across multiple subcommands.
 	Equivalent to *--arch=notsrc*. This is a pseudo arch that does not exist
 	in rpm. It includes noarch and the system architecture. It does NOT
 	include multilib.
+*-X*, *--exclude-subpackages* (only available for the *what\** subcommands)
+	Filter out reverse dependencies that are built from the same source
+	package as _any_ of the input packages. See the whatrequires EXAMPLES.
+
+# FORMATTERS
+
+Package attributes (nonexhaustive; see *dnf repoquery --querytags*):
+- *-F name*: Show package names ++
+(example line: *yt-dlp*)
+- *-F arch*: Show package arches only ++
+(example line : *noarch*)
+- *-F repoid*: Show package's repo. ++
+(example line: *updates-testing*)
+
+Custom formatters:
+- *-F na*: Show package _name_._arch_ ++
+(example line: *yt-dlp.noarch*)
+- *-F nv*: Show package _name_-_version_ ++
+(example line: *yt-dlp-2022.11.11*)
+- *-F nev*: Show package _name_-_epoch_:_version_ ++
+(example line: *bind-32:9.18.8*)
+- *-F source*: Package queries can include source and binary
+  RPMs. The *source* formatter combines and deduplicates all of
+  the source names.
+  For example, if *python3-setuptools.noarch* is in the result,
+  it'll become *python-setuptools*.
+  If *python-setuptools.src* is also in the result, it'll become
+  *python-setuptools*, but *python-setuptools* won't be
+  duplicated in the output.
+- *-F breakdown*: Only supported by *fedrq --whatrequires*.
+  Shows a breakdown of runtime and buildtime dependencies.
 
 # BUILTIN RELEASES
 
