@@ -101,7 +101,9 @@ class Repoquery:
         if not arch:
             return query
         if arch == "notsrc":
-            return query.filter(arch=(self.base.conf.basearch, "noarch"))
+            return query.filter(
+                arch=(*{self.base.conf.basearch, self.base.conf.arch}, "noarch")
+            )
         if arch == "arched":
             return query.filter(arch=self.base.conf.basearch)
         return query.filter(arch=arch)
