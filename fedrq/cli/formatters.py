@@ -49,6 +49,8 @@ ATTRS = (
     "files",
     "reponame",
     "repoid",
+    "vendor",
+    "packager",
 )
 
 
