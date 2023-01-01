@@ -54,7 +54,10 @@ The RPM package weakly depends on `python3-tomli-w`.
 
 
 ## Versioning
-This project is in alpha.
+
+This project is in alpha. `fedrq.cli.*` is internal to this module. A stable
+API for `fedrq.repoquery` and `fedrq.config` may be provided down the line. The
+CLI interface is also subject to small changes.
 
 
 ## Documentaion
