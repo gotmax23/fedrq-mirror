@@ -106,6 +106,7 @@ class Command(abc.ABC):
         # This is mutually exclusive with --smartcache. It's still undocumented
         # and subject to change.
         cachedir_group.add_argument("--cachedir", help=argparse.SUPPRESS, type=Path)
+        cachedir_group.add_argument("--system-cache", action="store_true")
         parser.add_argument("--debug", action="store_true")
         return parser
 
@@ -211,6 +212,12 @@ class Command(abc.ABC):
 
     @_v_add_errors
     def v_smartcache(self) -> str | None:
+        if (
+            self.config.smartcache
+            and self.args.cachedir is None
+            and not self.args.system_cache
+        ):
+            self.args.cachedir = SMARTCACHE
         if self.args.cachedir != SMARTCACHE:
             return None
         if self.release.version == get_releasever():

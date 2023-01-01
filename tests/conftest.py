@@ -69,6 +69,11 @@ def repo_test_tmpdir(tmp_path_factory):
     return str(b)
 
 
+@pytest.fixture(autouse=True)
+def clear_config(monkeypatch):
+    monkeypatch.setattr(rqconfig, "CONFIG_DIRS", ())
+
+
 @pytest.fixture
 def patch_config_dirs(monkeypatch, tmp_path):
     config_dirs = (
