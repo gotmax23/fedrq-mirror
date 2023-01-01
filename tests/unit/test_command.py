@@ -93,3 +93,40 @@ def test_smartcache_not_used(subcommand, mocker, patch_config_dirs):
     get_releasever.assert_called_once()
 
     _make_cachedir.assert_not_called()
+
+
+@pytest.mark.parametrize("subcommand", SUBCOMMANDS)
+def test_nonexistant_formatter(subcommand, patch_config_dirs, capsys):
+    with pytest.raises(SystemExit, match=r"^1$"):
+        fedrq.cli.main([subcommand, "--formatter=blahblah", "*"])
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr.splitlines() == [
+        "ERROR: 'blahblah' is not a valid formatter",
+        fedrq.cli.base.FORMATTER_ERROR_SUFFIX,
+    ]
+
+
+@pytest.mark.parametrize("subcommand", SUBCOMMANDS)
+@pytest.mark.parametrize("formatter", (("json"), ("attr")))
+def test_formatter_0_args(subcommand, formatter, patch_config_dirs, capsys):
+    with pytest.raises(SystemExit, match=r"^1$"):
+        fedrq.cli.main([subcommand, "--formatter", formatter + ":", "*"])
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr.splitlines() == [
+        f"ERROR: The '{formatter}' formatter recieved 0 arguments",
+        fedrq.cli.base.FORMATTER_ERROR_SUFFIX,
+    ]
+
+
+@pytest.mark.parametrize("subcommand", SUBCOMMANDS)
+def test_json_formatter_invalid_args(subcommand, patch_config_dirs, capsys):
+    with pytest.raises(SystemExit, match=r"^1$"):
+        fedrq.cli.main([subcommand, "-F", "json:abc,name,requires,xyz", "*"])
+    stdout, stderr = capsys.readouterr()
+    assert not stdout
+    assert stderr.splitlines() == [
+        "ERROR: The 'json' formatter recieved invalid arguments: abc,xyz",
+        fedrq.cli.base.FORMATTER_ERROR_SUFFIX,
+    ]

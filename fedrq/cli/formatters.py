@@ -110,6 +110,11 @@ class FormatterContainer:
                 _special_formatters |= getattr(container, "_special_formatters", {})
         # _formatters |= formatters or {}
         # _special_formatters |= special_formatters or {}
+        # if combined := set(_formatters) & set(_special_formatters):
+        #     raise InvalidFormatterError(
+        #         f"'formatters' and 'special_formatters' must h",
+        #     )
+
         self.formatters = _formatters
         self.special_formatters = _special_formatters
 
@@ -137,7 +142,11 @@ class FormatterContainer:
         elif name in self.formatters:
             return self.formatters[name]()
         elif self._fallback_formatter:
-            return self._fallback_formatter(value)
+            try:
+                return self._fallback_formatter(value)
+            except InvalidFormatterError:
+                pass
+
         raise InvalidFormatterError(f"'{value}' is not a valid formatter")
 
 
@@ -194,6 +203,8 @@ class AttrFormatter(SpecialFormatter):
 
     def verifier(self) -> None:
         self.params = self.params.strip()
+        if not self.params:
+            raise InvalidFormatterError("The 'attr' formatter recieved 0 arguments")
         if self.params not in ATTRS:
             raise InvalidFormatterError(f"'{self.params}' is not a valid attribute")
 
@@ -211,12 +222,19 @@ class JsonFormatter(SpecialFormatter):
         attr = attr.strip()
         if attr not in ATTRS:
             raise InvalidFormatterError(
-                f"{self.params} contains an invalid argument: '{attr}'"
+                f"'The 'json' formatter recieved an invalid argument: '{attr}'"
             )
         return attr
 
     def verifier(self) -> None:
-        self.attrs: list[str] = [self._check_attr(a) for a in self.params.split(",")]
+        self.params = self.params.strip()
+        if not self.params:
+            raise InvalidFormatterError("The 'json' formatter recieved 0 arguments")
+        self.attrs: list[str] = [a.strip() for a in self.params.split(",")]
+        if diff := [a for a in self.attrs if a not in ATTRS]:
+            diffs = ",".join(diff)
+            msg = f"The 'json' formatter recieved invalid arguments: {diffs}"
+            raise InvalidFormatterError(msg)
 
     def _format(self, package: dnf.package.Package) -> Iterable[tuple[str, t.Any]]:
         for attr in self.attrs:
