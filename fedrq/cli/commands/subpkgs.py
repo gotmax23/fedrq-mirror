@@ -49,10 +49,10 @@ class Subpkgs(Command):
     def run(self) -> None:
         srpms = self.rq.resolve_pkg_specs(self.args.names, latest=self.args.latest)
         srpms.filterm(arch="src")
-        subpackages = self.rq.get_subpackages(
+        self.query = self.rq.get_subpackages(
             srpms, latest=self.args.latest, arch=self.args.arch
         )
-        for p in self.formatter.format(subpackages, self.args.formatter):
+        for p in self.format():
             print(p)
 
     @Command._v_add_errors

@@ -14,18 +14,18 @@ def formatter(query, formatter_name="plain", *args, attr=False, **kwargs):
     result = sorted(
         (
             str(i)
-            for i in formatters.FormatterContainer().format(
-                query, formatter_name, *args, **kwargs
-            )
+            for i in formatters.DefaultFormatters()
+            .get_formatter(formatter_name)
+            .format(query, *args, **kwargs)
         )
     )
     if attr:
         assert result == sorted(
             (
                 str(i)
-                for i in formatters.FormatterContainer().format(
-                    query, f"attr:{formatter_name}", *args, **kwargs
-                )
+                for i in formatters.DefaultFormatters()
+                .get_formatter(f"attr:{formatter_name}")
+                .format(query, *args, **kwargs)
             )
         )
     return result
@@ -137,7 +137,7 @@ def test_requires_formatter(repo_test_rq):
 
 def test_repo_formatter(repo_test_rq):
     query = repo_test_rq.query()
-    result = formatter(query, "repo", attr=True)
+    result = formatter(query, "reponame", attr=True)
     assert len(query) == len(result)
     assert {"testrepo1"} == set(result)
 

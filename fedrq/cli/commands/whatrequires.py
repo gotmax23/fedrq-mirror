@@ -11,6 +11,7 @@ import typing as t
 
 from fedrq._utils import filter_latest, get_source_name
 from fedrq.cli.base import Command
+from fedrq.cli.formatters import DefaultFormatters, Formatter
 
 if t.TYPE_CHECKING:
     import hawkey
@@ -18,37 +19,40 @@ if t.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def breakdown_formatter(packages: hawkey.Query) -> cabc.Iterable[str]:
-    runtime = []
-    buildtime = []
-    for p in packages:
-        if p.arch == "src":
-            buildtime.append(p)
-        else:
-            runtime.append(p)
-    if runtime:
-        yield "Runtime:"
-        for p in runtime:
-            yield p.name
-        yield f"    {len(runtime)} total runtime dependencies"
+class BreakdownFormatter(Formatter):
+    def format(self, packages: hawkey.Query) -> cabc.Iterable[str]:
+        runtime = []
+        buildtime = []
+        for p in packages:
+            if p.arch == "src":
+                buildtime.append(p)
+            else:
+                runtime.append(p)
+        if runtime:
+            yield "Runtime:"
+            for p in runtime:
+                yield p.name
+            yield f"    {len(runtime)} total runtime dependencies"
+            if buildtime:
+                yield ""
         if buildtime:
-            yield ""
-    if buildtime:
-        yield "Buildtime:"
-        for p in buildtime:
-            yield p.name
-        yield f"    {len(buildtime)} total buildtime dependencies"
-    yield ""
-    yield "All SRPM names:"
-    yield from (all := sorted({get_source_name(pkg) for pkg in packages}))
-    yield f"    {len(all)} total SRPMs"
+            yield "Buildtime:"
+            for p in buildtime:
+                yield p.name
+            yield f"    {len(buildtime)} total buildtime dependencies"
+        yield ""
+        yield "All SRPM names:"
+        yield from (all := sorted({get_source_name(pkg) for pkg in packages}))
+        yield f"    {len(all)} total SRPMs"
+
+
+class WhatFormatters(DefaultFormatters):
+    _formatters = dict(breakdown=BreakdownFormatter)
 
 
 class WhatCommand(Command):
+    formatters = WhatFormatters()
     _exclude_subpackages_opt: bool = False
-    _extra_formatters: dict[str, cabc.Callable[..., cabc.Iterable[str]]] = dict(
-        breakdown=breakdown_formatter
-    )
     _operator: str
     operator: str
 
@@ -156,7 +160,7 @@ class WhatCommand(Command):
                 resolved_packages if self.args.resolve_packages else None
             )
 
-        for p in self.formatter.format(self.query, self.args.formatter):
+        for p in self.format():
             print(p)
 
 

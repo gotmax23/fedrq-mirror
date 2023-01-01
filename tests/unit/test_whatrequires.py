@@ -97,7 +97,7 @@ def test_whatrequires_versioned_resolve(run_command):
     (
         # Choose a random formatter to check that they don't fail
         # when no packages are provided.
-        (["package(a)", "-F", "attr:repo"], True),
+        (["package(a)", "-F", "attr:repoid"], True),
         (["vpackage(a)", "-F", "source"], True),
         (["/usr/share/packagea", "-F", "attr:sourcerpm"], True),
         (["/usr/share/packageb", "-F", "nev"], True),

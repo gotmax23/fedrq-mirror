@@ -27,7 +27,12 @@ from pydantic import ValidationError
 
 from fedrq._dnf import HAS_DNF, dnf, hawkey
 from fedrq._utils import make_cachedir, mklog
-from fedrq.cli.formatters import FormatterContainer
+from fedrq.cli.formatters import (
+    DefaultFormatters,
+    Formatter,
+    FormatterContainer,
+    InvalidFormatterError,
+)
 from fedrq.config import ConfigError, Release, RQConfig, get_config
 from fedrq.repoquery import Repoquery, get_releasever
 
@@ -47,10 +52,11 @@ def _append_error(lst: list[str], error: cabc.Iterable | str | None) -> None:
 
 
 class Command(abc.ABC):
-    _extra_formatters: dict[str, cabc.Callable[..., cabc.Iterable[str]]] = {}
     config: RQConfig
     release: Release
     query: hawkey.Query
+    formatters: FormatterContainer = DefaultFormatters()
+    formatter: Formatter
 
     def __init__(self, args: argparse.Namespace):
         self.args = args
@@ -61,10 +67,6 @@ class Command(abc.ABC):
         except (ValidationError) as exc:
             sys.exit(str(exc))
         self._v_errors: list[str] = []
-
-    @property
-    def formatter(self) -> FormatterContainer:
-        return FormatterContainer.add_formatters(**self._extra_formatters)
 
     @abc.abstractmethod
     def run(self) -> None:
@@ -134,6 +136,12 @@ class Command(abc.ABC):
         if not self.args.names:
             sys.exit("No package names were passed")
 
+    def format(self) -> cabc.Iterable[str]:
+        """
+        Helper to run `self.formatter.format(self.query)`
+        """
+        return self.formatter.format(self.query)
+
     @staticmethod
     def _v_add_errors(
         func: cabc.Callable[..., str | cabc.Iterable | None]
@@ -189,11 +197,10 @@ class Command(abc.ABC):
 
     @_v_add_errors
     def v_formatters(self) -> str | None:
-        if self.args.formatter not in self.formatter.list_all_formatters():
-            return (
-                f"{self.args.formatter} is not a valid formatter. "
-                "See fedrq(1) for more information about formatters."
-            )
+        try:
+            self.formatter = self.formatters.get_formatter(self.args.formatter)
+        except InvalidFormatterError as err:
+            return str(err) + "\n" + FORMATTER_ERROR_SUFFIX
         return None
 
     @_v_add_errors

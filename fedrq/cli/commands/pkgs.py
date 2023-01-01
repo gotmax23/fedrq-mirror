@@ -89,5 +89,5 @@ class Pkgs(Command):
         filter_latest(self.query, self.args.latest)
         flog.debug("self.query = %s", tuple(self.query))
 
-        for p in self.formatter.format(self.query, self.args.formatter):
+        for p in self.format():
             print(p)
