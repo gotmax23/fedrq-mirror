@@ -10,6 +10,7 @@ from collections.abc import Iterable, Mapping
 from fedrq._utils import get_source_name, mklog
 
 if t.TYPE_CHECKING:
+    import dnf
     import hawkey
 
 ATTRS = (
@@ -205,6 +206,32 @@ class AttrFormatter(SpecialFormatter):
             yield stringify(result)
 
 
+class JsonFormatter(SpecialFormatter):
+    def _check_attr(self, attr: str) -> str:
+        attr = attr.strip()
+        if attr not in ATTRS:
+            raise InvalidFormatterError(
+                f"{self.params} contains an invalid argument: '{attr}'"
+            )
+        return attr
+
+    def verifier(self) -> None:
+        self.attrs: list[str] = [self._check_attr(a) for a in self.params.split(",")]
+
+    def _format(self, package: dnf.package.Package) -> Iterable[tuple[str, t.Any]]:
+        for attr in self.attrs:
+            result = getattr(package, attr)
+            if isinstance(result, list):
+                result = [str(i) for i in result]
+            yield attr, result
+
+    def format(self, packages: hawkey.Query):
+        import json
+
+        data = [dict(self._format(package)) for package in packages]
+        yield json.dumps(data, indent=2)
+
+
 class DefaultFormatters(FormatterContainer):
     _formatters = dict(
         plain=PlainFormatter,
@@ -213,5 +240,5 @@ class DefaultFormatters(FormatterContainer):
         nev=NEVFormatter,
         source=SourceFormatter,
     )
-    _special_formatters = dict(attr=AttrFormatter)
+    _special_formatters = dict(attr=AttrFormatter, json=JsonFormatter)
     _fallback_formatter = AttrFormatter

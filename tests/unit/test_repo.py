@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import glob
+import json
 
 import pytest
 
@@ -180,3 +181,45 @@ def test_formatter_sanity(repo_test_rq, attr):
         "supplements",
     ):
         assert len(result) == len(query)
+
+
+def test_json_formatter(repo_test_rq):
+    expected = [
+        {
+            "name": "packagea",
+            "evr": "1-1.fc36",
+            "arch": "noarch",
+            "requires": ["vpackage(b)"],
+            "conflicts": [],
+            "provides": ["package(a)", "packagea = 1-1.fc36", "vpackage(a) = 1-1.fc36"],
+            "source_name": "packagea",
+        },
+        {
+            "name": "packagea",
+            "evr": "1-1.fc36",
+            "arch": "src",
+            "requires": ["vpackage(b) > 0"],
+            "conflicts": [],
+            "provides": ["packagea = 1-1.fc36", "packagea-sub = 1-1.fc36"],
+            "source_name": None,
+        },
+        {
+            "name": "packagea-sub",
+            "evr": "1-1.fc36",
+            "arch": "noarch",
+            "requires": ["/usr/share/packageb-sub", "packagea = 1-1.fc36"],
+            "conflicts": [],
+            "provides": [
+                "subpackage(a)",
+                "packagea-sub = 1-1.fc36",
+                "vsubpackage(a) = 1-1.fc36",
+            ],
+            "source_name": "packagea",
+        },
+    ]
+    query = repo_test_rq.resolve_pkg_specs(["packagea*"], latest=1)
+    output = formatter(
+        query, "json:name,evr,arch,requires,conflicts,provides,source_name"
+    )
+    assert len(output) == 1
+    assert json.loads(output[0]) == expected

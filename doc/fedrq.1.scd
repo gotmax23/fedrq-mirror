@@ -131,6 +131,9 @@ Custom formatters:
   duplicated in the output.
 - *-F breakdown*: Only supported by *fedrq --whatrequires*.
   Shows a breakdown of runtime and buildtime dependencies.
+- *-F json:[comma seperated list of Package attrs]*:
+  Return an array of objects containing the specified Package attributes. The
+  JSON output is formatted with _indent=2_. The output can be piped to jq.
 
 # BUILTIN RELEASES
 
@@ -217,6 +220,50 @@ Find the package(s) that contain(s) a file on f35
 $ fedrq pkgs -b f35 -P /usr/bin/ansible
 ansible-2.9.27-4.fc35.noarch
 ansible-core-2.12.10-1.fc35.noarch
+```
+
+Return a JSON object containing certain package attributes
+```
+fedrq pkgs scdoc -F json:name,evr,arch,files,requires
+[
+  {
+    "name": "scdoc",
+    "evr": "1.11.2-3.fc37",
+    "arch": "x86_64",
+    "requires": [
+      "rtld(GNU_HASH)",
+      "libc.so.6(GLIBC_2.34)(64bit)",
+      "/usr/bin/pkg-config"
+    ],
+    "files": [
+      "/usr/bin/scdoc",
+      "/usr/lib/.build-id",
+      "/usr/lib/.build-id/c1",
+      "/usr/lib/.build-id/c1/62fcbc2f7d9b41ce409071b05905bdbfa6ffe7",
+      "/usr/share/doc/scdoc",
+      "/usr/share/doc/scdoc/README.md",
+      "/usr/share/licenses/scdoc",
+      "/usr/share/licenses/scdoc/COPYING",
+      "/usr/share/man/man1/scdoc.1.gz",
+      "/usr/share/man/man5/scdoc.5.gz",
+      "/usr/share/pkgconfig/scdoc.pc"
+    ]
+  },
+  {
+    "name": "scdoc",
+    "evr": "1.11.2-3.fc37",
+    "arch": "src",
+    "requires": [
+      "make",
+      "gcc",
+      "sed"
+    ],
+    "files": [
+      "/scdoc-1.11.2.tar.gz",
+      "/scdoc.spec"
+    ]
+  }
+]
 ```
 
 ## whatrequires
