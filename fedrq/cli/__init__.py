@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import argparse
-import typing as t
 from collections.abc import Sequence
 
 from fedrq.cli.base import CheckConfig, Command
@@ -34,7 +33,7 @@ __all__ = (
 )
 
 
-def main(argv: t.Optional[Sequence] = None, **kwargs) -> None:
+def main(argv: Sequence | None = None, **kwargs) -> None:
     parser = argparse.ArgumentParser(
         description="fedrq is a tool for querying the Fedora and EPEL repositories.",
         **kwargs,
@@ -49,7 +48,7 @@ def main(argv: t.Optional[Sequence] = None, **kwargs) -> None:
     return COMMANDS[args.action](args).run()
 
 
-COMMANDS: dict[str, t.Type[Command]] = {
+COMMANDS: dict[str, type[Command]] = {
     "check-config": CheckConfig,
     "pkgs": Pkgs,
     "subpkgs": Subpkgs,

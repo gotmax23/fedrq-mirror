@@ -96,7 +96,7 @@ class Repoquery:
         return self.base.sack
 
     def arch_filter(
-        self, query: hawkey.Query, arch: t.Union[str, Iterable[str], None] = None
+        self, query: hawkey.Query, arch: str | Iterable[str] | None = None
     ) -> hawkey.Query:
         if not arch:
             return query
@@ -109,7 +109,7 @@ class Repoquery:
         return query.filter(arch=arch)
 
     def query(
-        self, *, arch: t.Union[str, Iterable[str], None] = None, **kwargs
+        self, *, arch: str | Iterable[str] | None = None, **kwargs
     ) -> hawkey.Query:
         if kwargs.get("latest", "UNDEFINED") is None:
             kwargs.pop("latest")
@@ -119,7 +119,7 @@ class Repoquery:
     def get_package(
         self,
         name: str,
-        arch: t.Union[str, Iterable[str], None] = None,
+        arch: str | Iterable[str] | None = None,
     ) -> dnf.package.Package:
 
         query = self.query(name=name, latest=1, arch=arch)
