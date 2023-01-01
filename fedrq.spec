@@ -36,16 +36,6 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 %prep
 %autosetup -p1
 
-# Workaround F36's old flit-core
-# https://bugzilla.redhat.com/show_bug.cgi?id=2155118
-rm -r .data/*
-sed -i \
-    -e 's|^requires = \["flit_core >=3.7,<4"\]|requires = ["flit_core >=3.2,<4"]|' \
-    -e '/\[tool.flit.external-data\]/d' \
-    -e '/^directory = ".data"$/d' \
-    pyproject.toml
-
-
 
 %generate_buildrequires
 %pyproject_buildrequires -x test
@@ -67,8 +57,8 @@ install -Dpm 0644 fedrq.1 -t %{buildroot}%{_mandir}/man1/
 
 
 %files -f %{pyproject_files}
-%license LICENSES/GPL-2.0-or-later.txt
-%license LICENSES/Unlicense.txt
+# Licenses are included in the wheel
+%license %{_licensedir}/fedrq/
 %doc README.md CONTRIBUTING.md
 %{_bindir}/fedrq*
 %{_mandir}/man1/fedrq.1*
