@@ -34,6 +34,17 @@ from fedrq.repoquery import Repoquery, get_releasever
 logger = logging.getLogger("fedrq")
 SMARTCACHE = "__smartcache__"
 
+FORMATTER_ERROR_SUFFIX = "See fedrq(1) for more information about formatters."
+
+
+def _append_error(lst: list[str], error: cabc.Iterable | str | None) -> None:
+    if isinstance(error, str):
+        lst.append(error)
+    elif isinstance(error, cabc.Iterable):
+        lst.append(*error)
+    elif error:
+        raise TypeError(f"{type(error)} is not a valid return type.")
+
 
 class Command(abc.ABC):
     _extra_formatters: dict[str, cabc.Callable[..., cabc.Iterable[str]]] = {}
@@ -129,14 +140,7 @@ class Command(abc.ABC):
         @wraps(func)
         def wrapper(self, *args, **kwargs) -> None:
             error = func(self, *args, **kwargs)
-            if not error:
-                return None
-            if isinstance(error, str):
-                self._v_errors.append(error)
-            elif isinstance(error, cabc.Iterable):
-                self._v_errors.append(*error)
-            else:
-                raise TypeError(f"{type(error)} is not a valid return type.")
+            _append_error(self._v_errors, error)
 
         return wrapper
 
@@ -146,15 +150,10 @@ class Command(abc.ABC):
     ) -> cabc.Callable:
         def wrapper(self, *args, **kwargs) -> None:
             error = func(self, *args, **kwargs)
-            if not error:
-                return None
             fatal: list[str] = []
-            if isinstance(error, str):
-                fatal.append(error)
-            elif isinstance(error, cabc.Iterable):
-                fatal.append(*error)
-            else:
-                raise TypeError(f"{type(error)} is not a valid return type.")
+            _append_error(fatal, error)
+            if not fatal:
+                return None
             self._v_handle_errors(False)
             for err in fatal:
                 print("FATAL ERROR:", err, file=sys.stderr)
