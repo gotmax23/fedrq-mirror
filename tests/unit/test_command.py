@@ -185,3 +185,7 @@ def test_json_formatter_invalid_args(subcommand, patch_config_dirs, capsys):
         "ERROR: The 'json' formatter recieved invalid arguments: abc,xyz",
         fedrq.cli.base.FORMATTER_ERROR_SUFFIX,
     ]
+
+
+# @pytest.mark.parametrize("subcommand", SUBCOMMANDS)
+# def test_multiple_errors

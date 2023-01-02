@@ -100,9 +100,20 @@ These options have the same meaning across multiple subcommands.
 	Equivalent to *--arch=notsrc*. This is a pseudo arch that does not exist
 	in rpm. It includes noarch and the system architecture. It does NOT
 	include multilib.
-*-X*, *--exclude-subpackages* (only available for the *what\** subcommands)
+
+## whatrequires, whatrecommends, whatsuggests
+
+*-X*, *--exclude-subpackages*
 	Filter out reverse dependencies that are built from the same source
 	package as _any_ of the input packages. See the whatrequires EXAMPLES.
+
+
+## subpkgs
+
+*-M*, *--match* <pattern> (can be repeated to match against multiple patterns)
+	Only show subpackages whose name matches this string. Glob
+	patterns are permitted. When specified multiple times, _any_
+	match is included.
 
 # FORMATTERS
 

@@ -86,3 +86,21 @@ def test_subpkg_arched(run_command, target_cpu):
     ]
     assert out[0] == expected
     assert not out[1]
+
+
+def test_subpkg_match(run_command):
+    stdout, stderr = run_command(
+        [
+            "packagea-1",
+            "packageb-1",
+            "--match",
+            "packagea*",
+            "-M",
+            "*-sub",
+            "-Fna",
+            "-la",
+            "--debug",
+        ]
+    )
+    assert stdout == ["packagea.noarch", "packagea-sub.noarch", "packageb-sub.noarch"]
+    assert not stderr

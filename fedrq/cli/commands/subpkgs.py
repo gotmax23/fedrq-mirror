@@ -31,6 +31,14 @@ class Subpkgs(Command):
         if add_help:
             pargs["help"] = "Find the subpackages of a list of SRPMs"
         parser = parser_func(**pargs)
+        parser.add_argument(
+            "-M",
+            "--match",
+            action="append",
+            help="Only show subpackages whose name matches this string."
+            " Glob patterns are permitted."
+            " When specified multiple times, _any_ match is included.",
+        )
         arch_group = parser.add_mutually_exclusive_group()
         arch_group.add_argument(
             "-A", "--arch", help="Only show subpackages with this arch"
@@ -52,6 +60,8 @@ class Subpkgs(Command):
         self.query = self.rq.get_subpackages(
             srpms, latest=self.args.latest, arch=self.args.arch
         )
+        if self.args.match:
+            self.query.filterm(name__glob=self.args.match)
         for p in self.format():
             print(p)
 
