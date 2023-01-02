@@ -13,7 +13,6 @@ import sys
 from functools import wraps
 from getpass import getuser
 from pathlib import Path
-from textwrap import dedent
 from typing import Any
 
 try:
@@ -39,6 +38,11 @@ from fedrq.repoquery import Repoquery, get_releasever
 logger = logging.getLogger("fedrq")
 
 FORMATTER_ERROR_SUFFIX = "See fedrq(1) for more information about formatters."
+
+NO_DNF_ERROR = """
+The dnf and hawkey modules are not available in the current context.
+These modules are only available for the default system Python interpreter.
+""".strip()
 
 
 def _append_error(lst: list[str], error: cabc.Iterable | str | None) -> None:
@@ -269,13 +273,7 @@ class Command(abc.ABC):
     def needs_dnf(self) -> str | None:
         if HAS_DNF:
             return None
-        error = dedent(
-            """
-            The dnf and hawkey modules are not available in the current context.
-            These modules are only available for the default system Python interpreter.
-            """
-        ).strip()
-        return error
+        return NO_DNF_ERROR
 
     def v_default(self):
         self.v_formatters()
