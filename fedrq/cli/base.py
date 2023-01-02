@@ -37,7 +37,6 @@ from fedrq.config import ConfigError, Release, RQConfig, get_config
 from fedrq.repoquery import Repoquery, get_releasever
 
 logger = logging.getLogger("fedrq")
-SMARTCACHE = "__smartcache__"
 
 FORMATTER_ERROR_SUFFIX = "See fedrq(1) for more information about formatters."
 
@@ -61,6 +60,8 @@ class Command(abc.ABC):
     def __init__(self, args: argparse.Namespace):
         self.args = args
         self.v_logging()
+        flog = mklog(__name__, self.__class__.__name__)
+        flog.debug("args=%s", args)
         self.get_names()
         try:
             self.config = get_config()
@@ -101,14 +102,17 @@ class Command(abc.ABC):
         cachedir_group.add_argument(
             "--sc",
             "--smartcache",
-            dest="cachedir",
-            action="store_const",
-            const=SMARTCACHE,
+            action="store_true",
+            dest="smartcache",
         )
         # This is mutually exclusive with --smartcache. It's still undocumented
         # and subject to change.
         cachedir_group.add_argument("--cachedir", help=argparse.SUPPRESS, type=Path)
-        cachedir_group.add_argument("--system-cache", action="store_true")
+        cachedir_group.add_argument(
+            "--system-cache",
+            action="store_true",
+            help="Use the default dnf cachedir and ignore `smartcache` config option",
+        )
         parser.add_argument("--debug", action="store_true")
         return parser
 
@@ -118,15 +122,15 @@ class Command(abc.ABC):
         cls,
         parser_func: cabc.Callable = argparse.ArgumentParser,
         *,
-        add_help: bool,
+        add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
         ...
 
     @classmethod
-    def standalone(cls) -> None:
+    def standalone(cls, argv: list[str] | None = None) -> None:
         parser = cls.make_parser(add_help=False)
-        return cls(args=parser.parse_args()).run()
+        return cls(args=parser.parse_args(argv)).run()
 
     def get_names(self) -> None:
         if self.args.names and self.args.stdin:
@@ -224,11 +228,12 @@ class Command(abc.ABC):
             and self.args.cachedir is None
             and not self.args.system_cache
         ):
-            self.args.cachedir = SMARTCACHE
-        if self.args.cachedir != SMARTCACHE:
+            self.args.smartcache = True
+        if not self.args.smartcache:
             return None
         if self.release.version == get_releasever():
             self.args.cachedir = None
+            self.args.smartcache = False
             return None
         basedir = Path(f"/var/tmp/fedrq-of-{getuser()}")
         if err := make_cachedir(basedir):
@@ -316,7 +321,7 @@ class CheckConfig(Command):
         cls,
         parser_func: cabc.Callable = argparse.ArgumentParser,
         *,
-        add_help: bool,
+        add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
         kwargs = dict(description=cls.__doc__, **kwargs)

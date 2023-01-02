@@ -65,7 +65,7 @@ class WhatCommand(Command):
         cls,
         parser_func: cabc.Callable = argparse.ArgumentParser,
         *,
-        add_help: bool,
+        add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
         pargs = dict(description=cls.__doc__, parents=[cls.parent_parser()], **kwargs)
