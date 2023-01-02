@@ -57,8 +57,8 @@ class Subpkgs(Command):
 
     @Command._v_add_errors
     def v_arch(self) -> str | None:
-        if r := super().v_arch():
-            return r
+        if super().v_arch():
+            return None
         if (
             self.args.arch
             and "src" in self.args.arch

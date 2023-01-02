@@ -155,9 +155,10 @@ class Command(abc.ABC):
         func: cabc.Callable[..., str | cabc.Iterable | None]
     ) -> cabc.Callable:
         @wraps(func)
-        def wrapper(self, *args, **kwargs) -> None:
+        def wrapper(self, *args, **kwargs) -> str | cabc.Iterable | None:
             error = func(self, *args, **kwargs)
             _append_error(self._v_errors, error)
+            return error
 
         return wrapper
 
