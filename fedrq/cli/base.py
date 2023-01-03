@@ -104,19 +104,22 @@ class Command(abc.ABC):
         )
         cachedir_group = parser.add_mutually_exclusive_group()
         cachedir_group.add_argument(
-            "--sc",
-            "--smartcache",
-            action="store_true",
-            dest="smartcache",
-        )
-        # This is mutually exclusive with --smartcache. It's still undocumented
-        # and subject to change.
-        cachedir_group.add_argument("--cachedir", help=argparse.SUPPRESS, type=Path)
-        cachedir_group.add_argument(
             "--system-cache",
             action="store_true",
             help="Use the default dnf cachedir and ignore `smartcache` config option",
         )
+        cachedir_group.add_argument(
+            "--sc",
+            "--smartcache",
+            action="store_true",
+            dest="smartcache",
+            help="See `smartcache` in fedrq(5)."
+            " smartcache is enabled by default,"
+            " so this is noop unless you set `smartcache=false` in the config file.",
+        )
+        # This is mutually exclusive with --smartcache. It's still undocumented
+        # and subject to change.
+        cachedir_group.add_argument("--cachedir", help=argparse.SUPPRESS, type=Path)
         parser.add_argument("--debug", action="store_true")
         return parser
 

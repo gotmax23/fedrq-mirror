@@ -104,7 +104,7 @@ def test_smartcache_not_used(subcommand, mocker, patch_config_dirs):
 @pytest.mark.parametrize(
     "args, config_smartcache, final_smartcache, cachedir",
     (
-        # smartcache is specified in the config file
+        # smartcache is specified in the config file (default)
         ([], True, True, Path("/var/tmp/fedrq-of-testuser/tester")),
         # smartcache is specified in the config file and on the cli (redundant)
         (["--sc"], True, True, Path("/var/tmp/fedrq-of-testuser/tester")),
@@ -112,9 +112,9 @@ def test_smartcache_not_used(subcommand, mocker, patch_config_dirs):
         (["--sc"], False, True, Path("/var/tmp/fedrq-of-testuser/tester")),
         # --system-cache is used to override the config file's 'smartcache = true'
         (["--system-cache"], True, False, None),
-        # --system-cache is used (default)
+        # --system-cache is used when smartcache is disabled in the config
         ([], False, False, None),
-        # --system-cache is used (default, redundant)
+        # --system-cache is used when smartcache is disabled in the config (redundant)
         (["--system-cache"], False, False, None),
         # --cachedir trumps smartcache
         (["--cachedir=blah"], True, False, Path("blah")),
@@ -125,8 +125,8 @@ def test_smartcache_config(
     args, config_smartcache, final_smartcache, cachedir, patch_config_dirs, mocker
 ):
     write_config = [True]
-    if not config_smartcache:
-        # Check that False is the default
+    # Check that True is the default
+    if config_smartcache:
         write_config.append(False)
     dest = patch_config_dirs / "smartcache.toml"
     assert not dest.exists()

@@ -193,7 +193,7 @@ class Release:
 class RQConfig(BaseModel):
     releases: dict[str, ReleaseConfig]
     default_branch: str = "rawhide"
-    smartcache: bool = False
+    smartcache: bool = True
 
     class Config:
         json_encoders: dict[t.Any, Callable[[t.Any], str]] = {
