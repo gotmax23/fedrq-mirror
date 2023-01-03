@@ -44,12 +44,14 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 %build
 %pyproject_wheel
 scdoc < doc/fedrq.1.scd > fedrq.1
+scdoc < doc/fedrq.5.scd > fedrq.5
 
 
 %install
 %pyproject_install
 %pyproject_save_files fedrq
 install -Dpm 0644 fedrq.1 -t %{buildroot}%{_mandir}/man1/
+install -Dpm 0644 fedrq.5 -t %{buildroot}%{_mandir}/man5/
 
 
 %check
@@ -62,6 +64,7 @@ install -Dpm 0644 fedrq.1 -t %{buildroot}%{_mandir}/man1/
 %doc README.md CONTRIBUTING.md
 %{_bindir}/fedrq*
 %{_mandir}/man1/fedrq.1*
+%{_mandir}/man5/fedrq.5*
 
 
 %changelog

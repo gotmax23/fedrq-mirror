@@ -62,10 +62,13 @@ CLI interface is also subject to small changes.
 
 ## Documentaion
 
-WIP. See `fedrq --help` and [fedrq(1)][fedrq1] ([source][fedrq1-source]).
+See [fedrq(1)][fedrq1] ([source][fedrq1-source]) for the CLI interface
+and [fedrq(5)][fedrq5] ([source][fedrq5-source]) for the config file format.
 
 [fedrq1]: https://gotmax23.srht.site/fedrq/fedrq.1.html
 [fedrq1-source]: https://git.sr.ht/~gotmax23/fedrq/tree/main/doc/fedrq.1.scd
+[fedrq5]: https://gotmax23.srht.site/fedrq/fedrq.5.html
+[fedrq5-source]: https://git.sr.ht/~gotmax23/fedrq/tree/main/doc/fedrq.5.scd
 
 
 ## Contributing
