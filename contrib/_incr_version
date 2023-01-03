@@ -20,6 +20,11 @@ with fileinput.input(["pyproject.toml"], inplace=True) as fi:
         sys.stdout.write(
             re.sub(r'^version ?= ?"${oldversion}"', 'version = "${newversion}"', line)
         )
+with fileinput.input(["srpm.sh"], inplace=True) as fi:
+    for line in fi:
+        sys.stdout.write(
+            re.sub(r'^lastref=.*\$', 'lastref="v${newversion}"', line)
+        )
 EOF
 
 
