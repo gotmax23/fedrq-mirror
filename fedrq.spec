@@ -10,7 +10,7 @@ Summary:        A tool to query the Fedora and EPEL repositories
 # - the data and config files in fedrq/config are UNLICENSEed
 License:        GPL-2.0-or-later AND Unlicense
 URL:            https://git.sr.ht/~gotmax23/fedrq
-Source:         %{url}/archive/%{version}.tar.gz#/fedrq-%{version}.tar.gz
+Source:         %{url}/refs/download/v%{version}/fedrq-%{version}.tar.gz
 
 BuildArch:      noarch
 
