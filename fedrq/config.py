@@ -41,16 +41,22 @@ class ReleaseConfig(BaseModel):
     defs: dict[str, list[str]]
     matcher: t.Pattern
     defpaths: set[str] = Field(default_factory=set)
-    koschei_collection: t.Optional[str] = None
-    copr_chroot_fmt: t.Optional[str] = None
     system_repos: bool = True
     full_def_paths: t.ClassVar[list[importlib.abc.Traversable]] = []
+    koschei_collection: t.Optional[str] = None
+    copr_chroot_fmt: t.Optional[str] = None
 
     @validator("defpaths")
     def v_defpaths(cls, value, values) -> dict[str, t.Any]:
         flog = mklog(__name__, "ReleaseConfig", "_get_full_defpaths")
         flog.debug(f"Getting defpaths for {values['name']}: {value}")
         values["full_def_paths"] = cls._get_full_defpaths(values["name"], value)
+        return value
+
+    @validator("matcher")
+    def v_matcher(cls, value: t.Pattern) -> t.Pattern:
+        if value.groups != 1:
+            raise ValueError("'matcher' must have exactly one capture group")
         return value
 
     def is_match(self, val: str) -> bool:
@@ -200,7 +206,9 @@ class RQConfig(BaseModel):
         flog = mklog(__name__, "RQConfig", "get_releases")
         branch = branch or self.default_branch
         pair = (branch, repo_name)
-        for release in self.releases.values():
+        for release in sorted(
+            self.releases.values(), key=lambda r: r.name, reverse=True
+        ):
             try:
                 r = release.get_release(branch=branch, repo_name=repo_name)
             except ConfigError as exc:
