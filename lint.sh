@@ -23,10 +23,10 @@ run() {
     echo
 }
 
-run isort --add-import "from __future__ import annotations" ${c} fedrq/
+run isort --add-import "from __future__ import annotations" ${c} src/fedrq/
 run isort ${c} tests/*.py
-run black ${c} fedrq tests/*.py
-run flake8 --max-line-length 89 fedrq
-run mypy fedrq
+run black ${c} src/fedrq tests/*.py
+run flake8 --max-line-length 89 src/fedrq
+run mypy src/fedrq
 run reuse lint
 exit $r
