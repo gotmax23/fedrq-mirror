@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 ---
-image: fedora/rawhide
+image: fedora/36
 packages:
+  - createrepo_c
   - fedpkg
   - mock
   - mock-core-configs
@@ -19,9 +20,17 @@ artifacts:
 tasks:
   - setup-add-mock-group: |
       sudo usermod -aG mock $USER
-  - build: |
+  - build-f36: |
       cd fedrq
       keep_spec=1 ./srpm.sh
       fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after || r=$?
       tar cvf results_fedrq.tar.gz results_fedrq
       exit $r
+  - test-py310: |
+      cd fedrq
+      venv="$(mktemp -d)"
+      python3 -m venv "${venv}"  --system-site-packages
+      source "${venv}/bin/activate"
+      pip3 install '.[dev]' --use-pep517
+      pytest -v
+      mypy src/fedrq/

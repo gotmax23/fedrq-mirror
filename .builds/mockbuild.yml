@@ -19,7 +19,7 @@ artifacts:
 tasks:
   - setup-add-mock-group: |
       sudo usermod -aG mock $USER
-  - build: |
+  - build-rawhide: |
       cd fedrq
       keep_spec=1 ./srpm.sh
       fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after || r=$?
