@@ -54,6 +54,33 @@ def _append_error(lst: list[str], error: cabc.Iterable | str | None) -> None:
         raise TypeError(f"{type(error)} is not a valid return type.")
 
 
+def v_add_errors(func: cabc.Callable[..., str | cabc.Iterable | None]) -> cabc.Callable:
+    @wraps(func)
+    def wrapper(self: Command, *args, **kwargs) -> str | cabc.Iterable | None:
+        error = func(self, *args, **kwargs)
+        _append_error(self._v_errors, error)
+        return error
+
+    return wrapper
+
+
+def v_fatal_error(
+    func: cabc.Callable[..., str | cabc.Iterable | None]
+) -> cabc.Callable:
+    def wrapper(self: Command, *args, **kwargs) -> None:
+        error = func(self, *args, **kwargs)
+        fatal: list[str] = []
+        _append_error(fatal, error)
+        if not fatal:
+            return None
+        self._v_handle_errors(False)
+        for err in fatal:
+            print("FATAL ERROR:", err, file=sys.stderr)
+        sys.exit(1)
+
+    return wrapper
+
+
 class Command(abc.ABC):
     config: RQConfig
     release: Release
@@ -153,35 +180,6 @@ class Command(abc.ABC):
         """
         return self.formatter.format(self.query)
 
-    @staticmethod
-    def _v_add_errors(
-        func: cabc.Callable[..., str | cabc.Iterable | None]
-    ) -> cabc.Callable:
-        @wraps(func)
-        def wrapper(self, *args, **kwargs) -> str | cabc.Iterable | None:
-            error = func(self, *args, **kwargs)
-            _append_error(self._v_errors, error)
-            return error
-
-        return wrapper
-
-    @staticmethod
-    def _v_fatal_error(
-        func: cabc.Callable[..., str | cabc.Iterable | None]
-    ) -> cabc.Callable:
-        def wrapper(self, *args, **kwargs) -> None:
-            error = func(self, *args, **kwargs)
-            fatal: list[str] = []
-            _append_error(fatal, error)
-            if not fatal:
-                return None
-            self._v_handle_errors(False)
-            for err in fatal:
-                print("FATAL ERROR:", err, file=sys.stderr)
-            sys.exit(1)
-
-        return wrapper
-
     def _v_handle_errors(self, should_exit: bool = True):
         if self._v_errors:
             for line in self._v_errors:
@@ -193,7 +191,7 @@ class Command(abc.ABC):
         if getattr(self.args, "debug", None):
             logger.setLevel(logging.DEBUG)
 
-    @_v_add_errors
+    @v_add_errors
     def v_latest(self) -> str | None:
         try:
             self.args.latest = int(self.args.latest)
@@ -207,7 +205,7 @@ class Command(abc.ABC):
                 return "--latest must equal 'all' or be an integer"
         return None
 
-    @_v_add_errors
+    @v_add_errors
     def v_formatters(self) -> str | None:
         try:
             self.formatter = self.formatters.get_formatter(self.args.formatter)
@@ -215,7 +213,7 @@ class Command(abc.ABC):
             return str(err) + "\n" + FORMATTER_ERROR_SUFFIX
         return None
 
-    @_v_add_errors
+    @v_add_errors
     def v_arch(self) -> str | None:
         # TODO: Verify that arches are actually valid RPM arches.
         if not self.args.arch:
@@ -229,7 +227,7 @@ class Command(abc.ABC):
             self.args.arch = [item.strip() for item in self.args.arch.split(",")]
         return None
 
-    @_v_add_errors
+    @v_add_errors
     def v_smartcache(self) -> str | None:
         if (
             self.config.smartcache
@@ -249,13 +247,13 @@ class Command(abc.ABC):
         self.args.cachedir = basedir / self.release.branch
         return None
 
-    @_v_add_errors
+    @v_add_errors
     def v_cachedir(self) -> str | None:
         if not self.args.cachedir:
             return None
         return make_cachedir(self.args.cachedir)
 
-    @_v_fatal_error
+    @v_fatal_error
     def v_release(self) -> str | None:
         try:
             self.release = self.config.get_release(self.args.branch, self.args.repos)
@@ -263,7 +261,7 @@ class Command(abc.ABC):
             return str(err)
         return None
 
-    @_v_add_errors
+    @v_add_errors
     def v_rq(self) -> str | None:
         try:
             base = self.release.make_base(_cachedir=self.args.cachedir)
@@ -273,7 +271,7 @@ class Command(abc.ABC):
         self.rq = Repoquery(base)
         return None
 
-    @_v_fatal_error
+    @v_fatal_error
     def needs_dnf(self) -> str | None:
         if HAS_DNF:
             return None

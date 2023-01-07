@@ -7,7 +7,7 @@ from __future__ import annotations
 import argparse
 from collections.abc import Callable
 
-from fedrq.cli.base import Command
+from fedrq.cli.base import Command, v_add_errors
 
 
 class Subpkgs(Command):
@@ -65,7 +65,7 @@ class Subpkgs(Command):
         for p in self.format():
             print(p)
 
-    @Command._v_add_errors
+    @v_add_errors
     def v_arch(self) -> str | None:
         if super().v_arch():
             return None
