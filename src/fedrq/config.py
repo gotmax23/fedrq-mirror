@@ -3,20 +3,28 @@
 
 from __future__ import annotations
 
-import importlib.abc
-import importlib.resources
 import itertools
 import logging
 import re
+import sys
 import typing as t
+import zipfile
 from collections.abc import Callable
 from getpass import getuser
 from pathlib import Path
 
-try:
-    import tomllib  # type: ignore
-except ImportError:
-    import tomli as tomllib  # type: ignore
+if sys.version_info < (3, 11):
+    import tomli as tomllib
+else:
+    import tomllib
+
+if sys.version_info < (3, 10):
+    import importlib_resources
+    from importlib_resources.abc import Traversable
+else:
+    import importlib.resources as importlib_resources
+    from importlib.abc import Traversable
+
 
 from pydantic import BaseModel, Field, validator
 
@@ -40,17 +48,24 @@ class ReleaseConfig(BaseModel):
     name: str = Field(exclude=True)
     defs: dict[str, list[str]]
     matcher: t.Pattern
+    repo_dirs: list[Path] = Field(
+        default_factory=lambda: [dir.joinpath("repos") for dir in CONFIG_DIRS]
+    )
     defpaths: set[str] = Field(default_factory=set)
     system_repos: bool = True
-    full_def_paths: t.ClassVar[list[importlib.abc.Traversable]] = []
+
     koschei_collection: t.Optional[str] = None
     copr_chroot_fmt: t.Optional[str] = None
+
+    full_def_paths: t.ClassVar[list[Traversable]] = []
 
     @validator("defpaths")
     def v_defpaths(cls, value, values) -> dict[str, t.Any]:
         flog = mklog(__name__, "ReleaseConfig", "_get_full_defpaths")
         flog.debug(f"Getting defpaths for {values['name']}: {value}")
-        values["full_def_paths"] = cls._get_full_defpaths(values["name"], value)
+        values["full_def_paths"] = cls._get_full_defpaths(
+            values["name"], value, values["repo_dirs"]
+        )
         return value
 
     @validator("matcher")
@@ -58,6 +73,12 @@ class ReleaseConfig(BaseModel):
         if value.groups != 1:
             raise ValueError("'matcher' must have exactly one capture group")
         return value
+
+    @validator("repo_dirs", pre=True)
+    def v_repo_dirs(cls, value: str | list[Path]) -> list[Path]:
+        if not isinstance(value, str):
+            return value
+        return [Path(dir) for dir in value.split(":")]
 
     def is_match(self, val: str) -> bool:
         return bool(re.match(self.matcher, val))
@@ -69,11 +90,15 @@ class ReleaseConfig(BaseModel):
         return Release(self, branch, repo_name)
 
     @staticmethod
-    def _repo_dir_iterator() -> t.Iterator[importlib.abc.Traversable]:
-        for topdir in (
-            *(dir.joinpath("repos") for dir in CONFIG_DIRS),
-            importlib.resources.files("fedrq.data.repos"),
-        ):
+    def _repo_dir_iterator(
+        repo_dirs: list[Path],
+    ) -> t.Iterator[Traversable]:
+        flog = mklog(__name__, "ReleaseConfig", "_repo_dir_iterator")
+        topdirs = (*repo_dirs, importlib_resources.files("fedrq.data.repos"))
+        flog.debug("topdirs = %s", topdirs)
+        for topdir in topdirs:
+            if isinstance(topdir, Path):
+                topdir = topdir.expanduser()
             if not topdir.is_dir():
                 continue
             for file in topdir.iterdir():
@@ -82,10 +107,10 @@ class ReleaseConfig(BaseModel):
 
     @classmethod
     def _get_full_defpaths(
-        cls, name: str, defpaths: set[str]
-    ) -> list[importlib.abc.Traversable]:
-        missing_absolute: list[importlib.abc.Traversable] = []
-        full_defpaths: list[importlib.abc.Traversable] = []
+        cls, name: str, defpaths: set[str], repo_dirs: list[Path]
+    ) -> list[Traversable]:
+        missing_absolute: list[Traversable] = []
+        full_defpaths: list[Traversable] = []
         flog = mklog(__name__, cls.__name__, "_get_full_defpaths")
         flog.debug(f"Searching for absolute defpaths: {defpaths}")
         for defpath in defpaths.copy():
@@ -99,7 +124,7 @@ class ReleaseConfig(BaseModel):
                     flog.debug(f"Doesn't Exist: {path}")
                     missing_absolute.append(path)
         flog.debug(f"Getting relative defpaths: {defpaths}")
-        files = cls._repo_dir_iterator()
+        files = cls._repo_dir_iterator(repo_dirs)
         while defpaths:
             try:
                 file = next(files)
@@ -180,7 +205,7 @@ class Release:
             base_maker.read_system_repos()
         # flog.debug("full_def_paths: %s", self.release_config.full_def_paths)
         for path in self.release_config.full_def_paths:
-            with importlib.resources.as_file(path) as fp:
+            with importlib_resources.as_file(path) as fp:
                 flog.debug("Reading %s", fp)
                 base_maker._read_repofile((str(fp)))
         flog.debug("Enabling repos: %s", self.repos)
@@ -197,7 +222,8 @@ class RQConfig(BaseModel):
 
     class Config:
         json_encoders: dict[t.Any, Callable[[t.Any], str]] = {
-            re.Pattern: lambda pattern: pattern.pattern
+            re.Pattern: lambda pattern: pattern.pattern,
+            zipfile.Path: lambda path: str(path),
         }
 
     def get_release(
@@ -235,9 +261,9 @@ def get_smartcache_basedir() -> Path:
 
 
 def _get_files(
-    dir: importlib.abc.Traversable, suffix: str, reverse: bool = True
-) -> list[importlib.abc.Traversable]:
-    files: list[importlib.abc.Traversable] = []
+    dir: Traversable, suffix: str, reverse: bool = True
+) -> list[Traversable]:
+    files: list[Traversable] = []
     if not dir.is_dir():
         return files
     for file in dir.iterdir():
@@ -263,8 +289,8 @@ def get_config() -> RQConfig:
     flog.debug(f"CONFIG_DIRS = {CONFIG_DIRS}")
     config: dict[str, t.Any] = {}
     releases: dict[str, t.Any] = {}
-    all_files: list[list[importlib.abc.Traversable]] = [
-        _get_files(importlib.resources.files("fedrq.data"), ".toml"),
+    all_files: list[list[Traversable]] = [
+        _get_files(importlib_resources.files("fedrq.data"), ".toml"),
         *(_get_files(p, ".toml") for p in reversed(CONFIG_DIRS)),
     ]
     flog.debug("all_files = %s", all_files)

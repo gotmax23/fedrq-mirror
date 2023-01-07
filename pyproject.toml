@@ -15,7 +15,7 @@ description = "fedrq is a tool to query the Fedora and EPEL repositories"
 version = "0.1.0"
 authors = [{ name = "Maxwell G", email = "gotmax@e.email" }]
 readme = "README.md"
-license = { text = "GPL-2.0-or-later AND Unlicense" }
+license = { text = "GPL-2.0-or-later AND Unlicense AND MIT" }
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     "Programming Language :: Python :: 3",
@@ -33,6 +33,7 @@ dependencies = [
     # "dnf",
     "pydantic",
     "tomli; python_version<'3.11'",
+    "importlib_resources; python_version<'3.10'"
     # Optional dependency for `fedrq check-config --dump`
     # "tomli-w",
 ]
@@ -52,6 +53,7 @@ test = [
     "pytest",
     "pytest-mock",
     "tomli-w",
+    "typing_extensions",
 ]
 dev = [
     "fedrq[test]",
@@ -67,6 +69,9 @@ Source = "https://git.sr.ht/~gotmax23/fedrq"
 fedrq = "fedrq.cli:main"
 
 [tool.flit.sdist]
+include = [
+    "src/fedrq/data/"
+]
 exclude = [
     # Not useful without the git repository
     ".copr/",

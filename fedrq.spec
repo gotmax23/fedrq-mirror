@@ -8,7 +8,8 @@ Summary:        A tool to query the Fedora and EPEL repositories
 
 # - code is GPL-2.0-or-later
 # - the data and config files in fedrq/config are UNLICENSEed
-License:        GPL-2.0-or-later AND Unlicense
+# - Embeded repo defs are MIT.
+License:        GPL-2.0-or-later AND Unlicense AND MIT
 URL:            https://git.sr.ht/~gotmax23/fedrq
 Source:         %{url}/refs/download/v%{version}/fedrq-%{version}.tar.gz
 
@@ -18,12 +19,14 @@ BuildRequires:  python3-devel
 # Test deps
 BuildRequires:  createrepo_c
 BuildRequires:  fedora-repos-rawhide
+BuildRequires:  distribution-gpg-keys
 BuildRequires:  python3-dnf
 # Manpage
 BuildRequires:  scdoc
 
 Requires:       python3-dnf
-Requires:       fedora-repos-rawhide
+Requires:       (fedora-repos-rawhide or distribution-gpg-keys)
+Suggests:       distribution-gpg-keys
 
 # fedrq config --dump
 Recommends:     python3-tomli-w

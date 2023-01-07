@@ -8,7 +8,10 @@ copr_chroot_fmt = "fedora-rawhide-{arch}"
 
 defs.base = ["rawhide", "rawhide-source"]
 defs.buildroot = ["fedrq-koji-rawhide", "fedrq-koji-rawhide-source"]
-defpaths = ["rawhide-buildroot.repo"]
+defpaths = ["rawhide-buildroot.repo", "fedora-rawhide.repo"]
+
+system_repos = false
+repo_dirs = ["/etc/yum.repos.dir"]
 
 [releases.branched]
 matcher = "^f(\\d{2})$"
@@ -21,6 +24,10 @@ defs.updates = ["updates", "updates-source"]
 defs.testing =  ["fedora", "fedora-source", "updates", "updates-source",
                  "updates-testing", "updates-testing-source"]
 defs.testing-only =  ["updates-testing", "updates-testing-source"]
+
+system_repos = false
+repo_dirs = ["/etc/yum.repos.dir"]
+defpaths = ["fedora.repo", "fedora-updates.repo", "fedora-updates-testing.repo"]
 
 [releases.epel]
 matcher = "^epel(\\d{1,2})$"

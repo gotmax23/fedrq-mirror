@@ -27,13 +27,19 @@ def test_checkconfig_basic(run_command2):
     assert not out[1]
 
 
-def test_checkconfig_dump(run_command2):
+def test_checkconfig_dump(run_command2, patch_config_dirs, fedrq_config_home):
     defs = {"base": ["testrepo1"]}
     expected = {
         "matcher": "^(tester)$",
         "defpaths": [],
         "system_repos": False,
         "defs": defs,
+        "repo_dirs": list(
+            map(
+                str,
+                [patch_config_dirs / "repos", fedrq_config_home / "repos"],
+            )
+        ),
     }
 
     out = run_command2(["check-config", "--dump"])
