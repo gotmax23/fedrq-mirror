@@ -43,8 +43,7 @@ def main(argv: Sequence | None = None, **kwargs) -> None:
     )
     for name, cls in COMMANDS.items():
         cls.make_parser(subparsers.add_parser, name=name, add_help=True)
-    _argv = (argv,) if argv else ()
-    args = parser.parse_args(*_argv)
+    args = parser.parse_args(argv)
     return COMMANDS[args.action](args).run()
 
 
