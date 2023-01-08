@@ -46,6 +46,7 @@ lint = [
     "flake8",
     "mypy",
     "reuse",
+    "importlib_resources",
     # Optional fedrq runtime dependency
     "tomli-w",
 ]

@@ -18,13 +18,12 @@ if sys.version_info < (3, 11):
 else:
     import tomllib
 
-if sys.version_info < (3, 10):
+if sys.version_info < (3, 10) or t.TYPE_CHECKING:
     import importlib_resources
     from importlib_resources.abc import Traversable
 else:
     import importlib.resources as importlib_resources
     from importlib.abc import Traversable
-
 
 from pydantic import BaseModel, Field, validator
 
@@ -57,7 +56,7 @@ class ReleaseConfig(BaseModel):
     koschei_collection: t.Optional[str] = None
     copr_chroot_fmt: t.Optional[str] = None
 
-    full_def_paths: t.ClassVar[list[Traversable]] = []
+    full_def_paths: t.ClassVar[list[t.Union[Traversable, Path]]] = []
 
     @validator("defpaths")
     def v_defpaths(cls, value, values) -> dict[str, t.Any]:
@@ -92,9 +91,12 @@ class ReleaseConfig(BaseModel):
     @staticmethod
     def _repo_dir_iterator(
         repo_dirs: list[Path],
-    ) -> t.Iterator[Traversable]:
+    ) -> t.Iterator[t.Union[Traversable, Path]]:
         flog = mklog(__name__, "ReleaseConfig", "_repo_dir_iterator")
-        topdirs = (*repo_dirs, importlib_resources.files("fedrq.data.repos"))
+        topdirs: tuple[t.Union[Traversable, Path], ...] = (
+            *repo_dirs,
+            importlib_resources.files("fedrq.data.repos"),
+        )
         flog.debug("topdirs = %s", topdirs)
         for topdir in topdirs:
             if isinstance(topdir, Path):
@@ -108,9 +110,9 @@ class ReleaseConfig(BaseModel):
     @classmethod
     def _get_full_defpaths(
         cls, name: str, defpaths: set[str], repo_dirs: list[Path]
-    ) -> list[Traversable]:
-        missing_absolute: list[Traversable] = []
-        full_defpaths: list[Traversable] = []
+    ) -> list[t.Union[Traversable, Path]]:
+        missing_absolute: list[t.Union[Traversable, Path]] = []
+        full_defpaths: list[t.Union[Traversable, Path]] = []
         flog = mklog(__name__, cls.__name__, "_get_full_defpaths")
         flog.debug(f"Searching for absolute defpaths: {defpaths}")
         for defpath in defpaths.copy():
@@ -261,9 +263,9 @@ def get_smartcache_basedir() -> Path:
 
 
 def _get_files(
-    dir: Traversable, suffix: str, reverse: bool = True
-) -> list[Traversable]:
-    files: list[Traversable] = []
+    dir: t.Union[Traversable, Path], suffix: str, reverse: bool = True
+) -> list[t.Union[Traversable, Path]]:
+    files: list[t.Union[Traversable, Path]] = []
     if not dir.is_dir():
         return files
     for file in dir.iterdir():
@@ -289,7 +291,7 @@ def get_config() -> RQConfig:
     flog.debug(f"CONFIG_DIRS = {CONFIG_DIRS}")
     config: dict[str, t.Any] = {}
     releases: dict[str, t.Any] = {}
-    all_files: list[list[Traversable]] = [
+    all_files: list[list[t.Union[Traversable, Path]]] = [
         _get_files(importlib_resources.files("fedrq.data"), ".toml"),
         *(_get_files(p, ".toml") for p in reversed(CONFIG_DIRS)),
     ]
