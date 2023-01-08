@@ -3,5 +3,9 @@
 
 outdir ::= results_fedrq
 srpm:
-	dnf install -y git-core fedpkg rpmdevtools --setopt=install_weak_deps=False
+	dnf install -y --setopt=install_weak_deps=False \
+		git-core fedpkg rpmdevtools python3-specfile
+	python -m venv venv --system-site-packages
+	. ./venv/bin/activate
+	pip install fclogr
 	./srpm.sh $(outdir)

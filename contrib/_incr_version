@@ -7,28 +7,8 @@ set -euo pipefail
 oldversion="${1}"
 newversion="${2}"
 
-sed "s|^\(Version: *\)[^ ]*$|\1${newversion}|" -i fedrq.spec
+rpmdev-bumpspec -c "Release ${newversion}" --new "${newversion}" fedrq.spec
+sed -i 's|^version.*$|version = "'"${newversion}"'"|' pyproject.toml
 
-# This is what I came up with at midnight.
-python3 /dev/stdin << EOF
-import fileinput
-import re
-import sys
-
-with fileinput.input(["pyproject.toml"], inplace=True) as fi:
-    for line in fi:
-        sys.stdout.write(
-            re.sub(r'^version ?= ?"${oldversion}"', 'version = "${newversion}"', line)
-        )
-with fileinput.input(["srpm.sh"], inplace=True) as fi:
-    for line in fi:
-        sys.stdout.write(
-            re.sub(r'^lastref=.*\$', 'lastref="v${newversion}"', line)
-        )
-EOF
-
-
-rpmautospec generate-changelog | vipe > changelog
-
-git add changelog pyproject.toml fedrq.spec
+git add pyproject.toml fedrq.spec
 git commit -S -m "Release ${newversion}"

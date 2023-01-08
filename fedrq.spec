@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
 Name:           fedrq
 Version:        0.1.0
-Release:        %autorelease
+Release:        1%{?dist}
 Summary:        A tool to query the Fedora and EPEL repositories
 
 # - code is GPL-2.0-or-later
@@ -71,4 +71,11 @@ install -Dpm 0644 fedrq.5 -t %{buildroot}%{_mandir}/man5/
 
 
 %changelog
-%autochangelog
+* Tue Jan 03 2023 Maxwell G <gotmax@e.email> 0.1.0-1
+- Release 0.1.0
+
+* Tue Dec 20 2022 Maxwell G <gotmax@e.email> 0.0.2-1
+- Release 0.0.2
+
+* Tue Dec 20 2022 Maxwell G <gotmax@e.email> 0.0.1-1
+- Release 0.0.1

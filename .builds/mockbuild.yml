@@ -10,6 +10,8 @@ packages:
   - rpmautospec
   - rpmdevtools
   - shadow-utils
+  # fclogr dependency
+  - python3-specfile
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
 environment:
@@ -20,8 +22,11 @@ tasks:
   - setup-add-mock-group: |
       sudo usermod -aG mock $USER
   - build-rawhide: |
+      python3 -m venv venv --system-site-packages
+      . ./venv/bin/activate
+      pip install fclogr
       cd fedrq
-      keep_spec=1 ./srpm.sh
-      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after || r=$?
+      fclogr --debug dev-entries --archive -r $(git describe --abbrev=0 HEAD)
+      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after -- --verbose|| r=$?
       tar cvf results_fedrq.tar.gz results_fedrq
       exit $r

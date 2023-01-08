@@ -4,38 +4,14 @@
 
 set -euo pipefail
 
-outdir="${1:-results_fedrq}"
-projectdir="$(pwd)"
-specfile="fedrq.spec"
-lastref="v0.1.0"
-RELEASE="${RELEASE-rawhide}"
-
-# Sanity test
-git show "${lastref}" >/dev/null
-git merge-base --is-ancestor "${lastref}" HEAD
+outdir="${1:-.}"
+projectdir="$(dirname "$(readlink -f "${0}")")"
+specfile="${projectdir}/fedrq.spec"
 
 mkdir -p "${outdir}"
-find -maxdepth 1 \( -name 'fedrq-*.tar.gz' -o -name '*.src.rpm' \) -delete -print
-find "${outdir}" -maxdepth 1 -type f -name '*.src.rpm' -delete -print
-
-origversion="$(rpmspec -q --qf '%{version}\n' "${specfile}" | sed 's|~1$||')"
-if [ "$(git rev-list -n1 ${lastref})" = "$(git rev-parse HEAD)" ]; then
-    newversion="${origversion}"
-else
-    newversion="$(printf '%s^%s.%s\n' \
-                "${origversion}" \
-                "$(( $(git log --oneline "${lastref}..HEAD" | wc -l) + 1 ))" \
-                "$(git show -s --pretty=%cs.%h | sed 's|-||g')"
-            )"
-fi
-archivename="fedrq-${newversion}"
-
-cp "${specfile}" "${specfile}.bak"
-sed "s|^\(Version: *\)[^ ]*$|\1${newversion}|" -i "${specfile}"
-
-git archive -o "${archivename}.tar.gz" --prefix "${archivename}/" HEAD
-
-fedpkg --name fedrq --release "${RELEASE}" srpm
-cp -p *.src.rpm "${outdir}"
-
-[ -z "${keep_spec-}" ] && mv "${specfile}.bak" "${specfile}" || :
+find "${outdir}" \
+    -maxdepth 1 \( -name 'fedrq-*.tar.gz' -o -name '*.src.rpm' \) \
+    -delete -print
+fclogr --debug dev-srpm \
+    -r $(git describe --abbrev=0 HEAD) \
+    ${keep_spec+"--keep"} -o ${outdir} ${specfile}
