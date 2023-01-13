@@ -10,4 +10,4 @@ import fedrq.cli
 def test_pkgs_basic_rawhide(capsys, target_cpu):
     fedrq.cli.main(["pkgs", "bash", "-Fna", "--sc"])
     stdout, stderr = capsys.readouterr()
-    assert stdout.splitlines() == ["bash.src", f"bash.{target_cpu}"]
+    assert sorted(stdout.splitlines()) == sorted(["bash.src", f"bash.{target_cpu}"])

@@ -6,11 +6,9 @@ from pathlib import Path
 from shutil import rmtree
 
 import pytest
-from rpm import expandMacro
 
 import fedrq.cli
 from fedrq import config as rqconfig
-from fedrq.repoquery import Repoquery
 
 TEST_DATA = Path(__file__).parent.resolve() / "test_data"
 
@@ -30,6 +28,8 @@ defs.base = ["testrepo1"]
 defpaths = ["testrepo1.repo"]
 system_repos = false
 """
+
+# @pytest.fixture(scope="session", autouse=True)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -86,18 +86,14 @@ def patch_config_dirs(tmp_path, monkeypatch):
 
 @pytest.fixture
 def repo_test_rq(patch_config_dirs):
-    config = rqconfig.get_config()
-    release = config.get_release("tester", "base")
-    base = release.make_base(fill_sack=False)
-    base.cachedir = rqconfig.get_smartcache_basedir()
-    base.fill_sack(load_system_repo=False)
-    rq = Repoquery(base)
-    return rq
+    return rqconfig.get_rq("tester", "base", smart_cache=True, load_filelists=True)
 
 
 @pytest.fixture(scope="session")
 def target_cpu():
-    macro = expandMacro("%{_target_cpu}")
+    macro = subprocess.run(
+        ["rpm", "-E", "%_target_cpu"], text=True, capture_output=True, check=True
+    ).stdout.strip()
     assert macro != "%{_target_cpu}"
     return macro
 

@@ -12,8 +12,11 @@ import sys
 import typing as t
 import zipfile
 from collections.abc import Callable
+from enum import auto as auto_enum
 from importlib.abc import Traversable
 from pathlib import Path
+
+from fedrq._compat import StrEnum
 
 if sys.version_info < (3, 11):
     import tomli as tomllib
@@ -22,13 +25,14 @@ else:
 
 from pydantic import BaseModel, Field, validator
 
-from fedrq._dnf import dnf, needs_dnf
 from fedrq._utils import mklog
-from fedrq.repoquery import BaseMaker, Repoquery, get_releasever
+from fedrq.backends import BACKENDS, get_default_backend
 
 if t.TYPE_CHECKING:
-
+    import dnf
     from _typeshed import StrPath
+
+    from fedrq.backends.base import BackendMod, RepoqueryBase
 
 CONFIG_DIRS = (Path.home() / ".config/fedrq", Path("/etc/fedrq"))
 logger = logging.getLogger(__name__)
@@ -36,6 +40,12 @@ logger = logging.getLogger(__name__)
 
 class ConfigError(ValueError):
     pass
+
+
+class LoadFilelists(StrEnum):
+    auto = auto_enum()
+    always = auto_enum()
+    never = auto_enum()
 
 
 class ReleaseConfig(BaseModel):
@@ -187,41 +197,60 @@ class Release:
         fill_sack: bool = True,
         *,
         _cachedir: StrPath | None = None,
+        load_filelists: bool = True,
+        backend: BackendMod | None = None,
     ) -> dnf.Base:
         """
         Return a dnf.Base object based on the releases's configuration
 
         Note that the `_cachedir` arg is private and subject to removal.
         """
-        needs_dnf()
-        flog = mklog(__name__, self.__class__.__name__, "make_base")
-        base_maker = BaseMaker(base)
+        backend = backend or get_default_backend()
+        base_maker = backend.BaseMaker(base)
         base = base_maker.base
-        base_maker.base.conf.substitutions["releasever"] = self.version
-        if self.release_config.system_repos:
-            base_maker.read_system_repos()
-        # flog.debug("full_def_paths: %s", self.release_config.full_def_paths)
-        for path in self.release_config.full_def_paths:
-            with importlib_resources.as_file(path) as fp:
-                flog.debug("Reading %s", fp)
-                base_maker._read_repofile((str(fp)))
-        flog.debug("Enabling repos: %s", self.repos)
-        base_maker.enable_repos(self.repos)
+        if _cachedir:
+            base_maker.set("cachedir", str(_cachedir))
+        if load_filelists:
+            base_maker.load_filelists()
+        base_maker.set_var("releasever", self.version)
+        base_maker.load_release_repos(self)
         if fill_sack:
-            base_maker.fill_sack(_cachedir=_cachedir)
+            base_maker.fill_sack()
         return base_maker.base
 
 
 class RQConfig(BaseModel):
+    backend: t.Optional[str] = os.environ.get("FEDRQ_BACKEND")
     releases: dict[str, ReleaseConfig]
     default_branch: str = "rawhide"
     smartcache: bool = True
+    load_filelists: LoadFilelists = LoadFilelists.auto
+    _backend_mod = None
 
     class Config:
         json_encoders: dict[t.Any, Callable[[t.Any], str]] = {
             re.Pattern: lambda pattern: pattern.pattern,
             zipfile.Path: lambda path: str(path),
         }
+        underscore_attrs_are_private = True
+        validate_assignment = True
+
+    @validator("backend")
+    def v_backend(cls, value) -> str:
+        assert value in BACKENDS, f"Valid backends are: {', '.join(BACKENDS)}"
+        return value
+
+    @property
+    def backend_mod(self) -> BackendMod:
+        if not self._backend_mod:
+            self._backend_mod = get_default_backend(
+                self.backend,
+                # allow falling back to a non default backend
+                # (i.e. not backends.DEFAULT_BACKEND)
+                # when the user does not explicitly request a backend.
+                fallback=bool(self.backend),
+            )
+        return self._backend_mod
 
     def get_release(
         self, branch: str | None = None, repo_name: str = "base"
@@ -310,20 +339,32 @@ def _get_releases(rdict: dict[str, dict[str, t.Any]]) -> dict[str, t.Any]:
 
 
 def get_rq(
-    branch: str | None = None, repo: str = "base", *, smart_cache: bool = False
-) -> Repoquery:
+    branch: str | None = None,
+    repo: str = "base",
+    *,
+    smart_cache: bool | None = None,
+    load_filelists: bool = False,
+    backend: str | None = None,
+) -> RepoqueryBase:
     """
     Higher level interface that creates an RQConfig object, finds the Release
     object that mathces {branch} and {repo}, creates a dnf.Base, and finally
     returns a Repoquery object.
     """
-    needs_dnf()
     config = get_config()
+    if smart_cache is None:
+        smart_cache = config.smartcache
     branch = branch or config.default_branch
     release = config.get_release(branch, repo)
     cachedir = None
-    if release.version != get_releasever():
+    if smart_cache and release.version != config.backend_mod.get_releasever():
         base_cachedir = get_smartcache_basedir()
         cachedir = base_cachedir / branch
-    rq = Repoquery(release.make_base(_cachedir=cachedir))
+    rq = config.backend_mod.Repoquery(
+        release.make_base(
+            _cachedir=cachedir,
+            load_filelists=load_filelists,
+            backend=config.backend_mod,
+        )
+    )
     return rq

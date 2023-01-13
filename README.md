@@ -95,9 +95,11 @@ This project follows the REUSE specification. In general:
   licensed.
   These are only used when the needed repo defs are not available in the system
   config (i.e. for querying the Fedora repos from a non Fedora system).
+- `enum.StrEnum` is copied from Cpython 3.11 for older Python versions. It's
+  ~30 lines of PSF-2.0 licensed code.
 
 ```
-SPDX-License-Identifier: GPL-2.0-or-later AND Unlicense AND MIT
+SPDX-License-Identifier: GPL-2.0-or-later AND Unlicense AND MIT AND PSF-2.0
 ```
 
 

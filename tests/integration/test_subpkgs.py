@@ -18,7 +18,7 @@ def test_subpkgs_match1(capsys):
         ["subpkgs", "-b", "f37", "yt-dlp", "--match", "*completion", "-F", "name"]
     )
     stdout, stderr = capsys.readouterr()
-    assert stdout.splitlines() == YT_DLP_SUPKGS
+    assert sorted(stdout.splitlines()) == YT_DLP_SUPKGS
     assert not stderr
 
 

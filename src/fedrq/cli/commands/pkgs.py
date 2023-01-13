@@ -75,17 +75,14 @@ class Pkgs(Command):
         resolved_packages = self.rq.resolve_pkg_specs(
             self.args.names, self.args.resolve_packages
         )
-        flog.debug("resolved_packages = %s", tuple(resolved_packages))
+        self._logq(resolved_packages, "resolved_packages")
         self.query = self.query.union(resolved_packages)
 
-        # flog.debug("self.query = %s", tuple(self.query))
         glob_packages = self.rq.query(name__glob=self.args.names)
-        flog.debug("glob_packages = %s", tuple(glob_packages))
+        self._logq(glob_packages, "glob_packages")
         self.query = self.query.union(glob_packages)
 
-        # flog.debug("self.query = %s", tuple(self.query))
         self.query = self.rq.arch_filter(self.query, self.args.arch)
-        # flog.debug("self.query = %s", tuple(self.query))
         filter_latest(self.query, self.args.latest)
         flog.debug("self.query = %s", tuple(self.query))
 

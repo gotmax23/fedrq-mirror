@@ -31,7 +31,7 @@ classifiers = [
 dependencies = [
     # This cannot be installed from PyPI
     # "dnf",
-    "pydantic",
+    "pydantic ~= 1.0",
     "tomli; python_version<'3.11'",
     # Optional dependency for `fedrq check-config --dump`
     # "tomli-w",
@@ -47,12 +47,12 @@ lint = [
     "reuse",
     # Optional fedrq runtime dependency
     "tomli-w",
+    "typing_extensions",
 ]
 test = [
     "pytest",
     "pytest-mock",
     "tomli-w",
-    "typing_extensions",
 ]
 dev = [
     "fedrq[test]",
@@ -79,11 +79,11 @@ include = [
 # To comply with the license, its must be included in the wheel.
 directory = ".data"
 
-[tool.mypy]
-plugins = ["pydantic.mypy"]
+# [tool.mypy]
+# plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["dnf.*", "hawkey.*"]
+module = ["dnf.*", "hawkey.*", "libdnf5.*", "rpm.*"]
 ignore_missing_imports = true
 
 

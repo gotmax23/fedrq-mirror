@@ -33,30 +33,27 @@ def test_whatrequires_name(run_command):
     assert not output[1]
 
 
-def test_whatrequires_resolve_b(run_command):
-    output = run_command(
-        ["package(b)", "-l", "a", "-P"],
-        return_tuples=True,
-    )
-    output1 = run_command(
-        ["vpackage(b)", "-l", "a", "-P"],
-        return_tuples=True,
-    )
-    output2 = run_command(
-        ["packageb", "-l", "a", "-P"],
-        return_tuples=True,
-    )
-    output3 = run_command(["packageb", "-l", "a"], return_tuples=True)
-    output4 = run_command(["/usr/share/packageb", "-l", "a", "-P"], return_tuples=True)
-    outputs = {output[0], output1[0], output2[0], output3[0], output4[0]}
-    assert output[0] == (
+@pytest.mark.parametrize(
+    "args",
+    (
+        pytest.param(["package(b)", "-l", "a", "-P"]),
+        pytest.param(["vpackage(b)", "-l", "a", "-P"]),
+        pytest.param(["packageb", "-l", "a", "-P"]),
+        pytest.param(
+            ["packageb", "-l", "a"],
+        ),
+        pytest.param(["/usr/share/packageb", "-l", "a", "-P", "-Lalways"]),
+    ),
+)
+def test_whatrequires_resolve_b(run_command, args):
+    stdout, stderr = run_command(args, return_tuples=True)
+    assert stdout == (
         "packagea-1-1.fc36.noarch",
         "packagea-1-1.fc36.src",
         "packageb-sub-1-1.fc36.noarch",
         "packageb-sub-11111:2-1.fc36.noarch",
     )
-    assert len(outputs) == 1
-    assert not output[1]
+    assert not stderr
 
 
 @pytest.mark.parametrize(
@@ -66,7 +63,7 @@ def test_whatrequires_resolve_b(run_command):
         (["packagea", "-P"]),
         (["package(a)", "-P"]),
         (["vpackage(a)", "-P"]),
-        (["/usr/share/packagea", "-P"]),
+        (["/usr/share/packagea", "-P", "-Lalways"]),
     ),
 )
 def test_whatrequires_resolve_a(run_command, args):
@@ -99,8 +96,8 @@ def test_whatrequires_versioned_resolve(run_command):
         # when no packages are provided.
         (["package(a)", "-F", "attr:repoid"], True),
         (["vpackage(a)", "-F", "source"], True),
-        (["/usr/share/packagea", "-F", "attr:sourcerpm"], True),
-        (["/usr/share/packageb", "-F", "nev"], True),
+        (["/usr/share/packagea", "-F", "attr:sourcerpm", "-Lalways"], True),
+        (["/usr/share/packageb", "-F", "nev", "-Lalways"], True),
         # fedrq will resolve package names, so we need
         # to explicitly pass -E.
         (["packageb", "-F", "nv"], False),

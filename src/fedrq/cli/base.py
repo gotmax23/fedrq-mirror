@@ -12,7 +12,7 @@ import logging
 import sys
 from functools import wraps
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 try:
     import tomli_w
@@ -23,8 +23,8 @@ else:
 
 from pydantic import ValidationError
 
-from fedrq._dnf import HAS_DNF, dnf, hawkey
 from fedrq._utils import mklog
+from fedrq.backends import BACKENDS, MissingBackendError
 from fedrq.cli.formatters import (
     DefaultFormatters,
     Formatter,
@@ -33,19 +33,22 @@ from fedrq.cli.formatters import (
 )
 from fedrq.config import (
     ConfigError,
+    LoadFilelists,
     Release,
     RQConfig,
     get_config,
     get_smartcache_basedir,
 )
-from fedrq.repoquery import Repoquery, get_releasever
+
+if TYPE_CHECKING:
+    from fedrq.backends.base import BackendMod, PackageQueryCompat
 
 logger = logging.getLogger("fedrq")
 
 FORMATTER_ERROR_SUFFIX = "See fedrq(1) for more information about formatters."
 
-NO_DNF_ERROR = """
-The dnf and hawkey modules are not available in the current context.
+MISSING_BACKEND_MSG = """
+Failed to load the package management backend: {}
 These modules are only available for the default system Python interpreter.
 """.strip()
 
@@ -89,25 +92,56 @@ def v_fatal_error(
 class Command(abc.ABC):
     config: RQConfig
     release: Release
-    query: hawkey.Query
+    query: PackageQueryCompat
     formatters: FormatterContainer = DefaultFormatters()
     formatter: Formatter
 
     def __init__(self, args: argparse.Namespace):
         self.args = args
+
         self.v_logging()
         flog = mklog(__name__, self.__class__.__name__)
         flog.debug("args=%s", args)
+
         self.get_names()
+
         try:
-            self.config = get_config()
-        except (ValidationError) as exc:
+            self.config = self._get_config()
+        except ValidationError as exc:
             sys.exit(str(exc))
+        self._set_config("backend")
+        self._set_config("load_filelists")
+
         self._v_errors: list[str] = []
+
+    def _get_config(self):
+        # This makes it easier to mock the config
+        return get_config()
+
+    @property
+    def backend(self) -> BackendMod:
+        return self.config.backend_mod
 
     @abc.abstractmethod
     def run(self) -> None:
         ...
+
+    def _set_config(self, key: str) -> None:
+        arg = getattr(self.args, key, None)
+        if arg is not None:
+            setattr(self.config, key, arg)
+
+    def _logq(
+        self, query: PackageQueryCompat, name: str = "query", level=logging.DEBUG
+    ) -> PackageQueryCompat:
+        """
+        Log a query object after performing the appropriate formatting.
+        Don't iterate over the query unless the logging level is low enough to
+        avoid a performance penalty.
+        """
+        if logger.getEffectiveLevel() <= level:
+            logger.debug("%s = %s", name, tuple(query))
+        return query
 
     @classmethod
     def parent_parser(cls) -> argparse.ArgumentParser:
@@ -153,6 +187,18 @@ class Command(abc.ABC):
         # and subject to change.
         cachedir_group.add_argument("--cachedir", help=argparse.SUPPRESS, type=Path)
         parser.add_argument("--debug", action="store_true")
+        parser.add_argument(
+            "-L",
+            "--filelists",
+            choices=tuple(LoadFilelists),
+            dest="load_filelists",
+            help="Whether to load filelists."
+            " By default, filelists are only loaded when using the files formatter."
+            " This only applies when using the libdnf5 backend,"
+            " which doesn't load filelists by default to save bandwidth."
+            " dnf4 always loads filelists.",
+        )
+        parser.add_argument("-B", "--backend", choices=tuple(BACKENDS))
         return parser
 
     @classmethod
@@ -219,6 +265,15 @@ class Command(abc.ABC):
         return None
 
     @v_add_errors
+    def v_filelists(self) -> None:
+        options: dict[LoadFilelists, bool] = {
+            LoadFilelists.never: False,
+            LoadFilelists.always: True,
+            LoadFilelists.auto: "files" in self.args.formatter,
+        }
+        self.filelists = options[self.config.load_filelists]
+
+    @v_add_errors
     def v_arch(self) -> str | None:
         # TODO: Verify that arches are actually valid RPM arches.
         if not self.args.arch:
@@ -242,7 +297,7 @@ class Command(abc.ABC):
             self.args.smartcache = True
         if not self.args.smartcache:
             return None
-        if self.release.version == get_releasever():
+        if self.release.version == self.backend.get_releasever():
             self.args.cachedir = None
             self.args.smartcache = False
             return None
@@ -259,27 +314,30 @@ class Command(abc.ABC):
 
     @v_add_errors
     def v_rq(self) -> str | None:
-        try:
-            base = self.release.make_base(_cachedir=self.args.cachedir)
-        except dnf.exceptions.RepoError as exc:
-            sys.exit(f"Failed to load repositories: {exc}")
+        base = self.release.make_base(
+            _cachedir=self.args.cachedir,
+            load_filelists=self.filelists,
+            backend=self.backend,
+        )
 
-        self.rq = Repoquery(base)
+        self.rq = self.backend.Repoquery(base)
         return None
 
     @v_fatal_error
-    def needs_dnf(self) -> str | None:
-        if HAS_DNF:
-            return None
-        return NO_DNF_ERROR
+    def v_backend(self) -> str | None:
+        try:
+            _ = self.backend
+        except MissingBackendError as exc:
+            return MISSING_BACKEND_MSG.format(str(exc))
+        return None
 
     def v_default(self):
         self.v_formatters()
+        self.v_filelists()
         self.v_latest()
         self.v_arch()
         # Fatal
-        self.needs_dnf()
-        # Fatal
+        self.v_backend()
         self.v_release()
         self.v_smartcache()
         self.v_rq()
@@ -339,7 +397,7 @@ class CheckConfig(Command):
             print("Validating config...")
         try:
             self.config = get_config()
-        except (ValidationError) as exc:
+        except ValidationError as exc:
             sys.exit(str(exc))
         try:
             self.config.get_release(self.config.default_branch)

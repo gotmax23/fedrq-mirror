@@ -10,17 +10,15 @@ import logging
 import typing as t
 
 from fedrq._utils import filter_latest, get_source_name
+from fedrq.backends.base import PackageQueryCompat
 from fedrq.cli.base import Command
 from fedrq.cli.formatters import DefaultFormatters, Formatter
-
-if t.TYPE_CHECKING:
-    import hawkey
 
 logger = logging.getLogger(__name__)
 
 
 class BreakdownFormatter(Formatter):
-    def format(self, packages: hawkey.Query) -> cabc.Iterable[str]:
+    def format(self, packages: PackageQueryCompat) -> cabc.Iterable[str]:
         runtime = []
         buildtime = []
         for p in packages:
@@ -119,12 +117,12 @@ class WhatCommand(Command):
             parser.add_argument("-X", "--exclude-subpackages", action="store_true")
         return parser
 
-    def exclude_subpackages(self, rpms: t.Optional[hawkey.Query]) -> None:
+    def exclude_subpackages(self, rpms: t.Optional[PackageQueryCompat]) -> None:
         import re
 
         rpms = rpms or self.rq.resolve_pkg_specs(self.args.names, resolve=True)
-        brpms = rpms.filter(arch__neq="src")
-        srpms = rpms.filter(arch="src")
+        brpms = self.rq.query(pkg=rpms, arch__neq="src")
+        srpms = self.rq.query(pkg=rpms, arch="src")
 
         brpm_sourcerpms = [re.sub(r"\.rpm$", "", pkg.sourcerpm) for pkg in brpms]
         brpm_srpm_query = self.rq.resolve_pkg_specs(brpm_sourcerpms)
@@ -141,16 +139,16 @@ class WhatCommand(Command):
             resolved_packages = self.rq.resolve_pkg_specs(
                 self.args.names, self.args.resolve_packages, with_src=False
             )
-            logger.debug(f"resolved_packages: {tuple(resolved_packages)}")
+            self._logq(resolved_packages, "resolved_packages")
             operator_kwargs = {self.operator: resolved_packages}
             rp_rdeps = self.rq.query(**operator_kwargs, arch=self.args.arch)
-            logger.debug(f"rp_rdeps={tuple(rp_rdeps)}")
+            self._logq(rp_rdeps, "rp_rdeps")
 
             self.query = self.query.union(rp_rdeps)
 
         operator_kwargs = {f"{self.operator}__glob": self.args.names}
         glob_rdeps = self.rq.query(**operator_kwargs, arch=self.args.arch)
-        logger.debug(f"glob_rdeps={tuple(glob_rdeps)}")
+        self._logq(glob_rdeps, "glob_rdeps")
 
         self.query = self.query.union(glob_rdeps)
         filter_latest(self.query, self.args.latest)

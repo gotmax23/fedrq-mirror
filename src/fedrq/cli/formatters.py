@@ -211,7 +211,7 @@ class AttrFormatter(SpecialFormatter):
     def format(self, packages: hawkey.Query) -> Iterable[str]:
         for p in sorted(packages):
             result = getattr(p, self.params)
-            if isinstance(result, list):
+            if isinstance(result, Iterable) and not isinstance(result, str):
                 yield from map(stringify, result)
                 continue
             yield stringify(result)
@@ -239,7 +239,7 @@ class JsonFormatter(SpecialFormatter):
     def _format(self, package: dnf.package.Package) -> Iterable[tuple[str, t.Any]]:
         for attr in self.attrs:
             result = getattr(package, attr)
-            if isinstance(result, list):
+            if isinstance(result, Iterable) and not isinstance(result, str):
                 result = [str(i) for i in result]
             yield attr, result
 

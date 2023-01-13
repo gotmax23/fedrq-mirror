@@ -7,7 +7,6 @@ import logging
 import typing as t
 
 if t.TYPE_CHECKING:
-
     import dnf
     import hawkey
 
@@ -20,7 +19,7 @@ def get_source_name(package: dnf.package.Package) -> str:
 
 
 def filter_latest(query: hawkey.Query, latest: t.Optional[int]) -> None:
-    logger.debug("filter_latest(query={}, latest={})".format(tuple(query), latest))
+    # logger.debug("filter_latest(query={}, latest={})".format(tuple(query), latest))
     if latest:
         query.filterm(latest=latest)
 

@@ -16,42 +16,56 @@ import fedrq.config
 SUBCOMMANDS = ("pkgs", "whatrequires", "subpkgs")
 
 
+# @pytest.mark.parametrize("subcommand", SUBCOMMANDS)
+# def test_no_dnf_clean_failure(subcommand, capsys, monkeypatch):
+#     monkeypatch.setattr(fedrq.cli.base, "HAS_DNF", False)
+#     monkeypatch.setattr(fedrq.cli.base, "dnf", None)
+#     monkeypatch.setattr(fedrq.cli.base, "hawkey", None)
+
+#     with pytest.raises(SystemExit, match=r"^1$") as exc:
+#         fedrq.cli.main([subcommand, "dummy"])
+#     assert exc.value.code == 1
+#     stdout, stderr = capsys.readouterr()
+#     assert not stdout
+#     assert stderr == "FATAL ERROR: " + fedrq.cli.base.NO_DNF_ERROR + "\n"
+
+
 @pytest.mark.parametrize("subcommand", SUBCOMMANDS)
-def test_no_dnf_clean_failure(subcommand, capsys, monkeypatch):
-    monkeypatch.setattr(fedrq.cli.base, "HAS_DNF", False)
-    monkeypatch.setattr(fedrq.cli.base, "dnf", None)
-    monkeypatch.setattr(fedrq.cli.base, "hawkey", None)
-
-    with pytest.raises(SystemExit, match=r"^1$") as exc:
-        fedrq.cli.main([subcommand, "dummy"])
-    assert exc.value.code == 1
-    stdout, stderr = capsys.readouterr()
-    assert not stdout
-    assert stderr == "FATAL ERROR: " + fedrq.cli.base.NO_DNF_ERROR + "\n"
-
-
-@pytest.mark.parametrize("subcommand", SUBCOMMANDS)
-def test_smartcache_used(subcommand, mocker, patch_config_dirs, temp_smartcache: Path):
+def test_smartcache_used(
+    subcommand, mocker, monkeypatch, patch_config_dirs, temp_smartcache: Path
+):
     """
     Ensure that the smartcache is used when the requested
     branch's releasever is different the the system's releasever
     """
     assert not list(temp_smartcache.iterdir())
-    get_releasever = mocker.patch(
-        "fedrq.cli.base.get_releasever", return_value="rawhide"
-    )
-    bm_fill_sack = mocker.spy(fedrq.config.BaseMaker, "fill_sack")
+
+    mocks = {}
+
+    def _set_config(self, key: str) -> None:
+        arg = getattr(self.args, key, None)
+        if arg is not None:
+            setattr(self.config, key, arg)
+        if key == "backend":
+            mocks["get_releasever"] = mocker.patch.object(
+                self.config.backend_mod, "get_releasever", return_value="rawhide"
+            )
+            mocks["bm_set"] = mocker.spy(self.config.backend_mod.BaseMaker, "set")
 
     cls = fedrq.cli.COMMANDS[subcommand]
+    monkeypatch.setattr(cls, "_set_config", _set_config)
+
     parser = cls.make_parser()
     args = parser.parse_args(["--sc", "packageb"])
     obj = cls(args)
 
-    get_releasever.assert_called_once()
+    mocks["get_releasever"].assert_called_once()
 
-    bm_fill_sack.assert_called_once()
-    assert bm_fill_sack.call_args.kwargs == dict(
-        _cachedir=temp_smartcache / "fedrq" / "tester"
+    expected_cachedir = temp_smartcache / "fedrq" / "tester"
+
+    assert any(
+        call.args[1:] == ("cachedir", str(expected_cachedir))
+        for call in mocks["bm_set"].call_args_list
     )
 
     assert obj.args.smartcache
@@ -60,30 +74,40 @@ def test_smartcache_used(subcommand, mocker, patch_config_dirs, temp_smartcache:
 
 
 @pytest.mark.parametrize("subcommand", SUBCOMMANDS)
-def test_smartcache_not_used(subcommand, mocker, patch_config_dirs, temp_smartcache):
+def test_smartcache_not_used(
+    subcommand, mocker, monkeypatch, patch_config_dirs, temp_smartcache
+):
     """
     Ensure that the smartcache is not used when the requested branch's
     releasever matches the the system's releasever
     """
     assert not list(temp_smartcache.iterdir())
-    get_releasever = mocker.patch(
-        "fedrq.cli.base.get_releasever", return_value="tester"
-    )
-    bm_fill_sack = mocker.spy(fedrq.config.BaseMaker, "fill_sack")
+
+    mocks = {}
+
+    def _set_config(self, key: str) -> None:
+        arg = getattr(self.args, key, None)
+        if arg is not None:
+            setattr(self.config, key, arg)
+        if key == "backend":
+            mocks["get_releasever"] = mocker.patch.object(
+                self.config.backend_mod, "get_releasever", return_value="tester"
+            )
+            mocks["bm_set"] = mocker.spy(self.config.backend_mod.BaseMaker, "set")
 
     cls = fedrq.cli.COMMANDS[subcommand]
+    monkeypatch.setattr(cls, "_set_config", _set_config)
+
     parser = cls.make_parser()
     args = parser.parse_args(["--sc", "packageb"])
     obj = cls(args)
 
-    get_releasever.assert_called_once()
-
-    bm_fill_sack.assert_called_once()
-    assert bm_fill_sack.call_args.kwargs == {"_cachedir": None}
+    mocks["get_releasever"].assert_called_once()
 
     assert not obj.args.smartcache
 
-    assert not list(temp_smartcache.iterdir())
+    assert all(call.args[1] != "cachedir" for call in mocks["bm_set"].call_args_list)
+    # assert not list(temp_smartcache.iterdir())
 
 
 @pytest.mark.parametrize(

@@ -99,7 +99,6 @@ def test_subpkg_match(run_command):
             "*-sub",
             "-Fna",
             "-la",
-            "--debug",
         ]
     )
     assert stdout == ["packagea.noarch", "packagea-sub.noarch", "packageb-sub.noarch"]

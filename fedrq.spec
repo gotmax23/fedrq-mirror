@@ -1,15 +1,17 @@
 # This specfile is licensed under:
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+
 Name:           fedrq
 Version:        0.2.0
 Release:        1%{?dist}
 Summary:        A tool to query the Fedora and EPEL repositories
 
 # - code is GPL-2.0-or-later
-# - the data and config files in fedrq/config are UNLICENSEed
+# - the data and config files in fedrq/data are UNLICENSEed
 # - Embeded repo defs are MIT.
-License:        GPL-2.0-or-later AND Unlicense AND MIT
+# - PSF-2.0 code copied from Cpython 3.11 for older Python versions
+License:        GPL-2.0-or-later AND Unlicense AND MIT AND PSF-2.0
 URL:            https://git.sr.ht/~gotmax23/fedrq
 Source:         %{url}/refs/download/v%{version}/fedrq-%{version}.tar.gz
 
@@ -46,8 +48,8 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 
 %build
 %pyproject_wheel
-scdoc < doc/fedrq.1.scd > fedrq.1
-scdoc < doc/fedrq.5.scd > fedrq.5
+scdoc <doc/fedrq.1.scd >fedrq.1
+scdoc <doc/fedrq.5.scd >fedrq.5
 
 
 %install

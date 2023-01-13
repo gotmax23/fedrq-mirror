@@ -71,7 +71,7 @@ def install_system(
 @nox.session(venv_params=["--system-site-packages"])
 def test(session: nox.Session):
     install_system(session, "createrepo_c", "rpm-build", "python3-rpm")
-    install(session, ".[test]", editable=True)
+    install(session, ".[test]", "pytest-xdist", editable=True)
     posargs = session.posargs
     if "--check" in posargs:
         posargs.remove("--check")
@@ -80,7 +80,10 @@ def test(session: nox.Session):
         "-m",
         "pytest",
         *session.posargs,
-        env={"PYTEST_PLUGINS": "pytest_mock", "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
+        env={
+            "PYTEST_PLUGINS": "xdist.plugin,pytest_mock",
+            "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+        },
     )
 
 
@@ -114,7 +117,9 @@ def codeql(session: nox.Session):
 @nox.session(venv_params=["--system-site-packages"])
 def typing(session: nox.Session):
     install(session, ".", "tomli_w", "mypy", editable=True)
-    session.run("python", "-m", "mypy", "src/fedrq/")
+    session.run(
+        "python", "-m", "mypy", "--enable-incomplete-feature=Unpack", "src/fedrq/"
+    )
 
 
 @nox.session
