@@ -3,10 +3,10 @@
 """
 Generic tests for fedrq.cli.Command
 """
-import stat
 import shutil
-from textwrap import dedent
+import stat
 from pathlib import Path
+from textwrap import dedent
 from unittest.mock import call
 
 import pytest
