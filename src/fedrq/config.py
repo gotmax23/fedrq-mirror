@@ -35,7 +35,6 @@ if t.TYPE_CHECKING:
     from _typeshed import StrPath
 
 CONFIG_DIRS = (Path.home() / ".config/fedrq", Path("/etc/fedrq"))
-SMARTCACHE_BASEDIR = "/var/tmp/fedrq-of-{user}"
 logger = logging.getLogger(__name__)
 
 
