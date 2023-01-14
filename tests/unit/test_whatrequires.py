@@ -7,9 +7,9 @@ import fedrq.cli
 
 
 @pytest.fixture
-def run_command(capsys, repo_test_tmpdir, patch_config_dirs):
+def run_command(capsys, patch_config_dirs):
     def runner(args, *, return_tuples=False):
-        fedrq.cli.main(["whatrequires", "--cachedir", repo_test_tmpdir, *args])
+        fedrq.cli.main(["whatrequires", "--sc", *args])
         stdout, stderr = capsys.readouterr()
         result = stdout.splitlines(), stderr.splitlines()
         if return_tuples:

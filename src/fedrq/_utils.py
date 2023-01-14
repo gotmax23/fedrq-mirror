@@ -7,7 +7,6 @@ import logging
 import typing as t
 
 if t.TYPE_CHECKING:
-    from pathlib import Path
 
     import dnf
     import hawkey
@@ -28,12 +27,3 @@ def filter_latest(query: hawkey.Query, latest: t.Optional[int]) -> None:
 
 def mklog(*args: str) -> logging.Logger:
     return logging.getLogger(".".join(args))
-
-
-def make_cachedir(dir: Path) -> str | None:
-    logger.debug("_make_cachedir(%r)", dir)
-    try:
-        dir.mkdir(mode=0o700, exist_ok=True)
-    except FileExistsError as exc:
-        return f"Invalid cachedir. {dir} already exists: {exc}"
-    return None

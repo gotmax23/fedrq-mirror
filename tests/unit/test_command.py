@@ -3,11 +3,9 @@
 """
 Generic tests for fedrq.cli.Command
 """
+import os
 import shutil
-import stat
 from pathlib import Path
-from textwrap import dedent
-from unittest.mock import call
 
 import pytest
 import tomli_w
@@ -33,21 +31,14 @@ def test_no_dnf_clean_failure(subcommand, capsys, monkeypatch):
 
 
 @pytest.mark.parametrize("subcommand", SUBCOMMANDS)
-def test_smartcache_used(subcommand, mocker, patch_config_dirs, cleanup_smartcache):
+def test_smartcache_used(subcommand, mocker, patch_config_dirs, temp_smartcache: Path):
     """
     Ensure that the smartcache is used when the requested
     branch's releasever is different the the system's releasever
     """
-    paths = (
-        Path("/var/tmp/fedrq-of-testuser"),
-        Path("/var/tmp/fedrq-of-testuser/tester"),
-    )
+    assert not list(temp_smartcache.iterdir())
     get_releasever = mocker.patch(
         "fedrq.cli.base.get_releasever", return_value="rawhide"
-    )
-    mocker.patch("fedrq.cli.base.getuser", return_value="testuser")
-    _make_cachedir = mocker.patch(
-        "fedrq.cli.base.make_cachedir", wraps=fedrq.cli.base.make_cachedir
     )
     bm_fill_sack = mocker.spy(fedrq.config.BaseMaker, "fill_sack")
 
@@ -56,33 +47,27 @@ def test_smartcache_used(subcommand, mocker, patch_config_dirs, cleanup_smartcac
     args = parser.parse_args(["--sc", "packageb"])
     obj = cls(args)
 
-    bm_fill_sack.assert_called_once()
-    assert bm_fill_sack.call_args.kwargs == dict(_cachedir=paths[1])
-
     get_releasever.assert_called_once()
 
-    calls = [call(p) for p in paths]
-    assert _make_cachedir.call_args_list == calls
-
-    for p in paths:
-        assert p.is_dir()
-        assert stat.S_IMODE(p.stat().st_mode) == 0o700
+    bm_fill_sack.assert_called_once()
+    assert bm_fill_sack.call_args.kwargs == dict(
+        _cachedir=temp_smartcache / "fedrq" / "tester"
+    )
 
     assert obj.args.smartcache
 
+    assert list(temp_smartcache.iterdir())
+
 
 @pytest.mark.parametrize("subcommand", SUBCOMMANDS)
-def test_smartcache_not_used(subcommand, mocker, patch_config_dirs):
+def test_smartcache_not_used(subcommand, mocker, patch_config_dirs, temp_smartcache):
     """
     Ensure that the smartcache is not used when the requested branch's
     releasever matches the the system's releasever
     """
+    assert not list(temp_smartcache.iterdir())
     get_releasever = mocker.patch(
         "fedrq.cli.base.get_releasever", return_value="tester"
-    )
-    mocker.patch("fedrq.cli.base.getuser", return_value="testuser")
-    _make_cachedir = mocker.patch(
-        "fedrq.cli.base.make_cachedir", wraps=fedrq.cli.base.make_cachedir
     )
     bm_fill_sack = mocker.spy(fedrq.config.BaseMaker, "fill_sack")
 
@@ -91,39 +76,46 @@ def test_smartcache_not_used(subcommand, mocker, patch_config_dirs):
     args = parser.parse_args(["--sc", "packageb"])
     obj = cls(args)
 
+    get_releasever.assert_called_once()
+
     bm_fill_sack.assert_called_once()
     assert bm_fill_sack.call_args.kwargs == {"_cachedir": None}
 
-    get_releasever.assert_called_once()
-
-    _make_cachedir.assert_not_called()
-
     assert not obj.args.smartcache
+
+    assert not list(temp_smartcache.iterdir())
 
 
 @pytest.mark.parametrize(
     "args, config_smartcache, final_smartcache, cachedir",
     (
         # smartcache is specified in the config file (default)
-        ([], True, True, Path("/var/tmp/fedrq-of-testuser/tester")),
+        ([], True, True, lambda d: d / "tester"),
         # smartcache is specified in the config file and on the cli (redundant)
-        (["--sc"], True, True, Path("/var/tmp/fedrq-of-testuser/tester")),
+        (["--sc"], True, True, lambda d: d / "tester"),
         # smartcache is only specified on the cli
-        (["--sc"], False, True, Path("/var/tmp/fedrq-of-testuser/tester")),
+        (["--sc"], False, True, lambda d: d / "tester"),
         # --system-cache is used to override the config file's 'smartcache = true'
-        (["--system-cache"], True, False, None),
+        (["--system-cache"], True, False, lambda _: None),
         # --system-cache is used when smartcache is disabled in the config
-        ([], False, False, None),
+        ([], False, False, lambda _: None),
         # --system-cache is used when smartcache is disabled in the config (redundant)
-        (["--system-cache"], False, False, None),
+        (["--system-cache"], False, False, lambda _: None),
         # --cachedir trumps smartcache
-        (["--cachedir=blah"], True, False, Path("blah")),
-        (["--cachedir=blah"], False, False, Path("blah")),
+        (["--cachedir=blah"], True, False, lambda _: Path("blah")),
+        (["--cachedir=blah"], False, False, lambda _: Path("blah")),
     ),
 )
 def test_smartcache_config(
-    args, config_smartcache, final_smartcache, cachedir, patch_config_dirs, mocker
+    args,
+    config_smartcache,
+    final_smartcache,
+    cachedir,
+    patch_config_dirs,
+    mocker,
+    temp_smartcache,
 ):
+    assert os.environ["XDG_CACHE_HOME"] == str(temp_smartcache)
     write_config = [True]
     # Check that True is the default
     if config_smartcache:
@@ -136,14 +128,12 @@ def test_smartcache_config(
                 data = {"smartcache": config_smartcache}
                 with dest.open("wb") as fp:
                     tomli_w.dump(data, fp)
-            mocker.patch("fedrq.cli.base.getuser", return_value="testuser")
-
             Pkgs = fedrq.cli.Pkgs
             parser = Pkgs.make_parser()
             pargs = parser.parse_args([*args, "packagea"])
             obj = Pkgs(pargs)
             assert obj.args.smartcache is final_smartcache
-            assert obj.args.cachedir == cachedir
+            assert obj.args.cachedir == cachedir(temp_smartcache / "fedrq")
 
         finally:
             shutil.rmtree("blah", ignore_errors=True)

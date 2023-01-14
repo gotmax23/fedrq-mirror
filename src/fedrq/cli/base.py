@@ -11,7 +11,6 @@ import json
 import logging
 import sys
 from functools import wraps
-from getpass import getuser
 from pathlib import Path
 from typing import Any
 
@@ -25,14 +24,20 @@ else:
 from pydantic import ValidationError
 
 from fedrq._dnf import HAS_DNF, dnf, hawkey
-from fedrq._utils import make_cachedir, mklog
+from fedrq._utils import mklog
 from fedrq.cli.formatters import (
     DefaultFormatters,
     Formatter,
     FormatterContainer,
     InvalidFormatterError,
 )
-from fedrq.config import ConfigError, Release, RQConfig, get_config
+from fedrq.config import (
+    ConfigError,
+    Release,
+    RQConfig,
+    get_config,
+    get_smartcache_basedir,
+)
 from fedrq.repoquery import Repoquery, get_releasever
 
 logger = logging.getLogger("fedrq")
@@ -241,17 +246,8 @@ class Command(abc.ABC):
             self.args.cachedir = None
             self.args.smartcache = False
             return None
-        basedir = Path(f"/var/tmp/fedrq-of-{getuser()}")
-        if err := make_cachedir(basedir):
-            return err
-        self.args.cachedir = basedir / self.release.branch
+        self.args.cachedir = get_smartcache_basedir() / self.release.branch
         return None
-
-    @v_add_errors
-    def v_cachedir(self) -> str | None:
-        if not self.args.cachedir:
-            return None
-        return make_cachedir(self.args.cachedir)
 
     @v_fatal_error
     def v_release(self) -> str | None:
@@ -286,7 +282,6 @@ class Command(abc.ABC):
         # Fatal
         self.v_release()
         self.v_smartcache()
-        self.v_cachedir()
         self.v_rq()
         self._v_handle_errors()
 

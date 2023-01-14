@@ -5,12 +5,12 @@ from __future__ import annotations
 
 import itertools
 import logging
+import os
 import re
 import sys
 import typing as t
 import zipfile
 from collections.abc import Callable
-from getpass import getuser
 from pathlib import Path
 
 if sys.version_info < (3, 11):
@@ -28,7 +28,7 @@ else:
 from pydantic import BaseModel, Field, validator
 
 from fedrq._dnf import dnf, needs_dnf
-from fedrq._utils import make_cachedir, mklog
+from fedrq._utils import mklog
 from fedrq.repoquery import BaseMaker, Repoquery, get_releasever
 
 if t.TYPE_CHECKING:
@@ -259,7 +259,8 @@ class RQConfig(BaseModel):
 
 
 def get_smartcache_basedir() -> Path:
-    return Path(SMARTCACHE_BASEDIR.format(user=getuser()))
+    basedir = Path(os.environ.get("XDG_CACHE_HOME", Path("~/.cache").expanduser()))
+    return Path(basedir).joinpath("fedrq").resolve()
 
 
 def _get_files(
@@ -329,8 +330,5 @@ def get_rq(
     if release.version != get_releasever():
         base_cachedir = get_smartcache_basedir()
         cachedir = base_cachedir / branch
-        for dir in (base_cachedir, cachedir):
-            if err := make_cachedir(dir):
-                raise RuntimeError(err)
     rq = Repoquery(release.make_base(_cachedir=cachedir))
     return rq

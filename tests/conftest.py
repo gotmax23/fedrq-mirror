@@ -10,7 +10,6 @@ from rpm import expandMacro
 
 import fedrq.cli
 from fedrq import config as rqconfig
-from fedrq.config import SMARTCACHE_BASEDIR
 from fedrq.repoquery import Repoquery
 
 TEST_DATA = Path(__file__).parent.resolve() / "test_data"
@@ -25,15 +24,20 @@ gpgcheck = False
 """
 
 
-@pytest.fixture
-def cleanup_smartcache():
+@pytest.fixture(scope="session", autouse=True)
+def clear_cache():
+    path = rqconfig.get_smartcache_basedir() / "tester"
+    rmtree(path, ignore_errors=True)
     try:
         yield
     finally:
-        try:
-            rmtree(SMARTCACHE_BASEDIR.format(user="testuser"))
-        except FileNotFoundError:
-            pass
+        rmtree(path, ignore_errors=True)
+
+
+@pytest.fixture
+def temp_smartcache(monkeypatch, tmp_path):
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path))
+    return tmp_path
 
 
 @pytest.fixture
@@ -63,12 +67,6 @@ def repo_test_config():
         path.unlink()
 
 
-@pytest.fixture(scope="session")
-def repo_test_tmpdir(tmp_path_factory):
-    b = tmp_path_factory.mktemp("testrepo")
-    return str(b)
-
-
 @pytest.fixture(autouse=True)
 def clear_config(monkeypatch):
     monkeypatch.setattr(rqconfig, "CONFIG_DIRS", ())
@@ -85,11 +83,11 @@ def patch_config_dirs(monkeypatch, tmp_path):
 
 
 @pytest.fixture
-def repo_test_rq(repo_test_tmpdir, patch_config_dirs):
+def repo_test_rq(patch_config_dirs):
     config = rqconfig.get_config()
     release = config.get_release("tester", "base")
     base = release.make_base(fill_sack=False)
-    base.cachedir = repo_test_tmpdir
+    base.cachedir = rqconfig.get_smartcache_basedir()
     base.fill_sack(load_system_repo=False)
     rq = Repoquery(base)
     return rq
