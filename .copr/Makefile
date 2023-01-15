@@ -2,10 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 outdir ::= results_fedrq
+COPR_DIR ::= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
 srpm:
-	dnf install -y --setopt=install_weak_deps=False \
-		git-core fedpkg rpmdevtools python3-specfile
-	python -m venv venv --system-site-packages
-	. ./venv/bin/activate
-	pip install fclogr
-	./srpm.sh $(outdir)
+	$(COPR_DIR)/mk.sh "$(outdir)"
