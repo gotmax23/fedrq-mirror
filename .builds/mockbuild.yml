@@ -27,6 +27,6 @@ tasks:
       pip install 'git+https://git.sr.ht/~gotmax23/fclogr#main'
       cd fedrq
       fclogr --debug dev-entries --archive -r $(git describe --abbrev=0 HEAD)
-      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after -- --verbose|| r=$?
+      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after -- --verbose
       tar cvf results_fedrq.tar.gz results_fedrq
-      exit $r
+      fedpkg --verbose --name fedrq --release "${RELEASE}" lint --info
