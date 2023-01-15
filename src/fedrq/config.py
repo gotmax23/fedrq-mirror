@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import importlib.resources as importlib_resources
 import itertools
 import logging
 import os
@@ -11,19 +12,13 @@ import sys
 import typing as t
 import zipfile
 from collections.abc import Callable
+from importlib.abc import Traversable
 from pathlib import Path
 
 if sys.version_info < (3, 11):
     import tomli as tomllib
 else:
     import tomllib
-
-if sys.version_info < (3, 10) or t.TYPE_CHECKING:
-    import importlib_resources
-    from importlib_resources.abc import Traversable
-else:
-    import importlib.resources as importlib_resources
-    from importlib.abc import Traversable
 
 from pydantic import BaseModel, Field, validator
 
@@ -32,6 +27,7 @@ from fedrq._utils import mklog
 from fedrq.repoquery import BaseMaker, Repoquery, get_releasever
 
 if t.TYPE_CHECKING:
+
     from _typeshed import StrPath
 
 CONFIG_DIRS = (Path.home() / ".config/fedrq", Path("/etc/fedrq"))
