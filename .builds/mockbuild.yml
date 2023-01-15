@@ -24,7 +24,7 @@ tasks:
   - build-rawhide: |
       python3 -m venv venv --system-site-packages
       . ./venv/bin/activate
-      pip install fclogr
+      pip install 'git+https://git.sr.ht/~gotmax23/fclogr#main'
       cd fedrq
       fclogr --debug dev-entries --archive -r $(git describe --abbrev=0 HEAD)
       fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after -- --verbose|| r=$?
