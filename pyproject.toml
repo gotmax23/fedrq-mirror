@@ -69,15 +69,8 @@ fedrq = "fedrq.cli:main"
 
 [tool.flit.sdist]
 include = [
-    "src/fedrq/data/"
-]
-exclude = [
-    # Not useful without the git repository
-    ".copr/",
-    "srpm.sh",
-    ".builds/",
-    # fedrq.spec and its associated license are not wanted in the sdist
-    "fedrq.spec", "changelog", "changelog.license", "LICENSES/MIT.txt",
+    "src/fedrq/data/",
+    "LICENSES/*",
 ]
 
 [tool.flit.external-data]
