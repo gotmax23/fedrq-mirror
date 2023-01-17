@@ -14,7 +14,9 @@ YT_DLP_SUPKGS = [
 
 @pytest.mark.no_rpm_mock
 def test_subpkgs_match1(capsys):
-    fedrq.cli.main(["subpkgs", "yt-dlp", "--match", "*completion", "-F", "name"])
+    fedrq.cli.main(
+        ["subpkgs", "-b", "f37", "yt-dlp", "--match", "*completion", "-F", "name"]
+    )
     stdout, stderr = capsys.readouterr()
     assert stdout.splitlines() == YT_DLP_SUPKGS
     assert not stderr
@@ -26,6 +28,8 @@ def test_subpkgs_match2(capsys):
     fedrq.cli.main(
         [
             "subpkgs",
+            "-b",
+            "f37",
             "containerd",
             "moby-engine",
             "--match",

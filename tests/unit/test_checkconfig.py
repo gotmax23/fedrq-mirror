@@ -27,7 +27,7 @@ def test_checkconfig_basic(run_command2):
     assert not out[1]
 
 
-def test_checkconfig_dump(run_command2, patch_config_dirs, fedrq_config_home):
+def test_checkconfig_dump(run_command2, patch_config_dirs):
     defs = {"base": ["testrepo1"]}
     expected = {
         "matcher": "^(tester)$",
@@ -37,7 +37,10 @@ def test_checkconfig_dump(run_command2, patch_config_dirs, fedrq_config_home):
         "repo_dirs": list(
             map(
                 str,
-                [patch_config_dirs / "repos", fedrq_config_home / "repos"],
+                (
+                    patch_config_dirs / "repos",
+                    patch_config_dirs.parent / "global" / "repos",
+                ),
             )
         ),
     }

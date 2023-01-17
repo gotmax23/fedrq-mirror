@@ -13,14 +13,22 @@ from fedrq import config as rqconfig
 from fedrq.repoquery import Repoquery
 
 TEST_DATA = Path(__file__).parent.resolve() / "test_data"
-CONFIG_HOME = TEST_DATA / "config_home"
-FEDRQ_CONFIG_HOME = CONFIG_HOME / ".config" / "fedrq"
-TEST_REPO_DIR = FEDRQ_CONFIG_HOME / "repos"
+
 TEST_REPO_1 = f"""
 [testrepo1]
 name = testrepo1
 baseurl = file://{TEST_DATA / 'repos' / 'repo1' / 'repo'}/
 gpgcheck = False
+"""
+
+TEST_CONFIG_1 = """
+default_branch = "tester"
+
+[releases.testrepo1]
+matcher = "^(tester)$"
+defs.base = ["testrepo1"]
+defpaths = ["testrepo1.repo"]
+system_repos = false
 """
 
 
@@ -36,18 +44,15 @@ def clear_cache():
 
 @pytest.fixture
 def temp_smartcache(monkeypatch, tmp_path):
-    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path))
-    return tmp_path
+    path = tmp_path / "smartcache"
+    path.mkdir()
+    monkeypatch.setenv("XDG_CACHE_HOME", str(path))
+    return path
 
 
 @pytest.fixture
 def data_path():
     return TEST_DATA
-
-
-@pytest.fixture
-def fedrq_config_home():
-    return FEDRQ_CONFIG_HOME
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -57,29 +62,26 @@ def repo_test_repo():
     subprocess.run(("bash", buildsh), check=True)
 
 
-@pytest.fixture(scope="session", autouse=True)
-def repo_test_config():
-    try:
-        path = TEST_REPO_DIR / "testrepo1.repo"
-        path.write_text(TEST_REPO_1)
-        yield
-    finally:
-        path.unlink()
-
-
 @pytest.fixture(autouse=True)
 def clear_config(monkeypatch):
     monkeypatch.setattr(rqconfig, "CONFIG_DIRS", ())
 
 
 @pytest.fixture
-def patch_config_dirs(monkeypatch, tmp_path):
-    config_dirs = (
-        tmp_path,
-        FEDRQ_CONFIG_HOME,
-    )
+def patch_config_dirs(tmp_path, monkeypatch):
+    config_dirs = (tmp_path / "custom", tmp_path / "global")
+    for d in config_dirs:
+        d.mkdir()
+
+    conf = config_dirs[1]
+    conf.joinpath("test.toml").write_text(TEST_CONFIG_1)
+
+    repo_dir = conf.joinpath("repos")
+    repo_dir.mkdir()
+    repo_dir.joinpath("testrepo1.repo").write_text(TEST_REPO_1)
+
     monkeypatch.setattr(rqconfig, "CONFIG_DIRS", config_dirs)
-    return tmp_path
+    return config_dirs[0]
 
 
 @pytest.fixture
