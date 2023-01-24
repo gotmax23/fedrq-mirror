@@ -182,6 +182,12 @@ class Repoquery:
             )
             query = query.union(subject)
             flog.debug(f"subject query: {tuple(subject)}")
+        # get_best_query() may miss some Provides
+        if resolve:
+            flog.debug("Resolving provides...")
+            pp = self.query(provides=specs)
+            flog.debug(f"pp = {tuple(pp)}")
+            query = query.union(pp)
         filter_latest(query, latest)
         return query
 
