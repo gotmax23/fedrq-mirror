@@ -4,19 +4,15 @@
 ---
 image: fedora/rawhide
 packages:
-  - python3
-  - python3-dnf
-  - fedora-repos-rawhide
-  # Needed to build the test packages
-  - rpm-build
-  - createrepo_c
-  #
   - hut
+  - tar
 secrets:
   # Production Copr
   # - 759db354-8651-427c-b00a-0755164c8cae
   # Dev Copr
   - 9683b939-5f2b-4a0a-966e-acd99b5944a0
+environment:
+  nox: ./venv/bin/nox
 oauth: pages.sr.ht/PAGES:RW
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
@@ -63,17 +59,13 @@ tasks:
 
       tar czvf fedrq.tar.gz *.html
       hut pages publish fedrq.tar.gz -d gotmax23.srht.site -s "${site}"
+  - setup-venv: |
+      cd fedrq
+      python3 -m venv venv
+      ./venv/bin/pip install nox
   - lint: |
       cd fedrq
-      venv="$(mktemp -d)"
-      python3 -m venv "${venv}"  --system-site-packages
-      source "${venv}/bin/activate"
-      pip3 install '.[lint]' --use-pep517
-      ./lint.sh --check
+      $nox -e lint -- --check
   - pytest: |
       cd fedrq
-      venv="$(mktemp -d)"
-      python3 -m venv "${venv}"  --system-site-packages
-      source "${venv}/bin/activate"
-      pip3 install '.[test]' --use-pep517
-      pytest -v
+      $nox -e test -- -v

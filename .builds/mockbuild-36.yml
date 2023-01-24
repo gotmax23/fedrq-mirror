@@ -4,38 +4,30 @@
 ---
 image: fedora/36
 packages:
-  - createrepo_c
-  - fedpkg
+  - fedora-repos-rawhide
   - mock
   - mock-core-configs
-  - rpmautospec
-  - rpmdevtools
-  - shadow-utils
-  # fclogr dependency
-  - python3-specfile
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
 environment:
-  RELEASE: f36
+  CHROOT: "fedora-36"
+  nox: ./venv/bin/nox
 artifacts:
   - fedrq/results_fedrq.tar.gz
 tasks:
   - setup-add-mock-group: |
       sudo usermod -aG mock $USER
   - setup-venv: |
-      python3 -m venv ~/venv --system-site-packages
-      . ./venv/bin/activate
       cd fedrq
-      pip3 install '.[dev]' 'git+https://git.sr.ht/~gotmax23/fclogr#main'
-  - build-f36: |
-      . ./venv/bin/activate
+      python3 -m venv venv
+      ./venv/bin/pip install nox
+  - mockbuild-f36: |
       cd fedrq
-      fclogr --debug dev-entries --archive -r $(git describe --abbrev=0 HEAD)
-      fedpkg --name fedrq --release "${RELEASE}" mockbuild --no-cleanup-after -- --verbose|| r=$?
+      $nox -e mockbuild -- --resultdir results_fedrq -r "${CHROOT}-$(rpm -E %_arch)"
       tar cvf results_fedrq.tar.gz results_fedrq
-      exit $r
-  - test-py310: |
-      . ./venv/bin/activate
+  - pytest-py310: |
       cd fedrq
-      pytest -v
-      mypy src/fedrq/
+      $nox -e test -- -v
+  - typing-py310: |
+      cd fedrq
+      $nox -e typing
