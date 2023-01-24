@@ -15,11 +15,19 @@ import nox.virtualenv
 
 nox.options.sessions = "test", "lint"
 
+IN_CI = "JOB_ID" in os.environ
+ALLOW_EDITABLE = os.environ.get("ALLOW_EDITABLE", str(not IN_CI)).lower() in (
+    "1",
+    "true",
+)
 
-def install(session: nox.Session, *args, use_pep517=True, **kwargs):
+
+def install(session: nox.Session, *args, use_pep517=True, editable=False, **kwargs):
     if isinstance(session.virtualenv, nox.virtualenv.PassthroughEnv):
         session.warn(f"No venv. Skipping installation of {args}")
         return
+    if editable and ALLOW_EDITABLE:
+        args = ("-e", *args)
     session.install(*args, **kwargs)
 
 
@@ -63,7 +71,7 @@ def install_system(
 @nox.session(venv_params=["--system-site-packages"])
 def test(session: nox.Session):
     install_system(session, "createrepo_c", "rpm-build", "python3-rpm")
-    install(session, ".[test]")
+    install(session, ".[test]", editable=True)
     posargs = session.posargs
     if "--check" in posargs:
         posargs.remove("--check")
@@ -105,7 +113,7 @@ def codeql(session: nox.Session):
 
 @nox.session(venv_params=["--system-site-packages"])
 def typing(session: nox.Session):
-    install(session, ".", "tomli_w", "mypy")
+    install(session, ".", "tomli_w", "mypy", editable=True)
     session.run("python", "-m", "mypy", "src/fedrq/")
 
 
@@ -113,7 +121,7 @@ def typing(session: nox.Session):
 def format(session: nox.Session):
     install(session, "black", "isort")
     posargs = session.posargs
-    if not posargs and "JOB_ID" in os.environ:
+    if IN_CI:
         posargs = ["--check"]
     try:
         session.run(
