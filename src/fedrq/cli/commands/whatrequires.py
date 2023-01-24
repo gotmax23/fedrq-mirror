@@ -139,7 +139,7 @@ class WhatCommand(Command):
         # names are included.
         if not self.args.exact:
             resolved_packages = self.rq.resolve_pkg_specs(
-                self.args.names, self.args.resolve_packages
+                self.args.names, self.args.resolve_packages, with_src=False
             )
             logger.debug(f"resolved_packages: {tuple(resolved_packages)}")
             operator_kwargs = {self.operator: resolved_packages}

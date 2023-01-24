@@ -171,13 +171,14 @@ class Repoquery:
         specs: Collection[str],
         resolve: bool = False,
         latest: int | None = None,
+        **kwargs,
     ) -> hawkey.Query:
         flog = mklog(__name__, self.__class__.__name__, "resolve_pkg_spec")
         flog.debug(f"specs={specs}, resolve={resolve}, latest={latest}")
         query = self.query(empty=True)
         for p in specs:
             subject = dnf.subject.Subject(p).get_best_query(
-                self.sack, with_provides=resolve, with_filenames=resolve
+                self.sack, **kwargs, with_provides=resolve, with_filenames=resolve
             )
             query = query.union(subject)
             flog.debug(f"subject query: {tuple(subject)}")
