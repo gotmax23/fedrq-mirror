@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
 
+%bcond libdnf5 %[0%{?fedora} >= 38]
+
 Name:           fedrq
 Version:        0.2.0
 Release:        1%{?dist}
@@ -23,10 +25,14 @@ BuildRequires:  createrepo_c
 BuildRequires:  fedora-repos-rawhide
 BuildRequires:  distribution-gpg-keys
 BuildRequires:  python3-dnf
+%if %{with libdnf5}
+BuildRequires:  python3-libdnf5
+%endif
 # Manpage
 BuildRequires:  scdoc
 
-Requires:       python3-dnf
+Requires:       (python3-dnf or python3-libdnf5)
+Suggests:       python3-dnf
 Requires:       (fedora-repos-rawhide or distribution-gpg-keys)
 Suggests:       distribution-gpg-keys
 
@@ -60,7 +66,10 @@ install -Dpm 0644 fedrq.5 -t %{buildroot}%{_mandir}/man5/
 
 
 %check
-%pytest -v -m "not no_rpm_mock"
+FEDRQ_BACKEND=dnf %pytest -v -m "not no_rpm_mock"
+%if %{with libdnf5}
+FEDRQ_BACKEND=libdnf5 %pytest -v -m "not no_rpm_mock"
+%endif
 
 
 %files -f %{pyproject_files}

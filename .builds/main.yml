@@ -6,6 +6,7 @@ image: fedora/rawhide
 packages:
   - hut
   - tar
+  - python3-libdnf5
 secrets:
   # Production Copr
   # - 759db354-8651-427c-b00a-0755164c8cae
@@ -68,4 +69,5 @@ tasks:
       $nox -e lint -- --check
   - pytest: |
       cd fedrq
-      $nox -e test -- -v
+      FEDRQ_BACKEND=dnf $nox -e test -- -v
+      FEDRQ_BACKEND=libdnf5 $nox -e test -- -v
