@@ -257,6 +257,7 @@ class DefaultFormatters(FormatterContainer):
         na=NAFormatter,
         nev=NEVFormatter,
         source=SourceFormatter,
+        src=SourceFormatter,
     )
     _special_formatters = dict(attr=AttrFormatter, json=JsonFormatter)
     _fallback_formatter = AttrFormatter

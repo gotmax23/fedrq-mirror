@@ -33,6 +33,13 @@ fedrq is a tool to simplify querying the Fedora and EPEL repositories.
 :  Find the packages that Recommend *[package...]*
 |  whatrequires
 :  Find the packages that Require *[package...]*
+|  wr
+:  Alias for _whatrequires_
+|  whatrequires-src
+:  Find the packages Require the subpackages of *[package...]*.
+   *[package...]* must be source package(s).
+|  wrsrc
+:  Alias for _whatrequires-src_
 |  whatsuggests
 :  Find the packages that Suggest *[package...]*
 |  whatsupplements

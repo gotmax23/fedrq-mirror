@@ -225,3 +225,77 @@ class Whatenhances(WhatCommand):
     _operator = "Enhance"
     operator = "enhances"
     _exclude_subpackages_opt = False
+
+
+class WhatrequiresSrc(WhatCommand):
+    """
+    By default, fedrq whatrequires-src takes one or more valid source package
+    names. Then, it finds the reverse dependencies of the binary RPMs that they
+    produce. Use the options below to modify fedrq whatrequires-src's exact
+    search strategy.
+    This command is a shortcut for `fedrq whatrequires $(fedrq subpkgs ...)`.
+    """
+
+    _exclude_subpackages_opt = True
+    _operator = "Require"
+    operator = "requires"
+
+    @classmethod
+    def make_parser(
+        cls,
+        parser_func: cabc.Callable = argparse.ArgumentParser,
+        *,
+        add_help: bool = False,
+        **kwargs,
+    ) -> argparse.ArgumentParser:
+        pargs = dict(description=cls.__doc__, parents=[cls.parent_parser()], **kwargs)
+        if add_help:
+            _help = f"Find reverse {cls.operator.title()} of a list of source packages' subpackages."
+            pargs["help"] = _help
+        parser = parser_func(**pargs)
+        parser.add_argument(
+            "-X",
+            "--exclude-subpackages",
+            action="store_true",
+        )
+        arch_group = parser.add_mutually_exclusive_group()
+        arch_group.add_argument(
+            "-A",
+            "--arch",
+            help=f"After finding the packages that {cls._operator} NAMES' subpackages, "
+            "filter out the resulting packages that don't match ARCH",
+        )
+        arch_group.add_argument(
+            "-S",
+            "--notsrc",
+            dest="arch",
+            action="store_const",
+            const="notsrc",
+            help="This includes all binary RPMs. Multilib is excluded on x86_64. "
+            "Equivalent to --arch=notsrc",
+        )
+        arch_group.add_argument(
+            "-s",
+            "--src",
+            dest="arch",
+            action="store_const",
+            const="src",
+            help="This is equivalent to --arch=src.",
+        )
+        return parser
+
+    def run(self) -> None:
+        srpms = self.rq.resolve_pkg_specs(self.args.names, with_src=True).filterm(
+            arch="src"
+        )
+        subpackages = self.rq.get_subpackages(srpms)
+        qkwargs = {
+            self.operator: subpackages,
+            "arch": self.args.arch,
+            "latest": self.args.latest,
+        }
+        if self.args.exclude_subpackages:
+            qkwargs["pkg__neq"] = subpackages
+        self.query = self.rq.query(**qkwargs)
+        for p in self.format():
+            print(p)

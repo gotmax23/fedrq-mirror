@@ -15,6 +15,7 @@ from fedrq.cli.commands.whatrequires import (
     Whatenhances,
     Whatrecommends,
     Whatrequires,
+    WhatrequiresSrc,
     Whatsuggests,
     Whatsupplements,
 )
@@ -27,7 +28,7 @@ __all__ = (
     "Whatenhances",
     "Whatrecommends",
     "Whatrequires",
-    "Whatrequires",
+    "WhatrequiresSrc",
     "Whatsuggests",
     "Whatsupplements",
 )
@@ -54,6 +55,9 @@ COMMANDS: dict[str, type[Command]] = {
     "whatenhances": Whatenhances,
     "whatrecommends": Whatrecommends,
     "whatrequires": Whatrequires,
+    "wr": Whatrequires,
+    "whatrequires-src": WhatrequiresSrc,
+    "wrsrc": WhatrequiresSrc,
     "whatsuggests": Whatsuggests,
     "whatsupplements": Whatsupplements,
 }
