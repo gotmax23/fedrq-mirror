@@ -623,7 +623,59 @@ class Repoquery(RepoqueryBase):
 
 
 def get_releasever() -> str:
-    base = libdnf5.base.Base()
-    base.load_config_from_file()
-    base.setup()
-    return base.get_vars().get_value("releasever")
+    # # Creating a second Base object just to retrieve this value is
+    # # prohibitively expensive.
+    # base = libdnf5.base.Base()
+    # base.load_config_from_file()
+    # base.setup()
+    # return base.get_vars().get_value("releasever")
+
+    # This is taken from dnf and slightly modified until
+    # https://github.com/rpm-software-management/dnf5/issues/281 is resolved.
+    #
+    # SPDX-License-Identifier: GPL-2.0-or-later
+    # Copyright (C) 2012-2015  Red Hat, Inc.
+    DISTROVERPKG = (
+        "system-release(releasever)",
+        "system-release",
+        "distribution-release(releasever)",
+        "distribution-release",
+        "redhat-release",
+        "suse-release",
+    )
+    ts = rpm.TransactionSet("/")
+    try:
+        ts.setVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
+        for distroverpkg in map(lambda p: p.encode("utf-8"), DISTROVERPKG):
+            idx = ts.dbMatch("provides", distroverpkg)
+            if not len(idx):
+                continue
+            try:
+                hdr = next(idx)
+            except StopIteration:
+                raise RuntimeError(
+                    "Error: rpmdb failed to list provides. Try: rpm --rebuilddb"
+                )
+            releasever = hdr["version"]
+            try:
+                try:
+                    # header returns bytes -> look for bytes
+                    # it may fail because rpm returns a decoded string since 10 Apr 2019
+                    off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg)
+                except ValueError:
+                    # header returns a string -> look for a string
+                    off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg.decode("utf8"))
+                flag = hdr[rpm.RPMTAG_PROVIDEFLAGS][off]
+                ver = hdr[rpm.RPMTAG_PROVIDEVERSION][off]
+                if flag == rpm.RPMSENSE_EQUAL and ver:
+                    if hdr["name"] not in (distroverpkg, distroverpkg.decode("utf8")):
+                        # override the package version
+                        releasever = ver
+            except (ValueError, KeyError, IndexError):
+                pass
+            if isinstance(releasever, bytes):
+                releasever = releasever.decode("utf-8")
+            return releasever
+        return ""
+    finally:
+        ts.closeDB()
