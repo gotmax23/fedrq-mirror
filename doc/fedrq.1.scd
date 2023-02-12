@@ -71,10 +71,6 @@ These options have the same meaning across multiple subcommands.
 	This is similar to *dnf repoquery --qf* but more limited.
 	All Package attributes from *dnf repoquery --querytags* are supported.
 	Some custom formatters are also available. See FORMATTERS for a list.
-
-	*NOTE*: *--formatter* is provisional and may be removed or have its
-	interface changed in the near future.
-	Give your feedback at https://todo.sr.ht/~gotmax23/fedrq/3.
 *--debug*
 	Enable debug logging. Useful for development or bug reporting.
 *-P*, *--resolve-packages*
@@ -100,6 +96,18 @@ These options have the same meaning across multiple subcommands.
 	Equivalent to *--arch=notsrc*. This is a pseudo arch that does not exist
 	in rpm. It includes noarch and the system architecture. It does NOT
 	include multilib.
+*-B*, *--backend* <dnf|libdnf5>
+	Which package manager backend to use.
+	By default, fedrq uses dnf and falls back to libdnf5. Set *-B* /
+	*--backend* to make an explicit choice.
+	If you explicitly choose a backend whose dependencies are not met on
+	your system, fedrq will not fallback to another one.
+*-L*, *--filelists* <always|auto|never> (default: _auto_)
+	Whether to load filelists. By default, filelists are only loaded when
+	using the files formatter (i.e. *-F files* or *-F json:files*). This
+	only applies when using the libdnf5 backend, which doesn't load
+	filelists by default to save memory and bandwidth. dnf4 always loads
+	filelists.
 
 ## whatrequires, whatrecommends, whatsuggests
 
@@ -203,7 +211,7 @@ builtin configuration files.
 
 *~/.config/fedrq/\*.toml* User configuration files. Highest precedence
 
-See fedrq(5) (TODO) for configuration file syntax.
+See fedrq(5) for configuration file syntax.
 
 # EXAMPLES
 
