@@ -248,7 +248,7 @@ class RQConfig(BaseModel):
                 # allow falling back to a non default backend
                 # (i.e. not backends.DEFAULT_BACKEND)
                 # when the user does not explicitly request a backend.
-                fallback=bool(self.backend),
+                fallback=not bool(self.backend),
             )
         return self._backend_mod
 
