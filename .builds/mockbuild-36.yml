@@ -23,11 +23,16 @@ tasks:
       ./venv/bin/pip install nox
   - mockbuild-f36: |
       cd fedrq
-      $nox -e mockbuild -- --resultdir results_fedrq -r "${CHROOT}-$(rpm -E %_arch)"
+      $nox -e mockbuild -- --resultdir results_fedrq -r "${CHROOT}-$(rpm -E %_arch)" \
+        -a 'https://download.copr.fedorainfracloud.org/results/rpmsoftwaremanagement/dnf5-unstable/fedora-$releasever-$basearch/' \
+        --with libdnf5
       tar cvf results_fedrq.tar.gz results_fedrq
   - pytest-py310: |
       cd fedrq
-      $nox -e test -- -v
+      sudo dnf copr enable -y rpmsoftwaremanagement/dnf5-unstable
+      sudo dnf install -y python3-libdnf5
+      FEDRQ_BACKEND=dnf $nox -e test -- -v
+      FEDRQ_BACKEND=libdnf5 $nox -e test -- -v
   - typing-py310: |
       cd fedrq
       $nox -e typing
