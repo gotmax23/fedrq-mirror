@@ -248,11 +248,14 @@ class WhatrequiresSrc(WhatCommand):
         add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
-        pargs = dict(description=cls.__doc__, parents=[cls.parent_parser()], **kwargs)
+        kwargs.update(dict(description=cls.__doc__, parents=[cls.parent_parser()]))
         if add_help:
-            _help = f"Find reverse {cls.operator.title()} of a list of source packages' subpackages."
-            pargs["help"] = _help
-        parser = parser_func(**pargs)
+            _help = (
+                f"Find reverse {cls.operator.title()} of a list of"
+                " source packages' subpackages."
+            )
+            kwargs["help"] = _help
+        parser = parser_func(**kwargs)
         parser.add_argument(
             "-X",
             "--exclude-subpackages",

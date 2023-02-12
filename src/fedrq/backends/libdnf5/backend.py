@@ -537,14 +537,17 @@ class PackageQuery(libdnf5.rpm.PackageQuery):
         comp: _pkg_comps = libdnf5.common.QueryCmp_EQ,
         /,
     ):
-        if hasattr(self, "__rq__"):
-            base = self.__rq__.base
+        if isinstance(pkgs, (libdnf5.rpm.PackageSet, libdnf5.rpm.PackageQuery)):
+            newquery = pkgs
         else:
-            base = self.get_base()
-        newquery = libdnf5.rpm.PackageSet(base)
-        newquery.clear()
-        for p in pkgs:
-            newquery.add(p)
+            if hasattr(self, "__rq__"):
+                base = self.__rq__.base
+            else:
+                base = self.get_base()
+            newquery = libdnf5.rpm.PackageSet(base)
+            newquery.clear()
+            for p in pkgs:
+                newquery.add(p)
         if comp == libdnf5.common.QueryCmp_EQ:
             self.intersection(newquery)
         elif comp == libdnf5.common.QueryCmp_NEQ:
@@ -556,10 +559,10 @@ class PackageQuery(libdnf5.rpm.PackageQuery):
         return f"{self.__class__.__name__}<{tuple(self)}>"
 
 
-ValT = t.TypeVar("ValT")
+_ValT = t.TypeVar("_ValT")
 
 
-def _convert_value(key: str, value: ValT) -> t.Union[list[ValT], ValT]:
+def _convert_value(key: str, value: _ValT) -> t.Union[list[_ValT], _ValT]:
     d_annotations = t.get_type_hints(QueryFilterKwargs)
     annotation = d_annotations[key]
     if t.get_origin(annotation) is not t.Union or not any(

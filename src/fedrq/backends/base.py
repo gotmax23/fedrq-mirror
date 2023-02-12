@@ -330,8 +330,8 @@ class RepoqueryBase(abc.ABC):
     def query(
         self, *, arch: str | Iterable[str] | None = None, **kwargs
     ) -> PackageQueryCompat:
-        if kwargs.get("latest", "UNDEFINED") is None:
-            kwargs.pop("latest")
+        if kwargs.get("latest") is None:
+            kwargs.pop("latest", None)
         query = self._query()
         query.filterm(**kwargs)
         self.arch_filterm(query, arch)
