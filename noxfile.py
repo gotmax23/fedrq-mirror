@@ -13,7 +13,7 @@ import nox
 import nox.command
 import nox.virtualenv
 
-nox.options.sessions = "test", "lint"
+nox.options.sessions = "test", "lint", "libdnf5_test"
 
 IN_CI = "JOB_ID" in os.environ
 ALLOW_EDITABLE = os.environ.get("ALLOW_EDITABLE", str(not IN_CI)).lower() in (
@@ -69,7 +69,7 @@ def install_system(
 
 
 @nox.session(venv_params=["--system-site-packages"])
-def test(session: nox.Session):
+def test(session: nox.Session, backend=None):
     install_system(session, "createrepo_c", "rpm-build", "python3-rpm")
     install(session, ".[test]", "pytest-xdist", editable=True)
     posargs = session.posargs
@@ -83,8 +83,17 @@ def test(session: nox.Session):
         env={
             "PYTEST_PLUGINS": "xdist.plugin,pytest_mock",
             "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
-        },
+        }
+        | {"FEDRQ_BACKEND": backend}
+        if backend
+        else {},
     )
+
+
+@nox.session(venv_params=["--system-site-packages"])
+def libdnf5_test(session: nox.Session):
+    install_system(session, "python3-libdnf5")
+    test.func(session, "libdnf5")
 
 
 @nox.session(venv_backend="none")
