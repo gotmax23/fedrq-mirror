@@ -199,6 +199,9 @@ class Command(abc.ABC):
             " dnf4 always loads filelists.",
         )
         parser.add_argument("-B", "--backend", choices=tuple(BACKENDS))
+        parser.add_argument(
+            "--forcearch", help="Query a foreign architecture's repositories"
+        )
         return parser
 
     @classmethod
@@ -297,7 +300,10 @@ class Command(abc.ABC):
             self.args.smartcache = True
         if not self.args.smartcache:
             return None
-        if self.release.version == self.backend.get_releasever():
+        if (
+            not self.args.forcearch
+            and self.release.version == self.backend.get_releasever()
+        ):
             self.args.cachedir = None
             self.args.smartcache = False
             return None
@@ -314,13 +320,17 @@ class Command(abc.ABC):
 
     @v_add_errors
     def v_rq(self) -> str | None:
-        base = self.release.make_base(
-            _cachedir=self.args.cachedir,
-            load_filelists=self.filelists,
-            backend=self.backend,
-        )
-
-        self.rq = self.backend.Repoquery(base)
+        base_maker = self.backend.BaseMaker()
+        if self.args.cachedir:
+            base_maker.set("cachedir", str(self.args.cachedir))
+        if self.args.load_filelists:
+            base_maker.load_filelists()
+        base_maker.set_var("releasever", self.release.version)
+        if self.args.forcearch:
+            base_maker.set("ignorearch", True)
+            base_maker.set_var("arch", self.args.forcearch)
+        base_maker.load_release_repos(self.release)
+        self.rq = self.backend.Repoquery(base_maker.fill_sack())
         return None
 
     @v_fatal_error

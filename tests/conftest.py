@@ -99,7 +99,7 @@ def target_cpu():
 
 
 @pytest.fixture
-def runs(capsys, patch_config_dirs):
+def runs(capsys):
     def runner(args, return_stdout=True):
         fedrq.cli.main(args)
         stdout, stderr = capsys.readouterr()

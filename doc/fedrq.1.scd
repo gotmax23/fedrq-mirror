@@ -103,6 +103,8 @@ These options have the same meaning across multiple subcommands.
 	Equivalent to *--arch=notsrc*. This is a pseudo arch that does not exist
 	in rpm. It includes noarch and the system architecture. It does NOT
 	include multilib.
+*--forcearch* <str>
+	Query a foreign architecture's repositories
 *-B*, *--backend* <dnf|libdnf5>
 	Which package manager backend to use.
 	By default, fedrq uses dnf and falls back to libdnf5. Set *-B* /
