@@ -6,6 +6,7 @@ image: fedora/rawhide
 packages:
   - mock
   - mock-core-configs
+  - rpmlint
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
 environment:
@@ -24,3 +25,5 @@ tasks:
       cd fedrq
       $nox -e mockbuild -- --resultdir results_fedrq -r "${CHROOT}-$(rpm -E %_arch)"
       tar cvf results_fedrq.tar.gz results_fedrq
+  - rpmlint: |
+      rpmlint fedrq/results_fedrq/*.rpm
