@@ -90,6 +90,12 @@ def test(session: nox.Session, backend=None):
     )
 
 
+@nox.session(venv_backend="none")
+def testa(session):
+    session.notify("test")
+    session.notify("libdnf5_test")
+
+
 @nox.session(venv_params=["--system-site-packages"])
 def libdnf5_test(session: nox.Session):
     install_system(session, "python3-libdnf5")
