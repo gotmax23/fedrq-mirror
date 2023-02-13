@@ -36,6 +36,10 @@ by creating a configuration file with higher precedence.
 *releases* <dict[str, ReleaseConfig]>
 	Keys are a friendly name for the distribution.
 	RELEASE specifies the format for the values.
+*filelists* <always|never|auto> (default: _auto_)
+	See *--filelists* in fedrq(1)
+*backend* <dnf|libdnf5>
+	See *--backend* in fedrq(1)
 
 ## RELEASE
 
