@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import functools
 import logging
 import typing as t
 from collections.abc import Collection, Iterable
@@ -30,7 +31,7 @@ IntIter = t.Union[list[int], tuple[int], int]
 CONVERT_TO_LIST = (str, int)
 
 
-class QueryFilterKwargs(t.TypedDict, total=False):
+class _QueryFilterKwargs(t.TypedDict, total=False):
     name: t.Union[StrIter, libdnf5.rpm.PackageSet]
     name__eq: t.Union[StrIter, libdnf5.rpm.PackageSet]
     name__neq: t.Union[StrIter, libdnf5.rpm.PackageSet]
@@ -266,12 +267,23 @@ class BaseMaker(BaseMakerBase):
         option.add_item(libdnf5.conf.METADATA_TYPE_FILELISTS)
 
 
+@functools.total_ordering
 class Package(libdnf5.rpm.Package):
     DEBUGINFO_SUFFIX = "-debuginfo"
     DEBUGSOURCE_SUFFIX = "-debugsource"
+    """
+    libdnf5.rpm.Package subclass with strong dnf.package.Package compatability
+    """
 
     def __hash__(self) -> int:
         return hash(self.get_id().id)
+
+    def __gt__(self, other) -> bool:
+        if not isinstance(other, libdnf5.rpm.Package):
+            raise TypeError
+        if self.name != other.name:
+            return self.name > other.name
+        return libdnf5.rpm.rpmvercmp(self.get_nevra(), other.get_nevra()) > 0
 
     @property
     def name(self) -> str:
@@ -339,7 +351,7 @@ class Package(libdnf5.rpm.Package):
         return name + self.DEBUGINFO_SUFFIX
 
     @property
-    def source_name(self) -> str | None:
+    def source_name(self) -> t.Optional[str]:
         # def source_name(self) -> str:
         return None if self.arch == "src" else self.get_source_name()
         # return self.get_source_name()
@@ -402,8 +414,8 @@ class Package(libdnf5.rpm.Package):
         return self.get_conflicts()
 
     @property
-    def sourcerpm(self) -> str:
-        return self.get_sourcerpm()
+    def sourcerpm(self) -> t.Optional[str]:
+        return self.get_sourcerpm() or None
 
     @property
     def description(self) -> str:
@@ -458,6 +470,10 @@ libdnf5._rpm.Package_swigregister(Package)
 
 
 class Reldep5(libdnf5.rpm.Reldep):
+    """
+    Subclass of libdnf5.rpm.Reldep with a useful __str__() method
+    """
+
     def __str__(self) -> str:
         return self.to_string()
 
@@ -468,10 +484,16 @@ libdnf5._rpm.Reldep_swigregister(Reldep5)
 class PackageQuery(libdnf5.rpm.PackageQuery):
     __rq__: Repoquery
 
+    """
+    Subclass of libdnf5.rpm.PackageQuery with hawkey.Query compatability
+    """
+
     def _filter(  # type: ignore[override]
         self,
-        **kwargs: Unpack[QueryFilterKwargs],
+        **kwargs: Unpack[_QueryFilterKwargs],
     ) -> None:
+        if not kwargs:
+            return None
         filter_mapping = {
             "latest": "latest_evr",
             "latest_per_arch": "latest_evr",
@@ -489,7 +511,7 @@ class PackageQuery(libdnf5.rpm.PackageQuery):
         }
         invalid = []
         for key in kwargs:
-            if key not in QueryFilterKwargs.__annotations__:
+            if key not in _QueryFilterKwargs.__annotations__:
                 invalid.append(key)
         if invalid:
             raise TypeError(f"Invalid keyword arguments: {invalid}")
@@ -508,14 +530,14 @@ class PackageQuery(libdnf5.rpm.PackageQuery):
 
     def filterm(  # type: ignore[override]
         self,
-        **kwargs: Unpack[QueryFilterKwargs],
+        **kwargs: Unpack[_QueryFilterKwargs],
     ) -> PackageQuery:
         self._filter(**kwargs)
         return self
 
     def filter(  # type: ignore[override]
         self,
-        **kwargs: Unpack[QueryFilterKwargs],
+        **kwargs: Unpack[_QueryFilterKwargs],
     ) -> PackageQuery:
         self._filter(**kwargs)
         return self
@@ -566,7 +588,11 @@ _ValT = t.TypeVar("_ValT")
 
 
 def _convert_value(key: str, value: _ValT) -> t.Union[list[_ValT], _ValT]:
-    d_annotations = t.get_type_hints(QueryFilterKwargs)
+    """
+    Overkill code to normalize single strings or ints that libdnf5 requires to
+    be a list based on type annotations.
+    """
+    d_annotations = t.get_type_hints(_QueryFilterKwargs)
     annotation = d_annotations[key]
     if t.get_origin(annotation) is not t.Union or not any(
         isinstance(value, typ) for typ in CONVERT_TO_LIST
@@ -629,6 +655,9 @@ class Repoquery(RepoqueryBase):
 
 
 def get_releasever() -> str:
+    """
+    Return the system releasever
+    """
     # # Creating a second Base object just to retrieve this value is
     # # prohibitively expensive.
     # base = libdnf5.base.Base()
@@ -685,3 +714,15 @@ def get_releasever() -> str:
         return ""
     finally:
         ts.closeDB()
+
+
+__all__ = (
+    "BACKEND",
+    "BaseMaker",
+    "Package",
+    "PackageQuery",
+    "Repoquery",
+    "get_releasever",
+    #
+    "libdnf5",
+)

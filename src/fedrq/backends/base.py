@@ -7,7 +7,7 @@ import abc
 import importlib.resources
 import logging
 from collections.abc import Callable, Collection, Iterable, Iterator
-from typing import TYPE_CHECKING, Any, Protocol, TypeVar, runtime_checkable
+from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar, runtime_checkable
 from warnings import warn
 
 if TYPE_CHECKING:
@@ -21,6 +21,10 @@ LOG = logging.getLogger("fedrq.backends")
 
 @runtime_checkable
 class PackageCompat(Protocol):
+    """
+    Common interface provided by dnf.package.Package and other backends
+    """
+
     @property
     def name(self) -> str:
         ...
@@ -70,7 +74,7 @@ class PackageCompat(Protocol):
         ...
 
     @property
-    def source_name(self) -> str | None:
+    def source_name(self) -> Optional[str]:
         ...
 
     @property
@@ -130,7 +134,7 @@ class PackageCompat(Protocol):
         ...
 
     @property
-    def sourcerpm(self) -> str:
+    def sourcerpm(self) -> Optional[str]:
         ...
 
     @property
@@ -150,7 +154,7 @@ class PackageCompat(Protocol):
         ...
 
     @property
-    def reason(self) -> str | None:
+    def reason(self) -> Optional[str]:
         ...
 
     @property
@@ -173,16 +177,52 @@ class PackageCompat(Protocol):
     def packager(self) -> str:
         ...
 
+    def __hash__(self) -> int:
+        ...
+
+    def __lt__(self, other) -> bool:
+        ...
+
+    def __le__(self, other) -> bool:
+        ...
+
+    def __gt__(self, other) -> bool:
+        ...
+
+    def __ge__(self, other) -> bool:
+        ...
+
 
 @runtime_checkable
 class PackageQueryCompat(Protocol):
+    """
+    Common PackageQuery interface provided by hawkey.Query and other backends.
+    """
+
     def filter(self, **kwargs) -> PackageQueryCompat:
+        """
+        Filter the PackageQuery.
+        Depending on the backend, this either modifies 'self' in place and
+        return 'self' or return a new PackageQuery object.
+        See https://dnf.readthedocs.io/en/latest/api_queries.html#dnf.query.Query.filter
+        for the allowed kwargs.
+        """
         ...
 
     def filterm(self, **kwargs) -> PackageQueryCompat:
+        """
+        Filter the PackageQuery in place and return 'self'.
+        See https://dnf.readthedocs.io/en/latest/api_queries.html#dnf.query.Query.filter
+        for the allowed kwargs.
+        """
         ...
 
     def union(self: _QueryT, other: _QueryT) -> _QueryT:
+        """
+        Combine two PackageQuery objects.
+        Depending on the backend, this either modifies 'self' in place and
+        returns 'self' or returns a new PackageQuery object.
+        """
         ...
 
     def __len__(self) -> int:
@@ -194,7 +234,7 @@ class PackageQueryCompat(Protocol):
 
 class BaseMakerBase(abc.ABC):
     """
-    Create a Base object and load repos
+    Create a Base object, set configuration, and load repos
     """
 
     base: Any
@@ -212,9 +252,9 @@ class BaseMakerBase(abc.ABC):
         """
         Fill the sack and returns the Base object.
         The repository configuration shouldn't be manipulated after this.
-
-        Note that the `_cachedir` arg is private and subject to removal.
+        'from_cache' isn't currently supported by the libdnf5 backend.
         """
+        ...
 
     @abc.abstractmethod
     def read_system_repos(self, disable: bool = True) -> None:
@@ -247,8 +287,7 @@ class BaseMakerBase(abc.ABC):
     @abc.abstractmethod
     def set(self, key: str, value: Any) -> None:
         """
-        Set configuration options.
-        Must be called before set_var() and before reading repos.
+        Set configuration options. Must be called before reading repos.
         """
         ...
 
@@ -256,16 +295,35 @@ class BaseMakerBase(abc.ABC):
     def set_var(self, key: str, value: Any) -> None:
         """
         Set substitutions (e.g. arch, basearch, releasever).
-        Needs to be called after all options have been set() (if any)
-        and before reading repos.
+        Needs to be called before reading repos.
         """
         ...
 
+    def sets(self, conf: dict[str, Any], vars: dict[str, Any]) -> None:
+        """
+        :param conf: A dict of configuration options. Call self.set() for each
+        k-v pair.
+        :param vars: A dict of substitutions/vars options. Call self.set_var()
+        for each k-v pair.
+        """
+        for opt in conf.items():
+            self.set(*opt)
+        for opt in vars.items():
+            self.set_var(*opt)
+
     def load_filelists(self) -> None:
         # Can be overriden by subclasses. Purposely isn't an @abstractmethod.
+        """
+        Load the filelists if they're not already enabled default
+        """
         pass
 
-    def load_release_repos(self, release: Release) -> None:
+    def load_release_repos(self, release: Release, set_releasever: bool = True) -> None:
+        """
+        Load the repositories from a fedrq.config.Release object
+        """
+        if set_releasever:
+            self.set_var("releasever", release.version)
         if release.release_config.system_repos:
             self.read_system_repos()
         for path in release.release_config.full_def_paths:
@@ -279,7 +337,7 @@ class BaseMakerBase(abc.ABC):
 class RepoqueryBase(abc.ABC):
     """
     Helpers to query a repository.
-    Provides a unified interface for different backends.
+    Provides a unified repoquery interface for different backends.
     """
 
     def __init__(self, base) -> None:
@@ -288,6 +346,9 @@ class RepoqueryBase(abc.ABC):
     @property
     @abc.abstractmethod
     def base_arches(self) -> set[str]:
+        """
+        Return a set of the system's arch and basearch.
+        """
         ...
 
     @abc.abstractmethod
@@ -298,11 +359,35 @@ class RepoqueryBase(abc.ABC):
         latest: int | None = None,
         with_src: bool = True,
     ) -> PackageQueryCompat:
+        """
+        Resolve pkg specs.
+        See
+        https://dnf.readthedocs.io/en/latest/command_ref.html?highlight=spec#specifying-packages
+        or
+        https://dnf5.readthedocs.io/en/latest/misc/specs.7.html
+        for valid forms.
+
+        :param specs: Package specs to resolve.
+        :param resolve: Whether to resolve file paths or virtual Provides in
+                        addition to package specs
+        :param latest: Limit packages with the same name and arch.
+        """
         ...
 
     def arch_filterm(
         self, query: PackageQueryCompat, arch: str | Iterable[str] | None = None
     ) -> PackageQueryCompat:
+        """
+        Filter a query's architectures in place and return it.
+        It includes a little more functionality than query.filterm(arch=...).
+            - When arch is None, the query is left untouched.
+            - If arch equals 'notsrc', all src and multilib packages are
+              excluded.
+            - If arch equals 'arched', all noarch, multilib, and source
+              packages are excluded.
+            - Otherwise, arch is passed to query.filterm(arch=...) and no other
+              validation is preformed.
+        """
         if not arch:
             return query
         if arch == "notsrc":
@@ -315,6 +400,17 @@ class RepoqueryBase(abc.ABC):
     def arch_filter(
         self, query: PackageQueryCompat, arch: str | Iterable[str] | None = None
     ) -> PackageQueryCompat:
+        """
+        Filter a query's architectures and return it.
+        It includes a little more functionality than query.filter(arch=...).
+            - When arch is None, the query is left untouched.
+            - If arch equals 'notsrc', all src and multilib packages are
+              excluded.
+            - If arch equals 'arched', all noarch, multilib, and source
+              packages are excluded.
+            - Otherwise, arch is passed to query.filterm(arch=...) and no other
+              validation is preformed.
+        """
         if not arch:
             return query
         if arch == "notsrc":
@@ -325,11 +421,19 @@ class RepoqueryBase(abc.ABC):
 
     @abc.abstractmethod
     def _query(self) -> PackageQueryCompat:
+        """
+        Return the PackageQuery object for this backend
+        """
         return self.base.sack.query()
 
     def query(
         self, *, arch: str | Iterable[str] | None = None, **kwargs
     ) -> PackageQueryCompat:
+        """
+        Return an inital PackageQuery that's filtered with **kwargs.
+        Further filtering can be applied with the PackageQuery's filter and
+        filterm methods.
+        """
         if kwargs.get("latest") is None:
             kwargs.pop("latest", None)
         query = self._query()
@@ -342,20 +446,24 @@ class RepoqueryBase(abc.ABC):
         name: str,
         arch: str | Iterable[str] | None = None,
     ) -> PackageCompat:
+        """
+        Return the latest Package that matches the 'name' and 'arch'.
+        A ValueError is raised when no matches are found.
+        """
         query = self.query(name=name, arch=arch, latest=1)
         if len(query) < 1:
-            raise RuntimeError(f"Zero packages found for {name} on {arch}")
+            raise ValueError(f"Zero packages found for {name} on {arch}")
         return next(iter(query))
 
     def get_subpackages(
         self, packages: Iterable[PackageCompat], **kwargs
     ) -> PackageQueryCompat:
         """
-        Return a hawkey.Query containing the binary RPMS/subpackages produced
+        Return a PackageQuery containing the binary RPMS/subpackages produced
         by {packages}.
 
         :param package: A :class:`PackageQueryCompat` containing source packages
-        :arch package: Set this to filter out subpackages with a specific arch
+        :param package: Set this to filter out subpackages with a specific arch
         """
         arch = kwargs.get("arch")
         if arch == "src":
@@ -382,7 +490,9 @@ class BackendMod(Protocol):
     Protocol for a backend module
     """
 
-    get_releasever: Callable[[], str]
-    BaseMaker: type[BaseMakerBase]
-    Repoquery: type[RepoqueryBase]
     BACKEND: str
+    BaseMaker: type[BaseMakerBase]
+    Package: type[PackageCompat]
+    PackageQuery: type[PackageQueryCompat]
+    Repoquery: type[RepoqueryBase]
+    get_releasever: Callable[[], str]

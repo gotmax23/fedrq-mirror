@@ -10,7 +10,7 @@ import logging
 import typing as t
 
 from fedrq._utils import filter_latest, get_source_name
-from fedrq.backends.base import PackageQueryCompat
+from fedrq.backends.base import PackageCompat, PackageQueryCompat
 from fedrq.cli.base import Command
 from fedrq.cli.formatters import DefaultFormatters, Formatter
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class BreakdownFormatter(Formatter):
-    def format(self, packages: PackageQueryCompat) -> cabc.Iterable[str]:
+    def format(self, packages: cabc.Iterable[PackageCompat]) -> cabc.Iterable[str]:
         runtime = []
         buildtime = []
         for p in packages:
@@ -124,7 +124,9 @@ class WhatCommand(Command):
         brpms = self.rq.query(pkg=rpms, arch__neq="src")
         srpms = self.rq.query(pkg=rpms, arch="src")
 
-        brpm_sourcerpms = [re.sub(r"\.rpm$", "", pkg.sourcerpm) for pkg in brpms]
+        brpm_sourcerpms = [
+            re.sub(r"\.rpm$", "", t.cast(str, pkg.sourcerpm)) for pkg in brpms
+        ]
         brpm_srpm_query = self.rq.resolve_pkg_specs(brpm_sourcerpms)
         subpackages = self.rq.get_subpackages(brpm_srpm_query.union(srpms))
         self.query.filterm(pkg__neq=subpackages)

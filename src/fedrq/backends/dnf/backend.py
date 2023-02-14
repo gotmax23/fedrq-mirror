@@ -9,11 +9,17 @@ from collections.abc import Collection
 
 from fedrq._utils import filter_latest
 from fedrq.backends import MissingBackendError
-from fedrq.backends.base import BaseMakerBase, RepoqueryBase
+from fedrq.backends.base import (
+    BaseMakerBase,
+    PackageCompat,
+    PackageQueryCompat,
+    RepoqueryBase,
+)
 from fedrq.backends.dnf import BACKEND
 
 try:
     import dnf
+    import hawkey
 except ImportError:
     raise MissingBackendError from None
 
@@ -41,10 +47,11 @@ class BaseMaker(BaseMakerBase):
         return self.base.conf
 
     def set(self, key: str, value: t.Any) -> None:
-        # self.conf.set_or_append_opt_value(key, value)
         setattr(self.conf, key, value)
 
     def set_var(self, key: str, value: t.Any) -> None:
+        if key not in self.base.conf.substitutions:
+            raise KeyError(f"{key} is not a valid substituion")
         self.set(key, value)
 
     def fill_sack(
@@ -136,7 +143,23 @@ class Repoquery(RepoqueryBase):
 
 
 def get_releasever():
+    """
+    Return the system releasever
+    """
     return dnf.rpm.detect_releasever("/")
 
 
-__all__ = ("BACKEND", "BaseMaker", "Repoquery", "get_releasever")
+Package: PackageCompat = dnf.package.Package
+PackageQuery: PackageQueryCompat = dnf.query.Query
+
+__all__ = (
+    "BACKEND",
+    "BaseMaker",
+    "Package",
+    "PackageQuery",
+    "Repoquery",
+    "get_releasever",
+    #
+    "dnf",
+    "hawkey",
+)

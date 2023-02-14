@@ -27,7 +27,7 @@ def ensure_backend() -> None:
             raise MissingBackendError(f"Backend {BACKEND!r} requires {needs}")
 
 
-def _get_backend() -> ModuleType:
+def get_backend() -> ModuleType:
     from . import backend
 
     return backend

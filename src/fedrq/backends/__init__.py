@@ -75,11 +75,11 @@ class _DefaultBackend:
             raise MissingBackendError(f"Invalid backend {default!r}.")
         backends = _get_backends()
         if backend := backends.available.get(default):
-            return backend._get_backend()
+            return backend.get_backend()
         if not fallback:
             raise backends.missing[default]
         if backend := next(iter(backends.available.values()), None):
-            return backend._get_backend()
+            return backend.get_backend()
         _split = ", ".join(backends.missing)
         raise MissingBackendError(
             f"Neither of the following backends were available: {_split}"

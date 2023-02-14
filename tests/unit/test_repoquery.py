@@ -1,17 +1,15 @@
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-import pytest
 
 from fedrq import config as rqconfig
 from fedrq.backends.base import PackageCompat, PackageQueryCompat, RepoqueryBase
 
 
-@pytest.mark.no_rpm_mock
-def test_make_base_rawhide_repos():
+def test_make_base_rawhide_repos() -> None:
     config = rqconfig.get_config()
     rawhide = config.get_release("rawhide")
-    base = rawhide.make_base(fill_sack=False)
+    base = rawhide.make_base(config, fill_sack=False)
     backend: str = config.backend_mod.BACKEND
     if backend == "dnf":
         assert len(tuple(base.repos.iter_enabled())) == len(rawhide.repos)

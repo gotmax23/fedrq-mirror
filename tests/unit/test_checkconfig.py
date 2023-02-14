@@ -31,7 +31,7 @@ def test_checkconfig_dump(run_command2, patch_config_dirs):
     defs = {"base": ["testrepo1"]}
     expected = {
         "matcher": "^(tester)$",
-        "defpaths": [],
+        "defpaths": ["testrepo1.repo"],
         "system_repos": False,
         "defs": defs,
         "repo_dirs": list(

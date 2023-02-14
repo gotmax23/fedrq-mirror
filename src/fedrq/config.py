@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import typing as t
+import warnings
 import zipfile
 from collections.abc import Callable
 from enum import auto as auto_enum
@@ -17,6 +18,7 @@ from importlib.abc import Traversable
 from pathlib import Path
 
 from fedrq._compat import StrEnum
+from fedrq.backends.base import BaseMakerBase
 
 if sys.version_info < (3, 11):
     import tomli as tomllib
@@ -30,11 +32,12 @@ from fedrq.backends import BACKENDS, get_default_backend
 
 if t.TYPE_CHECKING:
     import dnf
-    from _typeshed import StrPath
+    import libdnf5
 
     from fedrq.backends.base import BackendMod, RepoqueryBase
 
 CONFIG_DIRS = (Path.home() / ".config/fedrq", Path("/etc/fedrq"))
+DEFAULT_REPO_CLASS = "base"
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +71,7 @@ class ReleaseConfig(BaseModel):
         flog = mklog(__name__, "ReleaseConfig", "_get_full_defpaths")
         flog.debug(f"Getting defpaths for {values['name']}: {value}")
         values["full_def_paths"] = cls._get_full_defpaths(
-            values["name"], value, values["repo_dirs"]
+            values["name"], value.copy(), values["repo_dirs"]
         )
         return value
 
@@ -150,13 +153,18 @@ class ReleaseConfig(BaseModel):
             raise ConfigError(f"Missing defpaths in {name}: {_missing}")
         return full_defpaths
 
-    def get_release(self, branch: str, repo_name: str = "base") -> Release:
+    def get_release(
+        self, config: RQConfig, branch: str, repo_name: str = "base"
+    ) -> Release:
         return Release(release_config=self, branch=branch, repo_name=repo_name)
 
 
 class Release:
     def __init__(
-        self, release_config: ReleaseConfig, branch: str, repo_name: str = "base"
+        self,
+        release_config: ReleaseConfig,
+        branch: str,
+        repo_name: str = "base",
     ) -> None:
         self.release_config = release_config
         if not self.release_config.is_match(branch):
@@ -193,30 +201,41 @@ class Release:
 
     def make_base(
         self,
-        base: dnf.Base | None = None,
+        config: RQConfig | None = None,
+        base_conf: dict[str, t.Any] | None = None,
+        base_vars: dict[str, t.Any] | None = None,
+        base_maker: BaseMakerBase | None = None,
         fill_sack: bool = True,
-        *,
-        _cachedir: StrPath | None = None,
-        load_filelists: bool = True,
-        backend: BackendMod | None = None,
-    ) -> dnf.Base:
+    ) -> dnf.Base | libdnf5.base.Base:
         """
-        Return a dnf.Base object based on the releases's configuration
-
-        Note that the `_cachedir` arg is private and subject to removal.
+        :param config: An RQConfig object.
+                       DEPRECATED since 0.4.0: A new RQConfig object will be
+                                               created if this is None.
+        :param base_conf: Base session configuration
+        :param base_vars: Base session vars/substitutions (arch, basearch,
+                                                           releasever, etc.)
+        :param base_maker: Existing BaseMaker object to configure.
+                           If base_maker is None, a new one will be created.
+        :param fill_sack: Whether to fill the Base object's package sack or
+                          just return the Base object after applying configuration.
         """
-        backend = backend or get_default_backend()
-        base_maker = backend.BaseMaker(base)
-        base = base_maker.base
-        if _cachedir:
-            base_maker.set("cachedir", str(_cachedir))
-        if load_filelists:
-            base_maker.load_filelists()
-        base_maker.set_var("releasever", self.version)
-        base_maker.load_release_repos(self)
-        if fill_sack:
-            base_maker.fill_sack()
-        return base_maker.base
+        if config is None:
+            warnings.warn(
+                "DEPRECATED since 0.4.0: Provide an RQConfig object for 'config'"
+            )
+            config = get_config()
+        base_conf = base_conf or {}
+        base_vars = base_vars or {}
+        if config.smartcache and self.version != config.backend_mod.get_releasever():
+            base_conf.setdefault(
+                "cachedir", str(get_smartcache_basedir() / str(self.branch))
+            )
+        bm = base_maker or config.backend_mod.BaseMaker()
+        bm.sets(base_conf, base_vars)
+        if config.load_filelists:
+            bm.load_filelists()
+        bm.load_release_repos(self, "releasever" not in base_vars)
+        return bm.fill_sack() if fill_sack else bm.base
 
 
 class RQConfig(BaseModel):
@@ -237,7 +256,9 @@ class RQConfig(BaseModel):
 
     @validator("backend")
     def v_backend(cls, value) -> str:
-        assert value in BACKENDS, f"Valid backends are: {', '.join(BACKENDS)}"
+        assert (
+            value is None or value in BACKENDS
+        ), f"Valid backends are: {', '.join(BACKENDS)}"
         return value
 
     @property
@@ -253,21 +274,19 @@ class RQConfig(BaseModel):
         return self._backend_mod
 
     def get_release(
-        self, branch: str | None = None, repo_name: str = "base"
+        self, branch: str | None = None, repo_name: str | None = None
     ) -> Release:
         flog = mklog(__name__, "RQConfig", "get_releases")
         branch = branch or self.default_branch
+        repo_name = repo_name or DEFAULT_REPO_CLASS
         pair = (branch, repo_name)
         for release in sorted(
             self.releases.values(), key=lambda r: r.name, reverse=True
         ):
             try:
-                r = release.get_release(branch=branch, repo_name=repo_name)
+                r = release.get_release(self, branch=branch, repo_name=repo_name)
             except ConfigError as exc:
-                logger.debug(
-                    f"{release.name} does not match {pair}: {exc}",
-                    # exc_info=exc,
-                )
+                logger.debug(f"{release.name} does not match {pair}: {exc}")
             else:
                 flog.debug("%s matches %s", release.name, pair)
                 return r
@@ -281,10 +300,31 @@ class RQConfig(BaseModel):
     def release_names(self) -> list[str]:
         return [rc.name for rc in self.releases.values()]
 
+    def get_rq(
+        self,
+        branch: str | None = None,
+        repo: str | None = None,
+        base_conf: dict[str, t.Any] | None = None,
+        base_vars: dict[str, t.Any] | None = None,
+    ) -> RepoqueryBase:
+        """
+        Higher level interface that finds the Release object that mathces
+        {branch} and {repo}, creates a (lib)dnf(5).base.Base session, and
+        returns a Repoquery object.
+
+        :param branch: branch name
+        :param repo: repo class. defaults to 'base'.
+        :param base_conf: Base session configuration
+        :param base_vars: Base session vars/substitutions (arch, basearch,
+                                                           releasever, etc.)
+        """
+        release = self.get_release(branch, repo)
+        return self.backend_mod.Repoquery(release.make_base(self, base_conf, base_vars))
+
 
 def get_smartcache_basedir() -> Path:
     basedir = Path(os.environ.get("XDG_CACHE_HOME", Path("~/.cache").expanduser()))
-    return Path(basedir).joinpath("fedrq").resolve()
+    return basedir.joinpath("fedrq").resolve()
 
 
 def _get_files(
@@ -307,7 +347,7 @@ def _process_config(
     config.update(data)
 
 
-def get_config() -> RQConfig:
+def get_config(**overrides: t.Any) -> RQConfig:
     """
     Retrieve config files from CONFIG_DIRS and fedrq.data.
     Perform naive top-level merging of the 'releases' table.
@@ -326,6 +366,7 @@ def get_config() -> RQConfig:
         with path.open("rb") as fp:
             data = tomllib.load(fp)
         _process_config(data, config, releases)
+    _process_config(overrides, config, releases)
     config["releases"] = _get_releases(releases)
     flog.debug("Final config: %s", config)
     return RQConfig(**config)
@@ -343,28 +384,19 @@ def get_rq(
     repo: str = "base",
     *,
     smart_cache: bool | None = None,
-    load_filelists: bool = False,
-    backend: str | None = None,
+    load_filelists: bool | None = None,
 ) -> RepoqueryBase:
     """
     Higher level interface that creates an RQConfig object, finds the Release
     object that mathces {branch} and {repo}, creates a dnf.Base, and finally
     returns a Repoquery object.
     """
+    warnings.warn("DEPRECATED since 0.4.0: use RQConfig.get_rq() instead.")
     config = get_config()
-    if smart_cache is None:
-        smart_cache = config.smartcache
-    branch = branch or config.default_branch
-    release = config.get_release(branch, repo)
-    cachedir = None
-    if smart_cache and release.version != config.backend_mod.get_releasever():
-        base_cachedir = get_smartcache_basedir()
-        cachedir = base_cachedir / branch
-    rq = config.backend_mod.Repoquery(
-        release.make_base(
-            _cachedir=cachedir,
-            load_filelists=load_filelists,
-            backend=config.backend_mod,
+    if smart_cache is not None:
+        config.smartcache = smart_cache
+    if load_filelists is not None:
+        config.load_filelists = (
+            LoadFilelists.always if load_filelists else LoadFilelists.never
         )
-    )
-    return rq
+    return config.get_rq(branch, repo)
