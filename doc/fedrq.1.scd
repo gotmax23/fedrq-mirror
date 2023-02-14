@@ -186,6 +186,11 @@ Custom formatters:
 :  base, testing, testing-only, next-base, next-testing, next-testing-only
 :  *base*, *testing*, *testing-only* are supersets of the *epelX* equivalent.
    *next-base*, *next-testing*, and *next-testing-only* only contain epel-next.
+|  CentOS Stream
+:  cXs
+:  *base*, *epel*, *no-crb*
+:  *epel* contains epel, epel-next, and crb.
+   *no-crb* contains base minus the crb repo.
 
 ## SPECIAL REPOS
 

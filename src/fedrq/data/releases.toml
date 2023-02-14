@@ -63,3 +63,37 @@ def.next-testing = ["fedrq-epel-next", "fedrq-epel-next-source",
                     "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
 defs.next-testing-only = ["fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
 
+
+[releases.centos-stream]
+matcher = '^c([19]\d?)s'
+copr_chroot_fmt = "centos-stream-{version}-{arch}"
+defpaths = ["epel.repo", "centos-stream.repo"]
+system_repos = false
+defs.base = [
+    "fedrq-centos-stream-baseos",
+    "fedrq-centos-stream-baseos-source",
+    "fedrq-centos-stream-appstream",
+    "fedrq-centos-stream-appstream-source",
+    "fedrq-centos-stream-crb",
+    "fedrq-centos-stream-crb-source",
+]
+defs.epel = [
+    # base
+    "fedrq-centos-stream-baseos",
+    "fedrq-centos-stream-baseos-source",
+    "fedrq-centos-stream-appstream",
+    "fedrq-centos-stream-appstream-source",
+    "fedrq-centos-stream-crb",
+    "fedrq-centos-stream-crb-source",
+    # epel
+    "fedrq-epel",
+    "fedrq-epel-source",
+    "fedrq-epel-next",
+    "fedrq-epel-next-source"
+]
+defs.no-crb = [
+    "fedrq-centos-stream-baseos",
+    "fedrq-centos-stream-baseos-source",
+    "fedrq-centos-stream-appstream",
+    "fedrq-centos-stream-appstream-source",
+]
