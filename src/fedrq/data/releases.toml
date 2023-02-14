@@ -65,7 +65,7 @@ defs.next-testing-only = ["fedrq-epel-next-testing", "fedrq-epel-next-testing-so
 
 
 [releases.centos-stream]
-matcher = '^c([19]\d?)s'
+matcher = '^c(9|1\d)s'
 copr_chroot_fmt = "centos-stream-{version}-{arch}"
 defpaths = ["epel.repo", "centos-stream.repo"]
 system_repos = false
