@@ -33,8 +33,8 @@ BuildRequires:  scdoc
 
 Requires:       (python3-dnf or python3-libdnf5)
 Suggests:       python3-dnf
-Requires:       (fedora-repos-rawhide or distribution-gpg-keys)
-Suggests:       distribution-gpg-keys
+Requires:       distribution-gpg-keys
+Recommends:     fedora-repos-rawhide
 
 # fedrq config --dump
 Recommends:     python3-tomli-w
