@@ -84,9 +84,7 @@ def test(session: nox.Session, backend=None):
             "PYTEST_PLUGINS": "xdist.plugin,pytest_mock",
             "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
         }
-        | {"FEDRQ_BACKEND": backend}
-        if backend
-        else {},
+        | ({"FEDRQ_BACKEND": backend} if backend else {}),
     )
 
 
