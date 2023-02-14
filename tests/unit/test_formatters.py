@@ -49,6 +49,25 @@ def test_plain_formatter(repo_test_rq, target_cpu):
     assert formatter(query, "plain") == expected
 
 
+def test_plainwithrepo_formatter(repo_test_rq, target_cpu):
+    expected = sorted(
+        (
+            "packagea-1-1.fc36.noarch testrepo1",
+            "packagea-1-1.fc36.src testrepo1",
+            "packagea-sub-1-1.fc36.noarch testrepo1",
+            "packageb-1-1.fc36.src testrepo1",
+            f"packageb-1-1.fc36.{target_cpu} testrepo1",
+            "packageb-11111:2-1.fc36.src testrepo1",
+            f"packageb-11111:2-1.fc36.{target_cpu} testrepo1",
+            "packageb-sub-1-1.fc36.noarch testrepo1",
+            "packageb-sub-11111:2-1.fc36.noarch testrepo1",
+        )
+    )
+    query = repo_test_rq.query()
+    assert formatter(query, "plainwithrepo") == expected
+    assert formatter(query, "nevrr") == expected
+
+
 def test_name_formatter(repo_test_rq):
     expected = sorted(
         (

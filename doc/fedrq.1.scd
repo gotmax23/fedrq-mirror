@@ -162,6 +162,9 @@ Custom formatters:
 - *-F json:[comma seperated list of Package attrs]*:
   Return an array of objects containing the specified Package attributes. The
   JSON output is formatted with _indent=2_. The output can be piped to jq.
+- *-F plainwithrepo*: Show default format and repoid separated by space: ++
+  (example line: *yt-dlp-2023.01.06-2.fc38.noarch rawhide*)
+- *-F nevrr*: alias to plainwithrepo formatter.
 
 # BUILTIN RELEASES
 

@@ -190,6 +190,16 @@ class NEVFormatter(Formatter):
             yield f"{p.name}-{p.epoch}:{p.version}"
 
 
+class PlainWithRepoFormatter(Formatter):
+    """
+    %{name}-%{epoch}:%{version} %{repoid}
+    """
+
+    def format(self, packages: hawkey.Query) -> Iterable[str]:
+        for p in sorted(packages):
+            yield f"{p} {p.repoid}"
+
+
 class SourceFormatter(Formatter):
     def format(self, packages: hawkey.Query) -> Iterable[str]:
         return sorted({get_source_name(pkg) for pkg in packages})
@@ -256,6 +266,8 @@ class DefaultFormatters(FormatterContainer):
         nv=NVFormatter,
         na=NAFormatter,
         nev=NEVFormatter,
+        plainwithrepo=PlainWithRepoFormatter,
+        nevrr=PlainWithRepoFormatter,
         source=SourceFormatter,
         src=SourceFormatter,
     )
