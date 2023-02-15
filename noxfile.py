@@ -13,7 +13,7 @@ import nox
 import nox.command
 import nox.virtualenv
 
-nox.options.sessions = "test", "lint", "libdnf5_test"
+nox.options.sessions = ("lint", "test", "libdnf5_test")
 
 IN_CI = "JOB_ID" in os.environ
 ALLOW_EDITABLE = os.environ.get("ALLOW_EDITABLE", str(not IN_CI)).lower() in (
