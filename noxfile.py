@@ -28,7 +28,7 @@ def install(session: nox.Session, *args, use_pep517=True, editable=False, **kwar
         return
     if editable and ALLOW_EDITABLE:
         args = ("-e", *args)
-    session.install(*args, **kwargs)
+    session.install(*args, "-U", **kwargs)
 
 
 def run_silent(*args, return_stdout: bool = False, **kwargs):
@@ -107,7 +107,7 @@ def lint(session: nox.Session):
     """
     Run format, codeql, typing, and reuse sessions
     """
-    for notify in ("format", "codeql", "typing", "reuse"):
+    for notify in ("formatters", "codeql", "typing", "reuse"):
         session.notify(notify)
 
 
@@ -138,7 +138,7 @@ def typing(session: nox.Session):
 
 
 @nox.session
-def format(session: nox.Session):
+def formatters(session: nox.Session):
     install(session, "black", "isort")
     posargs = session.posargs
     if IN_CI:

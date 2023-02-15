@@ -40,8 +40,8 @@ class BreakdownFormatter(Formatter):
             yield f"    {len(buildtime)} total buildtime dependencies"
         yield ""
         yield "All SRPM names:"
-        yield from (all := sorted({get_source_name(pkg) for pkg in packages}))
-        yield f"    {len(all)} total SRPMs"
+        yield from (all_pkgs := sorted({get_source_name(pkg) for pkg in packages}))
+        yield f"    {len(all_pkgs)} total SRPMs"
 
 
 class WhatFormatters(DefaultFormatters):

@@ -240,7 +240,7 @@ class BaseMakerBase(abc.ABC):
     base: Any
 
     def __init__(self, base=None) -> None:
-        ...
+        self.base = base
 
     @abc.abstractmethod
     def fill_sack(
@@ -299,16 +299,16 @@ class BaseMakerBase(abc.ABC):
         """
         ...
 
-    def sets(self, conf: dict[str, Any], vars: dict[str, Any]) -> None:
+    def sets(self, conf: dict[str, Any], substitutions: dict[str, Any]) -> None:
         """
         :param conf: A dict of configuration options. Call self.set() for each
         k-v pair.
-        :param vars: A dict of substitutions/vars options. Call self.set_var()
+        :param substitutions: A dict of substitutions/vars options. Call self.set_var()
         for each k-v pair.
         """
         for opt in conf.items():
             self.set(*opt)
-        for opt in vars.items():
+        for opt in substitutions.items():
             self.set_var(*opt)
 
     def load_filelists(self) -> None:
@@ -316,7 +316,7 @@ class BaseMakerBase(abc.ABC):
         """
         Load the filelists if they're not already enabled default
         """
-        pass
+        return None
 
     def load_release_repos(self, release: Release, set_releasever: bool = True) -> None:
         """

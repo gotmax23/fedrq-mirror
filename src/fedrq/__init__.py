@@ -5,6 +5,6 @@ from __future__ import annotations
 
 import logging
 
-format = "{levelname}:{name}: {message}"
-logging.basicConfig(format=format, style="{")
+fmt = "{levelname}:{name}: {message}"
+logging.basicConfig(format=fmt, style="{")
 logger = logging.getLogger("fedrq")

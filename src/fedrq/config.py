@@ -56,7 +56,9 @@ class ReleaseConfig(BaseModel):
     defs: dict[str, list[str]]
     matcher: t.Pattern
     repo_dirs: list[Path] = Field(
-        default_factory=lambda: [dir.joinpath("repos") for dir in CONFIG_DIRS]
+        default_factory=lambda: [
+            directory.joinpath("repos") for directory in CONFIG_DIRS
+        ]
     )
     defpaths: set[str] = Field(default_factory=set)
     system_repos: bool = True
@@ -85,7 +87,7 @@ class ReleaseConfig(BaseModel):
     def v_repo_dirs(cls, value: str | list[Path]) -> list[Path]:
         if not isinstance(value, str):
             return value
-        return [Path(dir) for dir in value.split(":")]
+        return [Path(directory) for directory in value.split(":")]
 
     def is_match(self, val: str) -> bool:
         return bool(re.match(self.matcher, val))
@@ -328,12 +330,12 @@ def get_smartcache_basedir() -> Path:
 
 
 def _get_files(
-    dir: t.Union[Traversable, Path], suffix: str, reverse: bool = True
+    directory: t.Union[Traversable, Path], suffix: str, reverse: bool = True
 ) -> list[t.Union[Traversable, Path]]:
     files: list[t.Union[Traversable, Path]] = []
-    if not dir.is_dir():
+    if not directory.is_dir():
         return files
-    for file in dir.iterdir():
+    for file in directory.iterdir():
         if file.name.endswith(suffix) and file.is_file():
             files.append(file)
     return sorted(files, key=lambda f: f.name, reverse=reverse)

@@ -690,7 +690,7 @@ def get_releasever() -> str:
             except StopIteration:
                 raise RuntimeError(
                     "Error: rpmdb failed to list provides. Try: rpm --rebuilddb"
-                )
+                ) from None
             releasever = hdr["version"]
             try:
                 try:
