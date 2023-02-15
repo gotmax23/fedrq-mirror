@@ -42,7 +42,7 @@ requires-python = ">=3.9"
 lint = [
     "black",
     "isort",
-    "flake8",
+    "ruff",
     "mypy",
     "reuse",
     # Optional fedrq runtime dependency

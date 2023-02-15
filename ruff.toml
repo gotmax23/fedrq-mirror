@@ -1,0 +1,24 @@
+# Copyright (C) 2023 Maxwell G <gotmax@e.email>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+select = [
+    # flake8-builtins
+    "A",
+    # flake8-bugbear
+    "B",
+    # pycodestyle
+    "E",
+    "W",
+    # pyflakes
+    "F",
+]
+ignore = [
+    # Class attribute is shadowing a python builtin
+    "A003",
+    "B008",
+]
+exclude = [
+    # Contains vendored code that we don't want to touch.
+    "src/fedrq/_compat.py"
+]

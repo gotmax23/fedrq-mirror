@@ -60,7 +60,9 @@ def install_system(
     to_install = list(_to_install_system(session, *packages))
     if not to_install:
         return
-    cmd = ["dnf", "install", "-y"]
+    cmd = ["dnf", "install"]
+    if not session.interactive:
+        cmd.append("-y")
     if os.geteuid() != 0:
         cmd.insert(0, "sudo")
     if not install_weak_deps:
@@ -113,14 +115,14 @@ def lint(session: nox.Session):
 def codeql(session: nox.Session):
     install(
         session,
-        "flake8",
+        "ruff",
     )
+    posargs = session.posargs
+    if "--check" in posargs:
+        posargs.remove("--check")
     session.run(
-        "python",
-        "-m",
-        "flake8",
-        "--max-line-length",
-        "89",
+        "ruff",
+        *session.posargs,
         "src/fedrq/",
         "tests/",
         "noxfile.py",
