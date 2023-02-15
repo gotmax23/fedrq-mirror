@@ -270,6 +270,9 @@ class Package(libdnf5.rpm.Package):
     DEBUGINFO_SUFFIX = "-debuginfo"
     DEBUGSOURCE_SUFFIX = "-debugsource"
 
+    def __hash__(self) -> int:
+        return hash(self.get_id().id)
+
     @property
     def name(self) -> str:
         return self.get_name()
