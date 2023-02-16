@@ -184,7 +184,7 @@ def test_formatter_0_args(subcommand, formatter, patch_config_dirs, capsys):
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert stderr.splitlines() == [
-        f"ERROR: The '{formatter}' formatter recieved 0 arguments",
+        f"ERROR: '{formatter}' FormatterError: received less than 1 argument",
         fedrq.cli.base.FORMATTER_ERROR_SUFFIX,
     ]
 
@@ -196,10 +196,6 @@ def test_json_formatter_invalid_args(subcommand, patch_config_dirs, capsys):
     stdout, stderr = capsys.readouterr()
     assert not stdout
     assert stderr.splitlines() == [
-        "ERROR: The 'json' formatter recieved invalid arguments: abc,xyz",
+        "ERROR: 'json' FormatterError: invalid argument 'abc'",
         fedrq.cli.base.FORMATTER_ERROR_SUFFIX,
     ]
-
-
-# @pytest.mark.parametrize("subcommand", SUBCOMMANDS)
-# def test_multiple_errors

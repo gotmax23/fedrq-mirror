@@ -1,19 +1,29 @@
-# SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+# Copyright (C) 2023 Maxwell G <gotmax@e.email>
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 from __future__ import annotations
 
 import abc
-import typing as t
-from collections.abc import Iterable, Mapping
+import logging
+import warnings
+from collections.abc import Callable, ItemsView, Iterable, Iterator, Mapping
+from contextlib import suppress
+from typing import TYPE_CHECKING, Any, NoReturn
 
-from fedrq._utils import get_source_name, mklog
+from fedrq._utils import get_source_name
 
-if t.TYPE_CHECKING:
-    import dnf
-    import hawkey
+if TYPE_CHECKING:
+    from fedrq.backends.base import PackageCompat
 
-ATTRS = (
+LOG = logging.getLogger(__name__)
+
+
+class FormatterError(Exception):
+    pass
+
+
+_ATTRS: tuple[str, ...] = (
     "name",
     "arch",
     "a",
@@ -55,221 +65,363 @@ ATTRS = (
 )
 
 
-class InvalidFormatterError(ValueError):
-    pass
-
-
-def stringify(value: t.Any) -> str:
+def _stringify(value: Any, *, multiline_allowed: bool = True) -> str:
     if value is None or value == "":
         return "(none)"
     if isinstance(value, str) and "\n" in value:
+        if not multiline_allowed:
+            raise FormatterError("Multiline values are not allowed")
         return value + "\n---\n"
     return str(value)
 
 
 class Formatter(abc.ABC):
-    @abc.abstractmethod
-    def format(self, packages: hawkey.Query) -> Iterable[str]:
-        ...
+    ATTRS = _ATTRS
+    MULTILINE = False
 
-
-class SpecialFormatter(Formatter):
-    def __init__(self, params: str) -> None:
-        self.params = params
-        self.verifier()
-
-    def verifier(self) -> None:
-        flog = mklog(__name__, self.__class__.__name__, "verifier")
-        flog.debug("No verifier defined")
-        return None
-
-
-class FormatterContainer:
-    _formatters: Mapping[str, type[Formatter]] = {}
-    _special_formatters: Mapping[str, type[SpecialFormatter]] = {}
-    _fallback_formatter: type[SpecialFormatter] | None = None
-
-    formatters: dict[str, type[Formatter]]
-    special_formatters: dict[str, type[SpecialFormatter]]
-
-    __slots__ = (
-        "formatters",
-        "special_formatters",
-    )
+    """
+    Convert PackageCompat objects into a string representation
+    for use with the fedrq CLI.
+    """
 
     def __init__(
         self,
-        # formatters: dict[str, type[Formatter]] | None = None,
-        # special_formatters: dict[str, type[SpecialFormatter]] | None = None,
+        name: str,
+        seperator: str,
+        args: str,
+        container: Formatters | None = None,
     ) -> None:
-        _formatters: dict[str, type[Formatter]] = {}
-        _special_formatters: dict[str, type[SpecialFormatter]] = {}
-        for container in reversed(self.__class__.__mro__):
-            if issubclass(container, FormatterContainer):
-                _formatters |= getattr(container, "_formatters", {})
-                _special_formatters |= getattr(container, "_special_formatters", {})
-        # _formatters |= formatters or {}
-        # _special_formatters |= special_formatters or {}
-        # if combined := set(_formatters) & set(_special_formatters):
-        #     raise InvalidFormatterError(
-        #         f"'formatters' and 'special_formatters' must h",
-        #     )
+        self.name = name
+        self.seperator = seperator
+        self.args = args
+        self.container: Formatters = container or Formatters({})
+        self.validate()
 
-        self.formatters = _formatters
-        self.special_formatters = _special_formatters
+    @abc.abstractmethod
+    def format_line(self, package: PackageCompat) -> str:
+        """
+        Format a single Package object
+        """
+        pass
 
-    def __contains__(self, value: str) -> bool:
-        if not isinstance(value, str):
+    def format(self, packages: Iterable[PackageCompat]) -> Iterable[str]:
+        """
+        Convert an Iterable of PackageCompat objects
+        (or a PackageQueryCompat object) to an Iterable of str.
+        """
+        yield from map(self.format_line, sorted(packages))
+
+    def err(self, msg: str) -> NoReturn:
+        raise FormatterError(f"{self.name!r} FormatterError: {msg}")
+
+    def validate(self) -> None:
+        if self.seperator:
+            self.err("no arguments are accepted")
+
+    @classmethod
+    def frompat(cls, fmt: str, name: str) -> type[Formatter]:
+        """
+        Convert Python format string (e.g. `{0.name}.{0.arch}`)
+        in a Formatter class.
+        """
+
+        def format_line(self, package):
+            return fmt.format(package)
+
+        dct = dict(
+            __doc__=f"{name} -- {fmt}",
+            __module__=__name__,
+            format_line=format_line,
+        )
+        typ = type(f"{name.upper()}Formatter", (cls,), dct)
+        return typ
+
+    @classmethod
+    def fromfunc(
+        cls, func: Callable[[PackageCompat], str], name: str
+    ) -> type[Formatter]:
+        """
+        Convert a function (or other callable) into a Formatter class.
+        The function is used as the format_line() method.
+        """
+        dct = dict(
+            format_line=func,
+            __module__=__name__,
+            __doc__=func.__doc__ if func.__doc__ else name,
+        )
+        typ = type(f"{name.upper()}Formatter", (cls,), dct)
+        return typ
+
+    def __str__(self) -> str:
+        return f"{self.name}{self.seperator}{self.args}"
+
+
+class Formatters(Mapping[str, type[Formatter]]):
+    __slots__ = ("__data", "fallback")
+
+    """
+    Immutable mapping like class of Formatter classes.
+    Converts strings and simple functions to Formatter objects.
+    Allows merging and adding other Formatters.
+    """
+
+    def __init__(
+        self,
+        formatters: Mapping[str, Callable | type[Formatter] | str],
+        fallback: type[Formatter] | None = None,
+    ) -> None:
+        self.__data = self._formattersv(dict(formatters))
+        self.fallback: type[Formatter] | None = fallback
+
+    def get_formatter(self, key: str) -> Formatter:
+        name, seperator, args = key.partition(":")
+        with suppress(KeyError):
+            return self[name](name, seperator, args, self)
+        if self.fallback:
+            with suppress(FormatterError):
+                return self.fallback(name, seperator, args, self)
+        raise FormatterError(f"{key!r} is not a valid formatter")
+
+    def __getitem__(self, key: str) -> type[Formatter]:
+        return self.__data[key]
+
+    def __len__(self) -> int:
+        return len(self.__data)
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.__data)
+
+    def __or__(
+        self, other: Mapping[str, Callable | type[Formatter] | str]
+    ) -> Formatters:
+        fallback: type[Formatter] | None = self.fallback
+        if hasattr(other, "fallback"):
+            fallback = other.fallback
+        return type(self)({**self, **other}, fallback)
+
+    def __contains__(self, name: object) -> bool:
+        if not isinstance(name, str):
             raise TypeError
         try:
-            self.get_formatter(value)
-        except InvalidFormatterError:
+            self.get_formatter(name)
+        except FormatterError:
             return False
-        return True
+        else:
+            return True
 
-    def __eq__(self, value: object) -> bool:
-        if not isinstance(value, FormatterContainer):
-            return False
-        for attr in ("formatters", "special_formatters", "_fallback_formatter"):
-            if getattr(self, attr) != (value, attr):
-                return False
-        return True
+    def singleline(self) -> Formatters:
+        return Formatters(
+            {
+                name: formatter
+                for name, formatter in self.items()
+                if not formatter.MULTILINE
+            }
+        )
 
-    def get_formatter(self, value: str) -> Formatter:
-        name, part, params = value.partition(":")
-        if part and name in self.special_formatters:
-            return self.special_formatters[name](params)
-        elif name in self.formatters:
-            return self.formatters[name]()
-        elif self._fallback_formatter:
-            try:
-                return self._fallback_formatter(value)
-            except InvalidFormatterError:
+    def new(self, other: Mapping[str, str | Callable | type[Formatter]]) -> Formatters:
+        return self | other
+
+    def items(self) -> ItemsView[str, type[Formatter]]:
+        return ItemsView(self)
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}({self.__data!r})"
+
+    def _formattersv(self, formatters) -> dict[str, type[Formatter]]:
+        if not formatters:
+            return {}
+        for name, formatter in formatters.items():
+            if isinstance(formatter, type) and issubclass(formatter, Formatter):
                 pass
+            elif isinstance(formatter, str):
+                formatters[name] = Formatter.frompat(formatter, name)
+            elif callable(formatter):
+                formatters[name] = Formatter.fromfunc(
+                    formatter,  # type: ignore[arg-type]
+                    name,
+                )
+            else:
+                raise TypeError
+        return formatters
 
-        raise InvalidFormatterError(f"'{value}' is not a valid formatter")
+
+class SourceFromatter(Formatter):
+    def format(self, packages: Iterable[PackageCompat]) -> Iterable[str]:
+        return sorted(set(map(self.format_line, packages)))
+
+    def format_line(self, package: PackageCompat) -> str:
+        return get_source_name(package)
 
 
-class PlainFormatter(Formatter):
+class SpecialFormatter(Formatter):
     """
-    Default Package formatter (%{name}-%{?epoch:%{epoch}:}%{version}-%{release}.%{arch})
-    """
-
-    def format(self, packages: hawkey.Query) -> Iterable[str]:
-        for p in sorted(packages):
-            yield str(p)
-
-
-class NVFormatter(Formatter):
-    """
-    %{name}-%{version}
-    """
-
-    def format(self, packages: hawkey.Query) -> Iterable[str]:
-        for p in sorted(packages):
-            yield f"{p.name}-{p.version}"
-
-
-class NAFormatter(Formatter):
-    """
-    %{name}.%{arch}
+    Formatter that accepts arguments
     """
 
-    def format(self, packages: hawkey.Query) -> Iterable[str]:
-        for p in sorted(packages):
-            yield f"{p.name}.{p.arch}"
+    ATTRS: tuple[str, ...] = Formatter.ATTRS
 
+    def _get_attrs(self, args: str) -> Iterator[str | Formatter]:
+        for attr in args.split(","):
+            if attr in self.ATTRS:
+                yield attr
+            elif attr in self.container.singleline():
+                yield self.container.get_formatter(attr)
+            else:
+                self.err(f"invalid argument {attr!r}")
 
-class NEVFormatter(Formatter):
-    """
-    %{name}-%{epoch}:%{version}
-    """
-
-    def format(self, packages: hawkey.Query) -> Iterable[str]:
-        for p in sorted(packages):
-            yield f"{p.name}-{p.epoch}:{p.version}"
-
-
-class PlainWithRepoFormatter(Formatter):
-    """
-    %{name}-%{epoch}:%{version} %{repoid}
-    """
-
-    def format(self, packages: hawkey.Query) -> Iterable[str]:
-        for p in sorted(packages):
-            yield f"{p} {p.repoid}"
-
-
-class SourceFormatter(Formatter):
-    def format(self, packages: hawkey.Query) -> Iterable[str]:
-        return sorted({get_source_name(pkg) for pkg in packages})
+    def validate(self) -> None:
+        if not self.args.strip() or self.args.strip() == ",":
+            self.err("received less than 1 argument")
 
 
 class AttrFormatter(SpecialFormatter):
-    """
-    Lookup a Package attribute for each package in the query result.
-    Equivalent to `dnf repoquery --qf=%{ATTR}` where ATTR is the formatter argument.
-    """
+    MULTILINE = True
 
-    def verifier(self) -> None:
-        self.params = self.params.strip()
-        if not self.params:
-            raise InvalidFormatterError("The 'attr' formatter recieved 0 arguments")
-        if self.params not in ATTRS:
-            raise InvalidFormatterError(f"'{self.params}' is not a valid attribute")
+    def validate(self) -> None:
+        super().validate()
+        self._validate()
 
-    def format(self, packages: hawkey.Query) -> Iterable[str]:
+    def _validate(self) -> None:
+        if self.args not in self.ATTRS:
+            raise FormatterError(f"'{self.args}' is not a valid attribute")
+        self.attr = self.args
+
+    def format_line(self, package: PackageCompat) -> str:
+        # Return one string if there's multiple lines
+        return "\n".join(self.format([package]))
+
+    def format(self, packages: Iterable[PackageCompat]) -> Iterable[str]:
         for p in sorted(packages):
-            result = getattr(p, self.params)
+            result = getattr(p, self.attr)
             if isinstance(result, Iterable) and not isinstance(result, str):
-                yield from map(stringify, result)
-                continue
-            yield stringify(result)
+                yield from map(_stringify, result)
+            else:
+                yield _stringify(result)
+
+
+class AttrFallbackFormatter(AttrFormatter):
+    def validate(self) -> None:
+        if self.seperator:
+            self.err("no arguments are accepted")
+        self.args = self.name
+        self._validate()
 
 
 class JsonFormatter(SpecialFormatter):
-    def _check_attr(self, attr: str) -> str:
-        attr = attr.strip()
-        if attr not in ATTRS:
-            raise InvalidFormatterError(
-                f"'The 'json' formatter recieved an invalid argument: '{attr}'"
-            )
-        return attr
+    MULTILINE = True
 
-    def verifier(self) -> None:
-        self.params = self.params.strip()
-        if not self.params:
-            raise InvalidFormatterError("The 'json' formatter recieved 0 arguments")
-        self.attrs: list[str] = [a.strip() for a in self.params.split(",")]
-        if diff := [a for a in self.attrs if a not in ATTRS]:
-            diffs = ",".join(diff)
-            msg = f"The 'json' formatter recieved invalid arguments: {diffs}"
-            raise InvalidFormatterError(msg)
+    def validate(self) -> None:
+        super().validate()
+        self.attrs: list[Formatter | str] = list(self._get_attrs(self.args))
 
-    def _format(self, package: dnf.package.Package) -> Iterable[tuple[str, t.Any]]:
+    def _format(self, package: PackageCompat) -> Iterable[tuple[str, Any]]:
         for attr in self.attrs:
-            result = getattr(package, attr)
-            if isinstance(result, Iterable) and not isinstance(result, str):
-                result = [str(i) for i in result]
-            yield attr, result
+            if isinstance(attr, str):
+                result = getattr(package, attr)
+                if isinstance(result, Iterable) and not isinstance(result, str):
+                    result = [str(i) for i in result]
+            else:
+                result = attr.format_line(package)
+            yield str(attr), result
 
-    def format(self, packages: hawkey.Query):
+    def format(self, packages: Iterable[PackageCompat]):
         import json
 
         data = [dict(self._format(package)) for package in packages]
         yield json.dumps(data, indent=2)
 
+    def format_line(self, package: PackageCompat):
+        raise NotImplementedError
 
-class DefaultFormatters(FormatterContainer):
-    _formatters = dict(
-        plain=PlainFormatter,
-        nv=NVFormatter,
-        na=NAFormatter,
-        nev=NEVFormatter,
-        plainwithrepo=PlainWithRepoFormatter,
-        nevrr=PlainWithRepoFormatter,
-        source=SourceFormatter,
-        src=SourceFormatter,
+
+class SingleLineFormatter(SpecialFormatter):
+    DEFAULT_DIVIDER = " : "
+    ATTRS: tuple[str, ...] = tuple(
+        set(SpecialFormatter.ATTRS)
+        - {
+            "description",
+            "provides",
+            "requires",
+            "recommends",
+            "suggests",
+            "supplements",
+            "enhances",
+            "obsoletes",
+            "conflicts",
+            "files",
+        }
     )
-    _special_formatters = dict(attr=AttrFormatter, json=JsonFormatter)
-    _fallback_formatter = AttrFormatter
+
+    def validate(self) -> None:
+        args, seperator, args2 = self.args.rpartition(":")
+        LOG.debug(
+            "parsing %s args: %r, %r, %r",
+            "SingleLineFormatter.validate",
+            args,
+            seperator,
+            args2,
+        )
+        # line:name:| -> params=name, divider = |
+        if args and seperator and args2:
+            LOG.debug("case 1")
+            self.params = args
+            self.divider = args2
+        # line:name -> params=name, divider = DEFAULT_DIVIDER
+        # line: -> params='', divider=DEFAULT_DIVIDER -> error in _get_attr()
+        # line:: -> params='', divider=DEFAULT_DIVIDER -> error in _get_attr()
+        elif not args:
+            LOG.debug("case 2")
+            self.params = args2
+            self.divider = self.DEFAULT_DIVIDER
+        # line:name: (trailing :) -> params=name, divider=DEFAULT_DIVIDER
+        # line:otherformatter:arg: -> params=otherformatter:args,
+        #                             divider=DEFAULT_DIVIDER
+        # line::: -> error
+        elif args and seperator and not args2:
+            LOG.debug("case 3")
+            self.params = args
+            self.divider = self.DEFAULT_DIVIDER
+        else:
+            raise RuntimeError
+        self.attrs = list(self._get_attrs(self.params))
+
+    def format_line(self, package: PackageCompat) -> str:
+        out = ""
+        for index, attr in enumerate(self.attrs):
+            if isinstance(attr, str):
+                out += _stringify(getattr(package, attr), multiline_allowed=False)
+            else:
+                out += attr.format_line(package)
+            if index != len(self.attrs) - 1:
+                out += self.divider
+        return out
+
+
+class _DefaultFormatters(Formatters):
+    def __call__(self) -> Any:
+        warnings.warn(
+            "DEPRECATED since 0.4.0: DefaultFormatters no longer needs to be called."
+            " It's already initialized."
+            " Just call DefaultFormatters.get_formatter() directly."
+        )
+        return self
+
+
+DefaultFormatters = _DefaultFormatters(
+    dict(
+        plain="{0}",
+        plainwithrepo="{0} {0.reponame}",
+        nevrr="{0} {0.reponame}",
+        na="{0.name}.{0.arch}",
+        nev="{0.name}-{0.epoch}:{0.version}",
+        nevr="{0.name}-{0.evr}",
+        nevra="{0.name}-{0.evr}.{0.arch}",
+        nv="{0.name}-{0.version}",
+        source=SourceFromatter,
+        src=SourceFromatter,
+        attr=AttrFormatter,
+        json=JsonFormatter,
+        line=SingleLineFormatter,
+    ),
+    AttrFallbackFormatter,
+)

@@ -18,6 +18,11 @@ logger = logging.getLogger(__name__)
 
 
 class BreakdownFormatter(Formatter):
+    MULTILINE = True
+
+    def format_line(self, package: PackageCompat) -> str:
+        raise NotImplementedError
+
     def format(self, packages: cabc.Iterable[PackageCompat]) -> cabc.Iterable[str]:
         runtime = []
         buildtime = []
@@ -28,14 +33,14 @@ class BreakdownFormatter(Formatter):
                 runtime.append(p)
         if runtime:
             yield "Runtime:"
-            for p in runtime:
+            for p in sorted(runtime):
                 yield p.name
             yield f"    {len(runtime)} total runtime dependencies"
             if buildtime:
                 yield ""
         if buildtime:
             yield "Buildtime:"
-            for p in buildtime:
+            for p in sorted(buildtime):
                 yield p.name
             yield f"    {len(buildtime)} total buildtime dependencies"
         yield ""
@@ -44,12 +49,11 @@ class BreakdownFormatter(Formatter):
         yield f"    {len(all_pkgs)} total SRPMs"
 
 
-class WhatFormatters(DefaultFormatters):
-    _formatters = dict(breakdown=BreakdownFormatter)
+WhatFormatters = DefaultFormatters | dict(breakdown=BreakdownFormatter)
 
 
 class WhatCommand(Command):
-    formatters = WhatFormatters()
+    formatters = WhatFormatters
     _exclude_subpackages_opt: bool = False
     _operator: str
     operator: str

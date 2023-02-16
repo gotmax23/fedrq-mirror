@@ -28,8 +28,8 @@ from fedrq.backends import BACKENDS, MissingBackendError
 from fedrq.cli.formatters import (
     DefaultFormatters,
     Formatter,
-    FormatterContainer,
-    InvalidFormatterError,
+    FormatterError,
+    Formatters,
 )
 from fedrq.config import (
     ConfigError,
@@ -93,7 +93,7 @@ class Command(abc.ABC):
     config: RQConfig
     release: Release
     query: PackageQueryCompat
-    formatters: FormatterContainer = DefaultFormatters()
+    formatters: Formatters = DefaultFormatters
     formatter: Formatter
 
     def __init__(self, args: argparse.Namespace):
@@ -263,7 +263,7 @@ class Command(abc.ABC):
     def v_formatters(self) -> str | None:
         try:
             self.formatter = self.formatters.get_formatter(self.args.formatter)
-        except InvalidFormatterError as err:
+        except FormatterError as err:
             return str(err) + "\n" + FORMATTER_ERROR_SUFFIX
         return None
 

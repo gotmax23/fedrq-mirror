@@ -243,7 +243,7 @@ class Release:
 class RQConfig(BaseModel):
     backend: t.Optional[str] = os.environ.get("FEDRQ_BACKEND")
     releases: dict[str, ReleaseConfig]
-    default_branch: str = "rawhide"
+    default_branch: str = os.environ.get("FEDRQ_BRANCH", "rawhide")
     smartcache: bool = True
     load_filelists: LoadFilelists = LoadFilelists.auto
     _backend_mod = None

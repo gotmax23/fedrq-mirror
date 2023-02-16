@@ -12,18 +12,18 @@ def formatter(query, formatter_name="plain", *args, attr=False, **kwargs):
     result = sorted(
         (
             str(i)
-            for i in formatters.DefaultFormatters()
-            .get_formatter(formatter_name)
-            .format(query, *args, **kwargs)
+            for i in formatters.DefaultFormatters.get_formatter(formatter_name).format(
+                query, *args, **kwargs
+            )
         )
     )
     if attr:
         assert result == sorted(
             (
                 str(i)
-                for i in formatters.DefaultFormatters()
-                .get_formatter(f"attr:{formatter_name}")
-                .format(query, *args, **kwargs)
+                for i in formatters.DefaultFormatters.get_formatter(
+                    f"attr:{formatter_name}"
+                ).format(query, *args, **kwargs)
             )
         )
     return result
@@ -170,7 +170,7 @@ def test_repo_files_formatter(repo_test_rq):
     assert result == ["/usr/share/packagea", "/usr/share/packageb"]
 
 
-@pytest.mark.parametrize("attr", formatters.ATTRS)
+@pytest.mark.parametrize("attr", formatters._ATTRS)
 def test_formatter_sanity(repo_test_rq, attr):
     """
     Sanity test to ensure that supported formatters work at all
