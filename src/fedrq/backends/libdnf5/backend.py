@@ -285,6 +285,9 @@ class Package(libdnf5.rpm.Package):
             return self.name > other.name
         return libdnf5.rpm.rpmvercmp(self.get_nevra(), other.get_nevra()) > 0
 
+    def __lt__(self, other) -> bool:
+        return not (self > other)
+
     @property
     def name(self) -> str:
         return self.get_name()
