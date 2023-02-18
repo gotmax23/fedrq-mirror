@@ -333,6 +333,15 @@ class BaseMakerBase(abc.ABC):
         LOG.debug("Enabling repos: %s", release.repos)
         self.enable_repos(release.repos)
 
+    @abc.abstractmethod
+    def create_repo(self, repoid: str, **kwargs) -> None:
+        """
+        Add a Repo object to the repo sack and configure it.
+        :param kwargs: key-values options that should be set on the Repo object
+                       values (like $basearch) will be substituted automatically.
+        """
+        ...
+
 
 class RepoqueryBase(abc.ABC):
     """
@@ -495,4 +504,5 @@ class BackendMod(Protocol):
     Package: type[PackageCompat]
     PackageQuery: type[PackageQueryCompat]
     Repoquery: type[RepoqueryBase]
+    RepoError: Exception
     get_releasever: Callable[[], str]

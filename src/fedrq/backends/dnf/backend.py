@@ -107,6 +107,14 @@ class BaseMaker(BaseMakerBase):
         for repo in rr._get_repos(str(file)):
             self.base.repos.add(repo)
 
+    def create_repo(self, repoid: str, **kwargs) -> None:
+        """
+        Add a Repo object to the repo sack and configure it.
+        :param kwargs: key-values options that should be set on the Repo object
+                       values (like $basearch) will be substituted automatically.
+        """
+        self.base.repos.add_new_repo(repoid, self.conf, **kwargs)
+
 
 class Repoquery(RepoqueryBase):
     def __init__(self, base: dnf.Base) -> None:
@@ -151,12 +159,14 @@ def get_releasever():
 
 Package: PackageCompat = dnf.package.Package
 PackageQuery: PackageQueryCompat = dnf.query.Query
+RepoError = dnf.exceptions.RepoError
 
 __all__ = (
     "BACKEND",
     "BaseMaker",
     "Package",
     "PackageQuery",
+    "RepoError",
     "Repoquery",
     "get_releasever",
     #

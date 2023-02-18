@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+import os
 import subprocess
 from pathlib import Path
 from shutil import rmtree
@@ -9,6 +10,7 @@ import pytest
 
 import fedrq.cli
 from fedrq import config as rqconfig
+from fedrq.backends import get_default_backend
 
 TEST_DATA = Path(__file__).parent.resolve() / "test_data"
 
@@ -40,6 +42,12 @@ def clear_cache():
         yield
     finally:
         rmtree(path, ignore_errors=True)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def default_backend():
+    backend = os.environ.get("FEDRQ_BACKEND")
+    return get_default_backend(backend, bool(backend))
 
 
 @pytest.fixture

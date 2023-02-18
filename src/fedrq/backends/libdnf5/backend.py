@@ -176,7 +176,7 @@ class BaseMaker(BaseMakerBase):
         """
         self.base = base or libdnf5.base.Base()
         self.initialized = initialized if base else False
-        if not base:
+        if not self.initialized:
             self.base.load_config_from_file()
 
     def setup(self) -> None:
@@ -188,17 +188,24 @@ class BaseMaker(BaseMakerBase):
     def config(self) -> libdnf5.config.ConfigMain:
         return self.base.get_config()
 
-    def set(self, key: str, value: t.Any) -> None:
-        # if self.initialized:
-        #     raise RuntimeError("The base object has already been initialized")
-        LOG.debug("Setting config option %s=%r", key, value)
-        option_obj = getattr(self.config, key, None)
+    @property
+    def vars(self) -> libdnf5.conf.Vars:
+        return self.base.get_vars()
+
+    def _set(self, config, key: str, value: t.Any) -> None:
+        option_obj = getattr(config, key, None)
         if not callable(option_obj):
             raise ValueError(f"{key!r} is not a valid option.")
         option_obj().set(Priority_RUNTIME, value)
 
+    def set(self, key: str, value: t.Any) -> None:
+        # if self.initialized:
+        #     raise RuntimeError("The base object has already been initialized")
+        LOG.debug("Setting config option %s=%r", key, value)
+        self._set(self.config, key, value)
+
     def set_var(self, key: str, value: t.Any) -> None:
-        self.base.get_vars().set(key, value)
+        self.vars.set(key, value)
 
     @property
     def rs(self) -> libdnf5.repo.RepoSackWeakPtr:
@@ -265,6 +272,33 @@ class BaseMaker(BaseMakerBase):
         LOG.debug("Loading filelists")
         option: libdnf5.conf.OptionStringSet = self.config.optional_metadata_types()
         option.add_item(libdnf5.conf.METADATA_TYPE_FILELISTS)
+
+    def create_repo(self, repoid: str, **kwargs) -> None:
+        """
+        Add a Repo object to the repo sack and configure it.
+        :param kwargs: key-values options that should be set on the Repo object
+                       values (like $basearch) will be substituted automatically.
+        """
+        repo = self.rs.create_repo(repoid)
+        config = repo.get_config()
+        for key, value in kwargs.items():
+            value = self._substitute(value)
+            self._set(config, key, value)
+
+    # https://github.com/rpm-software-management/dnf5/issues/306
+    # https://github.com/rpm-software-management/dnf/blob/276ade38231f3f4120f442e5c3d214f37b66379b/dnf/repodict.py#L73
+    def _substitute(self, values):
+        if isinstance(values, str):
+            return self.vars.substitute(values)
+        if isinstance(values, (list, tuple)):
+            new = []
+            for value in values:
+                if isinstance(value, str):
+                    new.append(self.vars.substitute(value))
+                else:
+                    new.append(value)
+            return new
+        return values
 
 
 @functools.total_ordering
@@ -719,12 +753,15 @@ def get_releasever() -> str:
         ts.closeDB()
 
 
+RepoError = RuntimeError
+
 __all__ = (
     "BACKEND",
     "BaseMaker",
     "Package",
     "PackageQuery",
     "Repoquery",
+    "RepoError",
     "get_releasever",
     #
     "libdnf5",
