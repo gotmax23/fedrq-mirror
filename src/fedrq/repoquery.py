@@ -12,10 +12,19 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from fedrq.backends import get_default_backend
-from fedrq.backends.base import BaseMakerBase, RepoqueryBase
+from fedrq.backends.base import (
+    BackendMod,
+    BaseMakerBase,
+    PackageCompat,
+    PackageQueryCompat,
+    RepoqueryBase,
+)
 
-backend = get_default_backend()
+backend: BackendMod = get_default_backend()
 BaseMaker: type[BaseMakerBase] = backend.BaseMaker
+Package: type[PackageCompat] = backend.Package
+PackageQuery: type[PackageQueryCompat] = backend.PackageQuery
+RepoError: Exception = backend.RepoError
 Repoquery: type[RepoqueryBase] = backend.Repoquery
 get_releasever: Callable[[], str] = backend.get_releasever
 BACKEND: str = backend.BACKEND
