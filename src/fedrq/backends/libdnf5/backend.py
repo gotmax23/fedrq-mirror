@@ -317,7 +317,10 @@ class Package(libdnf5.rpm.Package):
             raise TypeError
         if self.name != other.name:
             return self.name > other.name
-        return libdnf5.rpm.rpmvercmp(self.get_nevra(), other.get_nevra()) > 0
+        evrcmp = libdnf5.rpm.rpmvercmp(self.get_evr(), other.get_evr())
+        if evrcmp != 0:
+            return evrcmp > 0
+        return self.get_arch() > other.get_arch()
 
     def __lt__(self, other) -> bool:
         return not (self > other)
