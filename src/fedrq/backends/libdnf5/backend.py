@@ -5,12 +5,13 @@ from __future__ import annotations
 
 import functools
 import logging
+import sys
 import typing as t
 from collections.abc import Collection, Iterable
 
 from fedrq._utils import filter_latest
 from fedrq.backends import MissingBackendError
-from fedrq.backends.base import BaseMakerBase, RepoqueryBase
+from fedrq.backends.base import BackendMod, BaseMakerBase, RepoqueryBase
 from fedrq.backends.libdnf5 import BACKEND  # noqa: F401
 
 if t.TYPE_CHECKING:
@@ -299,6 +300,10 @@ class BaseMaker(BaseMakerBase):
                     new.append(value)
             return new
         return values
+
+    @property
+    def backend(self) -> BackendMod:
+        return sys.modules[__name__]
 
 
 @functools.total_ordering
@@ -692,6 +697,10 @@ class Repoquery(RepoqueryBase):
             r_query.union(query)
         filter_latest(r_query, latest)
         return r_query
+
+    @property
+    def backend(self) -> BackendMod:
+        return sys.modules[__name__]
 
 
 def get_releasever() -> str:

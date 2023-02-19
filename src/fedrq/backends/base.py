@@ -342,6 +342,11 @@ class BaseMakerBase(abc.ABC):
         """
         ...
 
+    @property
+    @abc.abstractmethod
+    def backend(self) -> BackendMod:
+        ...
+
 
 class RepoqueryBase(abc.ABC):
     """
@@ -492,6 +497,11 @@ class RepoqueryBase(abc.ABC):
         ]
         query = self.query(sourcerpm=sourcerpms, **kwargs)
         return query
+
+    @property
+    @abc.abstractmethod
+    def backend(self) -> BackendMod:
+        ...
 
 
 class BackendMod(Protocol):

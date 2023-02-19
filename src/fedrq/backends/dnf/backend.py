@@ -4,12 +4,14 @@
 from __future__ import annotations
 
 import logging
+import sys
 import typing as t
 from collections.abc import Collection
 
 from fedrq._utils import filter_latest
 from fedrq.backends import MissingBackendError
 from fedrq.backends.base import (
+    BackendMod,
     BaseMakerBase,
     PackageCompat,
     PackageQueryCompat,
@@ -115,6 +117,10 @@ class BaseMaker(BaseMakerBase):
         """
         self.base.repos.add_new_repo(repoid, self.conf, **kwargs)
 
+    @property
+    def backend(self) -> BackendMod:
+        return sys.modules[__name__]
+
 
 class Repoquery(RepoqueryBase):
     def __init__(self, base: dnf.Base) -> None:
@@ -148,6 +154,10 @@ class Repoquery(RepoqueryBase):
             # LOG.debug(f"subject query: {tuple(subject)}")
         filter_latest(query, latest)
         return query
+
+    @property
+    def backend(self) -> BackendMod:
+        return sys.modules[__name__]
 
 
 def get_releasever():
