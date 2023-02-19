@@ -75,7 +75,7 @@ FEDRQ_BACKEND=libdnf5 %pytest -v -m "not no_rpm_mock"
 %files -f %{pyproject_files}
 # Licenses are included in the wheel
 %license %{_licensedir}/fedrq/
-%doc README.md CONTRIBUTING.md
+%doc README.md CONTRIBUTING.md doc/API.md
 %{_bindir}/fedrq*
 %{_mandir}/man1/fedrq.1*
 %{_mandir}/man5/fedrq.5*
