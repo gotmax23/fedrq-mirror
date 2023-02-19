@@ -52,12 +52,22 @@ as it needs to find dnf.
 `fedrq check-config --dump` requires `tomli-w`.
 The RPM package weakly depends on `python3-tomli-w`.
 
-
 ## Versioning
 
-This project is in alpha. `fedrq.cli.*` is internal to this module. A stable
-API for `fedrq.repoquery` and `fedrq.config` may be provided down the line. The
-CLI interface is also subject to small changes.
+This project is in beta and its versioning scheme follows semver.
+
+## Python API
+
+The `fedrq.config` module and the `fedrq.backend` package are public API.
+Everything under `fedrq.cli` is internal. fedrq is a primarily a CLI tool and
+its API abstracts the specific dnf/libdnf5 functionality that it uses. The
+API's main purpose is repoquerying, but you can use the fedrq functionality
+you'd like and then access the underlying dnf Base object to preform other
+tasks if needed.
+
+See [API.md] for more information. See [api-examples] for some example code. As
+always, direct any feedback, questions, or issues to the mailing list (see ##
+Contributing).
 
 
 ## Documentaion
@@ -103,7 +113,9 @@ SPDX-License-Identifier: GPL-2.0-or-later AND Unlicense AND MIT AND PSF-2.0
 ```
 
 
+[API.md]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/doc/API.md
 [CONTRIBUTING.md]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/CONTRIBUTING.md
+[api-examples]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/contrib/api_examples
 [link-hub]: https://sr.ht/~gotmax23/fedrq
 [badge-hub]: https://img.shields.io/badge/Project%20Hub-fedrq-blue?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgdmlld0JveD0iMCAwIDUxMiA1MTIiCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZzUxIgogICBzb2RpcG9kaTpkb2NuYW1lPSJzb3VyY2VodXQtd2hpdGUuc3ZnIgogICBpbmtzY2FwZTp2ZXJzaW9uPSIxLjEgKGM2OGUyMmMzODcsIDIwMjEtMDUtMjMpIgogICB4bWxuczppbmtzY2FwZT0iaHR0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxkZWZzCiAgICAgaWQ9ImRlZnM1NSIgLz4KICA8c29kaXBvZGk6bmFtZWR2aWV3CiAgICAgaWQ9Im5hbWVkdmlldzUzIgogICAgIHBhZ2Vjb2xvcj0iIzUwNTA1MCIKICAgICBib3JkZXJjb2xvcj0iI2ZmZmZmZiIKICAgICBib3JkZXJvcGFjaXR5PSIxIgogICAgIGlua3NjYXBlOnBhZ2VzaGFkb3c9IjAiCiAgICAgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAiCiAgICAgaW5rc2NhcGU6cGFnZWNoZWNrZXJib2FyZD0iMSIKICAgICBzaG93Z3JpZD0iZmFsc2UiCiAgICAgaW5rc2NhcGU6em9vbT0iMS42NTQyOTY5IgogICAgIGlua3NjYXBlOmN4PSIyNTYiCiAgICAgaW5rc2NhcGU6Y3k9IjI1NiIKICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiCiAgICAgaW5rc2NhcGU6d2luZG93LWhlaWdodD0iMTA1OSIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9InN2ZzUxIiAvPgogIDxwYXRoCiAgICAgZD0iTTI1NiA4QzExOSA4IDggMTE5IDggMjU2czExMSAyNDggMjQ4IDI0OCAyNDgtMTExIDI0OC0yNDhTMzkzIDggMjU2IDh6bTAgNDQ4Yy0xMTAuNSAwLTIwMC04OS41LTIwMC0yMDBTMTQ1LjUgNTYgMjU2IDU2czIwMCA4OS41IDIwMCAyMDAtODkuNSAyMDAtMjAwIDIwMHoiCiAgICAgaWQ9InBhdGg0OSIKICAgICBzdHlsZT0iZmlsbDojZmZmZmZmIiAvPgo8L3N2Zz4K&style=for-the-badge
 [link-repo]: https://git.sr.ht/~gotmax23/fedrq
