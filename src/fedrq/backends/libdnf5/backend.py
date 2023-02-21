@@ -701,6 +701,8 @@ class Repoquery(RepoqueryBase):
             query = self._query()
             query.resolve_pkg_spec(spec, settings, with_src)
             r_query.union(query)
+        if resolve:
+            r_query = r_query.union(self.query(provides=specs))
         filter_latest(r_query, latest)
         return r_query
 

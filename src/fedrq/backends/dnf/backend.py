@@ -152,6 +152,8 @@ class Repoquery(RepoqueryBase):
             )
             query = query.union(subject)
             # LOG.debug(f"subject query: {tuple(subject)}")
+        if resolve:
+            query = query.union(self.query(provides=specs))
         filter_latest(query, latest)
         return query
 
