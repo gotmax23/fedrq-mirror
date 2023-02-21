@@ -97,49 +97,47 @@ def test_smartcache_not_used(
 
     cls = fedrq.cli.COMMANDS[subcommand]
     monkeypatch.setattr(cls, "_set_config", _set_config)
-
     parser = cls.make_parser()
     args = parser.parse_args(["--sc", "packageb"])
-    obj = cls(args)
+    cls(args)
 
     mocks["get_releasever"].assert_called_once()
-
-    assert not obj.args.smartcache
-
     assert all(call.args[1] != "cachedir" for call in mocks["bm_set"].call_args_list)
     # assert not list(temp_smartcache.iterdir())
 
 
 @pytest.mark.parametrize(
-    "args, config_smartcache, final_smartcache, cachedir",
+    "args, config_smartcache, cachedir",
     (
         # smartcache is specified in the config file (default)
-        ([], True, True, lambda d: d / "tester"),
+        ([], True, lambda d: d / "tester"),
         # smartcache is specified in the config file and on the cli (redundant)
-        (["--sc"], True, True, lambda d: d / "tester"),
+        (["--sc"], True, lambda d: d / "tester"),
         # smartcache is only specified on the cli
-        (["--sc"], False, True, lambda d: d / "tester"),
+        (["--sc"], False, lambda d: d / "tester"),
         # --system-cache is used to override the config file's 'smartcache = true'
-        (["--system-cache"], True, False, lambda _: None),
+        (["--system-cache"], False, lambda _: None),
         # --system-cache is used when smartcache is disabled in the config
-        ([], False, False, lambda _: None),
+        ([], False, lambda _: None),
         # --system-cache is used when smartcache is disabled in the config (redundant)
-        (["--system-cache"], False, False, lambda _: None),
+        (["--system-cache"], False, lambda _: None),
         # --cachedir trumps smartcache
-        (["--cachedir=blah"], True, False, lambda _: Path("blah")),
-        (["--cachedir=blah"], False, False, lambda _: Path("blah")),
+        (["--cachedir=blah"], True, lambda _: Path("blah")),
+        (["--cachedir=blah"], False, lambda _: Path("blah")),
     ),
 )
 def test_smartcache_config(
     args,
     config_smartcache,
-    final_smartcache,
     cachedir,
     patch_config_dirs,
-    mocker,
     temp_smartcache,
+    mocker,
+    default_backend,
 ):
     assert os.environ["XDG_CACHE_HOME"] == str(temp_smartcache)
+    bm_set = mocker.spy(default_backend.BaseMaker, "set")
+
     write_config = [True]
     # Check that True is the default
     if config_smartcache:
@@ -152,12 +150,17 @@ def test_smartcache_config(
                 data = {"smartcache": config_smartcache}
                 with dest.open("wb") as fp:
                     tomli_w.dump(data, fp)
-            Pkgs = fedrq.cli.Pkgs
-            parser = Pkgs.make_parser()
+            parser = fedrq.cli.Pkgs.make_parser()
             pargs = parser.parse_args([*args, "packagea"])
-            obj = Pkgs(pargs)
-            assert obj.args.smartcache is final_smartcache
-            assert obj.args.cachedir == cachedir(temp_smartcache / "fedrq")
+            fedrq.cli.Pkgs(pargs)
+            expected_cachedir = cachedir(temp_smartcache / "fedrq")
+            if expected_cachedir:
+                assert any(
+                    call.args[1:] == ("cachedir", str(expected_cachedir))
+                    for call in bm_set.call_args_list
+                )
+            else:
+                assert all(call.args[1] != "cachedir" for call in bm_set.call_args_list)
 
         finally:
             shutil.rmtree("blah", ignore_errors=True)

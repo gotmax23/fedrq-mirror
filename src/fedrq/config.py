@@ -50,6 +50,13 @@ class LoadFilelists(StrEnum):
     always = auto_enum()
     never = auto_enum()
 
+    @classmethod
+    def from_bool(cls, /, boolean: bool) -> LoadFilelists:
+        return cls.always if boolean else cls.never
+
+    def __bool__(self) -> bool:
+        return self == LoadFilelists.always
+
 
 class ReleaseConfig(BaseModel):
     name: str = Field(exclude=True)
@@ -210,7 +217,7 @@ class Release:
         fill_sack: bool = True,
     ) -> dnf.Base | libdnf5.base.Base:
         """
-        :param config: An RQConfig object.
+        :param config: An RQConfig object. Not passing this argument is deprecated.
                        DEPRECATED since 0.4.0: A new RQConfig object will be
                                                created if this is None.
         :param base_conf: Base session configuration
@@ -228,10 +235,14 @@ class Release:
             config = get_config()
         base_conf = base_conf or {}
         base_vars = base_vars or {}
-        if config.smartcache and self.version != config.backend_mod.get_releasever():
-            base_conf.setdefault(
-                "cachedir", str(get_smartcache_basedir() / str(self.branch))
-            )
+        releasever = config.backend_mod.get_releasever()
+        if (
+            "cachedir" not in base_conf
+            and config.smartcache
+            and self.version != releasever
+        ):
+            logger.debug("Using smartcache")
+            base_conf["cachedir"] = str(get_smartcache_basedir() / str(self.branch))
         bm = base_maker or config.backend_mod.BaseMaker()
         bm.sets(base_conf, base_vars)
         if config.load_filelists:
@@ -389,6 +400,8 @@ def get_rq(
     load_filelists: bool | None = None,
 ) -> RepoqueryBase:
     """
+    DEPRECATED since 0.4.0
+    ----------------------
     Higher level interface that creates an RQConfig object, finds the Release
     object that mathces {branch} and {repo}, creates a dnf.Base, and finally
     returns a Repoquery object.
@@ -398,7 +411,5 @@ def get_rq(
     if smart_cache is not None:
         config.smartcache = smart_cache
     if load_filelists is not None:
-        config.load_filelists = (
-            LoadFilelists.always if load_filelists else LoadFilelists.never
-        )
+        config.load_filelists = LoadFilelists.from_bool(load_filelists)
     return config.get_rq(branch, repo)

@@ -31,14 +31,7 @@ from fedrq.cli.formatters import (
     FormatterError,
     Formatters,
 )
-from fedrq.config import (
-    ConfigError,
-    LoadFilelists,
-    Release,
-    RQConfig,
-    get_config,
-    get_smartcache_basedir,
-)
+from fedrq.config import ConfigError, LoadFilelists, Release, RQConfig, get_config
 
 if TYPE_CHECKING:
     from fedrq.backends.base import BackendMod, PackageQueryCompat
@@ -110,7 +103,14 @@ class Command(abc.ABC):
         except ValidationError as exc:
             sys.exit(str(exc))
         self._set_config("backend")
-        self._set_config("load_filelists")
+        self._set_config("smartcache")
+        if (
+            self.args.load_filelists == LoadFilelists.auto
+            and "files" in self.args.formatter
+        ):
+            self.config.load_filelists = LoadFilelists.always
+        else:
+            self._set_config("load_filelists")
 
         self._v_errors: list[str] = []
 
@@ -164,9 +164,6 @@ class Command(abc.ABC):
             "-F",
             "--formatter",
             default="plain",
-            # XXX: Steal --qf from dnf repoquery?
-            help="PROVISIONAL: This option may be removed or have its interface"
-            " changed in the near future",
         )
         cachedir_group = parser.add_mutually_exclusive_group()
         cachedir_group.add_argument(
@@ -178,6 +175,7 @@ class Command(abc.ABC):
             "--sc",
             "--smartcache",
             action="store_true",
+            default=None,
             dest="smartcache",
             help="See `smartcache` in fedrq(5)."
             " smartcache is enabled by default,"
@@ -195,7 +193,7 @@ class Command(abc.ABC):
             help="Whether to load filelists."
             " By default, filelists are only loaded when using the files formatter."
             " This only applies when using the libdnf5 backend,"
-            " which doesn't load filelists by default to save bandwidth."
+            " which doesn't load filelists by default to save memory and bandwidth."
             " dnf4 always loads filelists.",
         )
         parser.add_argument("-B", "--backend", choices=tuple(BACKENDS))
@@ -268,15 +266,6 @@ class Command(abc.ABC):
         return None
 
     @v_add_errors
-    def v_filelists(self) -> None:
-        options: dict[LoadFilelists, bool] = {
-            LoadFilelists.never: False,
-            LoadFilelists.always: True,
-            LoadFilelists.auto: "files" in self.args.formatter,
-        }
-        self.filelists = options[self.config.load_filelists]
-
-    @v_add_errors
     def v_arch(self) -> str | None:
         # TODO: Verify that arches are actually valid RPM arches.
         if not self.args.arch:
@@ -290,26 +279,6 @@ class Command(abc.ABC):
             self.args.arch = [item.strip() for item in self.args.arch.split(",")]
         return None
 
-    @v_add_errors
-    def v_smartcache(self) -> str | None:
-        if (
-            self.config.smartcache
-            and self.args.cachedir is None
-            and not self.args.system_cache
-        ):
-            self.args.smartcache = True
-        if not self.args.smartcache:
-            return None
-        if (
-            not self.args.forcearch
-            and self.release.version == self.backend.get_releasever()
-        ):
-            self.args.cachedir = None
-            self.args.smartcache = False
-            return None
-        self.args.cachedir = get_smartcache_basedir() / self.release.branch
-        return None
-
     @v_fatal_error
     def v_release(self) -> str | None:
         try:
@@ -319,19 +288,24 @@ class Command(abc.ABC):
         return None
 
     @v_add_errors
-    def v_rq(self) -> str | None:
-        base_maker = self.backend.BaseMaker()
+    def v_rq(self) -> None:
+        conf: dict[str, Any] = {}
+        bvars: dict[str, Any] = {}
+
+        # Set cachedir if it's explicitly passed
         if self.args.cachedir:
-            base_maker.set("cachedir", str(self.args.cachedir))
-        if self.args.load_filelists:
-            base_maker.load_filelists()
-        base_maker.set_var("releasever", self.release.version)
+            conf["cachedir"] = str(self.args.cachedir)
+        # Disable release based smartcache if user explicitly disabled it or if
+        # forcearch is in use.
+        elif self.args.system_cache or self.args.forcearch:
+            self.config.smartcache = False
+
         if self.args.forcearch:
-            base_maker.set("ignorearch", True)
-            base_maker.set_var("arch", self.args.forcearch)
-        base_maker.load_release_repos(self.release)
-        self.rq = self.backend.Repoquery(base_maker.fill_sack())
-        return None
+            conf["ignorearch"] = True
+            bvars["arch"] = self.args.forcearch
+        self.rq = self.backend.Repoquery(
+            self.release.make_base(self.config, conf, bvars)
+        )
 
     @v_fatal_error
     def v_backend(self) -> str | None:
@@ -341,15 +315,13 @@ class Command(abc.ABC):
             return MISSING_BACKEND_MSG.format(str(exc))
         return None
 
-    def v_default(self):
+    def v_default(self) -> None:
         self.v_formatters()
-        self.v_filelists()
         self.v_latest()
         self.v_arch()
         # Fatal
         self.v_backend()
         self.v_release()
-        self.v_smartcache()
         self.v_rq()
         self._v_handle_errors()
 
