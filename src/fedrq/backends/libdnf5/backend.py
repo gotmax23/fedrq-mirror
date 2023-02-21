@@ -166,18 +166,24 @@ class BaseMaker(BaseMakerBase):
     base: libdnf5.base.Base
 
     def __init__(
-        self, base: libdnf5.base.Base | None = None, *, initialized=False
+        self,
+        base: libdnf5.base.Base | None = None,
+        *,
+        initialized: bool = False,
+        config_loaded: bool = False,
     ) -> None:
         """
         Initialize and configure the base object.
         :param base: Pass in a :class:`libdnf.base.Base object` to configure
         instead of creating a new one.
         :param initialized: Set to True if base.setup() has already been
-        called.
+        called. Only applies when `base` is passed.
+        :param config_loaded: Set to True if base.load_config_from_file()
+        has already been called. Only applies when `base` is passed.
         """
         self.base = base or libdnf5.base.Base()
         self.initialized = initialized if base else False
-        if not self.initialized:
+        if not base or not config_loaded:
             self.base.load_config_from_file()
 
     def setup(self) -> None:
