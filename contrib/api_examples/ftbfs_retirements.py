@@ -59,7 +59,7 @@ def main(*, releases: list[str]):
     # rq.query() creates a PackageQuery instance and calls its filterm() method
     # with the provided kwargs.
 
-    # This filters out all src packages
+    # Create a Query with only source packages
     query: PackageQueryCompat = rq.query(arch="src")
 
     # PackageCompat is a Protocol implemented by both the dnf and libdnf5
