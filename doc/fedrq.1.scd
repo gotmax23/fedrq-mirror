@@ -162,6 +162,8 @@ Custom formatters:
 - *-F json:[comma seperated list of Package attrs]*:
   Return an array of objects containing the specified Package attributes. The
   JSON output is formatted with _indent=2_. The output can be piped to jq.
+- *-F line:[comma seperated list of Package attrs]*:
+  Return the specified package attributes on a single line.
 - *-F plainwithrepo*: Show default format and repoid separated by space: ++
   (example line: *yt-dlp-2023.01.06-2.fc38.noarch rawhide*)
 - *-F nevrr*: alias to plainwithrepo formatter.
@@ -258,9 +260,9 @@ ansible-2.9.27-4.fc35.noarch
 ansible-core-2.12.10-1.fc35.noarch
 ```
 
-Return a JSON object containing certain package attributes
+Return a JSON object containing certain package attributes:
 ```
-fedrq pkgs scdoc -F json:name,evr,arch,files,requires
+$ fedrq pkgs scdoc -F json:name,evr,arch,files,requires
 [
   {
     "name": "scdoc",
@@ -302,6 +304,25 @@ fedrq pkgs scdoc -F json:name,evr,arch,files,requires
 ]
 ```
 
+Show packages' name, evr, arch, and reponame with each package on a single line:
+```
+$ fedrq pkgs ansible ansible-core -F line:name,evr,arch,reponame
+ansible : 7.2.0-1.fc38 : noarch : rawhide
+ansible : 7.2.0-1.fc38 : src : rawhide-source
+ansible-core : 2.14.2-1.fc38 : noarch : rawhide
+ansible-core : 2.14.2-1.fc38 : src : rawhide-source
+```
+
+Incorrect usage of the *line* filter:
+
+```
+$ fedrq pkgs ansible ansible-core -F line:name,evr,files
+ERROR: 'line' FormatterError: invalid argument 'files'
+See fedrq(1) for more information about formatters.
+```
+
+(*files* cannot fit on a single line)
+
 ## whatrequires
 
 Find the packages that require another package, at buildtime or runtime:
@@ -340,9 +361,12 @@ epel-next-release.noarch
 epel-release.noarch
 ```
 
+
+## whatrequires-src / wrsrc (alias)
+
 Find the components that would be directly affected by the removal of pcre:
 ```
-$ fedrq subpkgs pcre | fedrq whatrequires -iX -F source
+$ fedrq whatrequires-src -X -F source pcre
 ClanLib
 Thunar
 adanaxisgpl
@@ -353,6 +377,17 @@ xmlcopyeditor
 yara
 zsh
 ```
+
+Find the packages the need to be rebuilt when libindi's .so name is bumped:
+```
+$ fedrq whatrequires-src -X -F source libindi
+indi-3rdparty-drivers
+indi-3rdparty-libraries
+kstars
+phd2
+stellarium
+```
+
 
 # AUTHOR
 
