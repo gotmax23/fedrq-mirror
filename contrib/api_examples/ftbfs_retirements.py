@@ -67,13 +67,11 @@ def main(*, releases: list[str]):
     packages: list[PackageCompat] = []
 
     for package in query:
-        # fmt: off
         if (
             not any(package.name.startswith(i) for i in DEFAULT_IGNORES) and
             not any(i in package.release for i in releases)
         ):
             packages.append(package)
-        # fmt: on
     for p in packages:
         print(p.name)
 
