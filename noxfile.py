@@ -246,3 +246,13 @@ def mockbuild(session: nox.Session):
     } & set(session.posargs):
         margs.insert(1, "-N")
     session.run(*margs, external=True)
+
+
+@nox.session(venv_backend="none")
+def bump(session: nox.Session):
+    session.run("bash", "-x", "contrib/bump.sh", *session.posargs)
+
+
+@nox.session(venv_backend="none")
+def publish(session: nox.Session):
+    session.run("bash", "-x", "contrib/publish.sh", *session.posargs)

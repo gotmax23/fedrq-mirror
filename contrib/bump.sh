@@ -4,11 +4,20 @@
 
 set -euo pipefail
 
-oldversion="${1}"
-newversion="${2}"
+if [ "$#" -eq 1 ]; then
+    oldversion=""
+    newversion="${1}"
+elif [ "$#" -eq 2 ]; then
+    oldversion="${1}"
+    newversion="${2}"
+else
+    echo "Argument error"
+    exit 1
+fi
 
 rpmdev-bumpspec -c "Release ${newversion}" --new "${newversion}" fedrq.spec
 sed -i 's|^version.*$|version = "'"${newversion}"'"|' pyproject.toml
 
 git add pyproject.toml fedrq.spec
 git commit -S -m "Release ${newversion}"
+git tag -a "${newversion}" -F NEWS.md
