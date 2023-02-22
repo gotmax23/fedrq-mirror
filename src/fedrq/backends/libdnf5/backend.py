@@ -191,14 +191,17 @@ class BaseMaker(BaseMakerBase):
             self.base.setup()
             self.initialized = True
 
+    # Not part of the BaseMakerBase interface
     @property
     def config(self) -> libdnf5.config.ConfigMain:
         return self.base.get_config()
 
+    # Not part of the BaseMakerBase interface
     @property
     def vars(self) -> libdnf5.conf.Vars:
         return self.base.get_vars()
 
+    # Not part of the BaseMakerBase interface
     def _set(self, config, key: str, value: t.Any) -> None:
         self._get_option(config, key).set(Priority_RUNTIME, value)
 
@@ -211,6 +214,7 @@ class BaseMaker(BaseMakerBase):
     def set_var(self, key: str, value: t.Any) -> None:
         self.vars.set(key, value)
 
+    # Not part of the BaseMakerBase interface
     @property
     def rs(self) -> libdnf5.repo.RepoSackWeakPtr:
         self.setup()
@@ -286,6 +290,48 @@ class BaseMaker(BaseMakerBase):
         # dnf5 <= 5.0.7
         # TODO: Add warning and deprecate
         return getattr(config, key)()
+
+    # This is private for now
+    def _read_repofile_new(self, file: StrPath) -> None:
+        """
+        Load repositories from a repo file if they're not already in the
+        configuration.
+        """
+        parser = libdnf5.conf.ConfigParser()
+        parser.read(str(file))
+        sections = parser.get_data()
+        for name, _ in sections:
+            expanded_id = self.vars.substitute(name)
+            if expanded_id == "main":
+                LOG.debug("Not reading main section.")
+                continue
+            if self._has_repo(expanded_id):
+                LOG.debug("Not adding %s. It's already in the config.", expanded_id)
+                continue
+            LOG.debug("Adding %s from %s", expanded_id, file)
+            repo: libdnf5.repo.Repo = self.rs.create_repo(expanded_id)
+            repo_config: libdnf5.repo.ConfigRepo = repo.get_config()
+            repo_config.load_from_parser(
+                parser,
+                expanded_id,
+                # base.get_vars() returns a WeakPtr, hence the .get()
+                self.base.get_vars().get(),
+                # base.get_logger() returns a WeakPtr, hence the .get()
+                self.base.get_logger().get(),
+                Priority_RUNTIME,
+            )
+            nameop = repo_config.name()
+            if nameop.get_priority() == libdnf5.conf.Option.Priority_DEFAULT:
+                nameop.set(Priority_RUNTIME, expanded_id)
+
+    # Not part of the BaseMakerBase interface
+    def _has_repo(self, name: str) -> bool:
+        """
+        Check if a repo id exists
+        """
+        repoq = libdnf5.repo.RepoQuery(self.base)
+        repoq.filter_id(name)
+        return bool(repoq)
 
     def load_filelists(self) -> None:
         LOG.debug("Loading filelists")

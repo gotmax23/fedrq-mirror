@@ -1,29 +1,29 @@
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
 # SPDX-License-Identifier: Unlicense
 
-[fedrq-epel]
-name = "fedrq-epel"
+[epel]
+name = "epel"
 metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel-$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
 enabled = False
 
-[fedrq-epel-source]
-name = "fedrq-epel-source"
+[epel-source]
+name = "epel-source"
 metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel-source-$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
 enabled = False
 
-[fedrq-epel-testing]
-name = "fedrq-epel-testing"
+[epel-testing]
+name = "epel-testing"
 metalink = "https://mirrors.fedoraproject.org/metalink?repo=testing-epel-$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
 enabled = False
 
-[fedrq-epel-testing-source]
-name = "fedrq-epel-testing-source"
+[epel-testing-source]
+name = "epel-testing-source"
 metalink = "https://mirrors.fedoraproject.org/metalink?repo=testing-source-epel-$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
@@ -31,29 +31,29 @@ enabled = False
 
 
 
-[fedrq-epel-next]
-name = "fedrq-epel-next"
+[epel-next]
+name = "epel-next"
 metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel-next-$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
 enabled = False
 
-[fedrq-epel-next-source]
-name = "fedrq-epel-next-source"
+[epel-next-source]
+name = "epel-next-source"
 metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel-next-source-$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
 enabled = False
 
-[fedrq-epel-next-testing]
-name = "fedrq-epel-next-testing"
+[epel-next-testing]
+name = "epel-next-testing"
 metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel-testing-next-$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
 enabled = False
 
-[fedrq-epel-next-testing-source]
-name = "fedrq-epel-next-testing-source"
+[epel-next-testing-source]
+name = "epel-next-testing-source"
 metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel-testing-next-source-$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True

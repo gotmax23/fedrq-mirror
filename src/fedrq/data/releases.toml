@@ -3,17 +3,24 @@
 
 [releases.rawhide]
 matcher = "^(rawhide)$"
+# These two fields are unused for now
 koschei_collection = "Fedora Rawhide"
 copr_chroot_fmt = "fedora-rawhide-{arch}"
 
+# `fedrq CMD -b rawhide (-r base)` enables the `rawhide` and `rawhide-source`
+# repos
+# -r base is the implicit default
 defs.base = ["rawhide", "rawhide-source"]
+# `fedrq CMD -b rawhide -r buildroot` enables the `fedrq-koji-rawhide` and
+# `fedrq-koji-rawhide-source` repositories.
 defs.buildroot = ["fedrq-koji-rawhide", "fedrq-koji-rawhide-source"]
+# fedrq will search for the repository names in the following
+# paths if they're not available in your system configuration.
 defpaths = ["rawhide-buildroot.repo", "fedora-rawhide.repo"]
-
-system_repos = false
-repo_dirs = ["/etc/yum.repos.dir"]
+system_repos = true
 
 [releases.branched]
+# e.g. f36, f37
 matcher = "^f(\\d{2})$"
 koschei_collection = "Fedora {version}"
 copr_chroot_fmt = "fedora-{version}-{arch}"
@@ -25,21 +32,20 @@ defs.testing =  ["fedora", "fedora-source", "updates", "updates-source",
                  "updates-testing", "updates-testing-source"]
 defs.testing-only =  ["updates-testing", "updates-testing-source"]
 
-system_repos = false
-repo_dirs = ["/etc/yum.repos.dir"]
 defpaths = ["fedora.repo", "fedora-updates.repo", "fedora-updates-testing.repo"]
 
 [releases.epel]
+# e.g. epel8, epel9, epel10
 matcher = "^epel(\\d{1,2})$"
 koschei_collection = "EPEL {version}"
 copr_chroot_fmt = "epel-{version}-{arch}"
 defpaths = ["epel.repo"]
 system_repos = false
 
-defs.base = ["fedrq-epel", "fedrq-epel-source"]
-defs.testing = ["fedrq-epel", "fedrq-epel-source",
-                "fedrq-epel-testing", "fedrq-epel-testing-source"]
-defs.testing-only = ["fedrq-epel-testing", "fedrq-epel-testing-source"]
+defs.base = ["epel", "epel-source"]
+defs.testing = ["epel", "epel-source",
+                "epel-testing", "epel-testing-source"]
+defs.testing-only = ["epel-testing", "epel-testing-source"]
 
 [releases.epel_next]
 matcher = "^epel(\\d{1,2})-next$"
@@ -48,20 +54,20 @@ copr_chroot_fmt = "centos-stream+epel-next-epel-{version}-{arch}"
 defpaths = ["epel.repo"]
 system_repos = false
 
-defs.base = ["fedrq-epel", "fedrq-epel-source",
-             "fedrq-epel-next", "fedrq-epel-next-source"]
+defs.base = ["epel", "epel-source",
+             "epel-next", "epel-next-source"]
 
-defs.testing = ["fedrq-epel", "fedrq-epel-source",
-                "fedrq-epel-next", "fedrq-epel-next-source",
-                "fedrq-epel-testing", "fedrq-epel-testing-source",
-                "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
-def.testing-only = ["fedrq-epel-testing", "fedrq-epel-testing-source",
-                    "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
+defs.testing = ["epel", "epel-source",
+                "epel-next", "epel-next-source",
+                "epel-testing", "epel-testing-source",
+                "epel-next-testing", "epel-next-testing-source"]
+def.testing-only = ["epel-testing", "epel-testing-source",
+                    "epel-next-testing", "epel-next-testing-source"]
 
-defs.next-base = ["fedrq-epel-next", "fedrq-epel-next-source"]
-def.next-testing = ["fedrq-epel-next", "fedrq-epel-next-source",
-                    "fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
-defs.next-testing-only = ["fedrq-epel-next-testing", "fedrq-epel-next-testing-source"]
+defs.next-base = ["epel-next", "epel-next-source"]
+def.next-testing = ["epel-next", "epel-next-source",
+                    "epel-next-testing", "epel-next-testing-source"]
+defs.next-testing-only = ["epel-next-testing", "epel-next-testing-source"]
 
 
 [releases.centos-stream]
@@ -86,10 +92,10 @@ defs.epel = [
     "fedrq-centos-stream-crb",
     "fedrq-centos-stream-crb-source",
     # epel
-    "fedrq-epel",
-    "fedrq-epel-source",
-    "fedrq-epel-next",
-    "fedrq-epel-next-source"
+    "epel",
+    "epel-source",
+    "epel-next",
+    "epel-next-source"
 ]
 defs.no-crb = [
     "fedrq-centos-stream-baseos",

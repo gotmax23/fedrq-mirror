@@ -107,6 +107,21 @@ class BaseMaker(BaseMakerBase):
     def read_repofile(self, file: StrPath) -> None:
         rr = dnf.conf.read.RepoReader(self.base.conf, None)
         for repo in rr._get_repos(str(file)):
+            LOG.debug("Adding %s from %s", repo.id, file)
+            self.base.repos.add(repo)
+
+    # This is private for now
+    def _read_repofile_new(self, file: StrPath) -> None:
+        """
+        Load repositories from a repo file if they're not already in the
+        configuration.
+        """
+        rr = dnf.conf.read.RepoReader(self.base.conf, None)
+        for repo in rr._get_repos(str(file)):
+            if repo.id in self.base.repos:
+                LOG.debug("Not adding %s. It's already in the config.", repo.id)
+                continue
+            LOG.debug("Adding %s from %s", repo.id, file)
             self.base.repos.add(repo)
 
     def create_repo(self, repoid: str, **kwargs) -> None:

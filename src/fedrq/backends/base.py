@@ -303,6 +303,14 @@ class BaseMakerBase(abc.ABC):
         """
         ...
 
+    # Private for now
+    @abc.abstractmethod
+    def _read_repofile_new(self, file: StrPath) -> None:
+        """
+        Load repositories from a repo file if they're not already in the
+        configuration.
+        """
+
     def sets(self, conf: dict[str, Any], substitutions: dict[str, Any]) -> None:
         """
         :param conf: A dict of configuration options. Call self.set() for each
@@ -333,7 +341,7 @@ class BaseMakerBase(abc.ABC):
         for path in release.release_config.full_def_paths:
             with importlib.resources.as_file(path) as fp:
                 LOG.debug("Reading %s", fp)
-                self.read_repofile((str(fp)))
+                self._read_repofile_new(fp)
         LOG.debug("Enabling repos: %s", release.repos)
         self.enable_repos(release.repos)
 
