@@ -177,6 +177,10 @@ class PackageCompat(Protocol):
     def packager(self) -> str:
         ...
 
+    @property
+    def location(self) -> str:
+        ...
+
     def __hash__(self) -> int:
         ...
 

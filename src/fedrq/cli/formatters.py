@@ -62,6 +62,7 @@ _ATTRS: tuple[str, ...] = (
     "repoid",
     "vendor",
     "packager",
+    "location",
 )
 
 

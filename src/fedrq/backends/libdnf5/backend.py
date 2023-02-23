@@ -510,6 +510,10 @@ class Package(libdnf5.rpm.Package):
     def packager(self) -> str:
         return self.get_packager()
 
+    @property
+    def location(self) -> str:
+        return self.get_location()
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}<{str(self)}>"
 
