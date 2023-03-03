@@ -242,7 +242,7 @@ class Release:
             and self.version != releasever
         ):
             logger.debug("Using smartcache")
-            base_conf["cachedir"] = str(get_smartcache_basedir() / str(self.branch))
+            base_conf["cachedir"] = str(get_smartcache_basedir() / str(self.version))
         bm = base_maker or config.backend_mod.BaseMaker()
         bm.sets(base_conf, base_vars)
         if config.load_filelists:
