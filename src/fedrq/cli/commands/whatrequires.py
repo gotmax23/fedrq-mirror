@@ -222,9 +222,9 @@ class Whatsupplements(WhatCommand):
 
 class Whatenhances(WhatCommand):
     """
-    By default, fedrq-whatsuggests takes one or more valid package names. Then,
+    By default, fedrq-whatenhances takes one or more valid package names. Then,
     it finds the packages' reverse dependencies, including dependents of their
-    virtual Provides. Use the options below to modify fedrq-whatsuggests exact
+    virtual Provides. Use the options below to modify fedrq-whatenhances exact
     search strategy.
     """
 
@@ -308,3 +308,16 @@ class WhatrequiresSrc(WhatCommand):
         self.query = self.rq.query(**qkwargs)
         for p in self.format():
             print(p)
+
+
+class Whatobsoletes(WhatCommand):
+    """
+    By default, fedrq-whatobsoletes takes one or more valid package names.
+    Then, it finds the packages' reverse dependencies, including dependents of
+    their virtual Provides. Use the options below to modify fedrq-whatobsoletes
+    # exact search strategy.
+    """
+
+    _exclude_subpackages_opt: bool = False
+    _operator = "Obsolete"
+    operator = "obsoletes"

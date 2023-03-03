@@ -13,6 +13,7 @@ from fedrq.cli.commands.subpkgs import Subpkgs
 from fedrq.cli.commands.whatrequires import (
     WhatCommand,
     Whatenhances,
+    Whatobsoletes,
     Whatrecommends,
     Whatrequires,
     WhatrequiresSrc,
@@ -26,6 +27,7 @@ __all__ = (
     "Subpkgs",
     "WhatCommand",
     "Whatenhances",
+    "Whatobsoletes",
     "Whatrecommends",
     "Whatrequires",
     "WhatrequiresSrc",
@@ -53,6 +55,7 @@ COMMANDS: dict[str, type[Command]] = {
     "pkgs": Pkgs,
     "subpkgs": Subpkgs,
     "whatenhances": Whatenhances,
+    "whatobsoletes": Whatobsoletes,
     "whatrecommends": Whatrecommends,
     "whatrequires": Whatrequires,
     "wr": Whatrequires,
