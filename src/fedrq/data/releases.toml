@@ -5,7 +5,7 @@
 matcher = "^(rawhide)$"
 # These two fields are unused for now
 koschei_collection = "Fedora Rawhide"
-copr_chroot_fmt = "fedora-rawhide-{arch}"
+copr_chroot_fmt = "fedora-rawhide"
 
 # `fedrq CMD -b rawhide (-r base)` enables the `rawhide` and `rawhide-source`
 # repos
@@ -23,7 +23,7 @@ system_repos = true
 # e.g. f36, f37
 matcher = "^f(\\d{2})$"
 koschei_collection = "Fedora {version}"
-copr_chroot_fmt = "fedora-{version}-{arch}"
+copr_chroot_fmt = "fedora-{version}"
 
 defs.base = ["fedora", "fedora-source", "updates", "updates-source"]
 defs.release = ["fedora", "fedora-source"]
@@ -38,7 +38,7 @@ defpaths = ["fedora.repo", "fedora-updates.repo", "fedora-updates-testing.repo"]
 # e.g. epel8, epel9, epel10
 matcher = "^epel(\\d{1,2})$"
 koschei_collection = "EPEL {version}"
-copr_chroot_fmt = "epel-{version}-{arch}"
+copr_chroot_fmt = "epel-{version}"
 defpaths = ["epel.repo"]
 system_repos = false
 
@@ -50,7 +50,7 @@ defs.testing-only = ["epel-testing", "epel-testing-source"]
 [releases.epel_next]
 matcher = "^epel(\\d{1,2})-next$"
 koschei_collection = "EPEL {version}"
-copr_chroot_fmt = "centos-stream+epel-next-{version}-{arch}"
+copr_chroot_fmt = "centos-stream+epel-next-{version}"
 defpaths = ["epel.repo"]
 system_repos = false
 
@@ -72,7 +72,7 @@ defs.next-testing-only = ["epel-next-testing", "epel-next-testing-source"]
 
 [releases.centos-stream]
 matcher = '^c(9|1\d)s'
-copr_chroot_fmt = "centos-stream-{version}-{arch}"
+copr_chroot_fmt = "centos-stream-{version}"
 defpaths = ["epel.repo", "centos-stream.repo"]
 system_repos = false
 defs.base = [
