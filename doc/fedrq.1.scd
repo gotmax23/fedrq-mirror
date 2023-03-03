@@ -196,6 +196,11 @@ Custom formatters:
 :  *base*, *epel*, *no-crb*
 :  *epel* contains epel, epel-next, and crb.
    *no-crb* contains base minus the crb repo.
+|  CentOS Stream 8 (legacy)
+:  c8s
+:  *base*, *epel*, *no-powertools*
+:  *epel* contains epel, epel-next, and crb.
+   *no-powertools* contains base minus the powertools repo.
 
 ## SPECIAL REPOS
 

@@ -103,3 +103,36 @@ defs.no-crb = [
     "fedrq-centos-stream-appstream",
     "fedrq-centos-stream-appstream-source",
 ]
+
+[releases.centos-stream8]
+matcher = "^c(8)s$"
+copr_chroot_fmt = "centos-stream-{version}"
+defpaths = ["epel.repo", "centos-stream8.repo"]
+defs.base = [
+    "centos-stream8-baseos",
+    "centos-stream8-baseos-source",
+    "centos-stream8-appstream",
+    "centos-stream8-appstream-source",
+    "centos-stream8-powertools",
+    "centos-stream8-powertools-source",
+]
+defs.epel = [
+    # base
+    "centos-stream8-baseos",
+    "centos-stream8-baseos-source",
+    "centos-stream8-appstream",
+    "centos-stream8-appstream-source",
+    "centos-stream8-powertools",
+    "centos-stream8-powertools-source",
+    # epel
+    "epel",
+    "epel-source",
+    "epel-next",
+    "epel-next-source"
+]
+defs.no-powertools = [
+    "centos-stream8-baseos",
+    "centos-stream8-baseos-source",
+    "centos-stream8-appstream",
+    "centos-stream8-appstream-source",
+]
