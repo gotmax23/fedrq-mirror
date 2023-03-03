@@ -50,7 +50,7 @@ defs.testing-only = ["epel-testing", "epel-testing-source"]
 [releases.epel_next]
 matcher = "^epel(\\d{1,2})-next$"
 koschei_collection = "EPEL {version}"
-copr_chroot_fmt = "centos-stream+epel-next-epel-{version}-{arch}"
+copr_chroot_fmt = "centos-stream+epel-next-{version}-{arch}"
 defpaths = ["epel.repo"]
 system_repos = false
 
