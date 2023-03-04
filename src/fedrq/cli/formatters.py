@@ -126,7 +126,7 @@ class Formatter(abc.ABC):
         in a Formatter class.
         """
 
-        def format_line(self, package):
+        def format_line(self, package):  # noqa: ARG001
             return fmt.format(package)
 
         dct = dict(

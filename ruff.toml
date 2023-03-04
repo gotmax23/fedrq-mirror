@@ -12,6 +12,8 @@ select = [
     "W",
     # pyflakes
     "F",
+    # unused-arguments
+    "ARG",
 ]
 ignore = [
     # Class attribute is shadowing a python builtin
@@ -22,3 +24,6 @@ exclude = [
     # Contains vendored code that we don't want to touch.
     "src/fedrq/_compat.py"
 ]
+
+[per-file-ignores]
+"tests/*" = ["ARG"]

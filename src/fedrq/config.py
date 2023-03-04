@@ -163,7 +163,7 @@ class ReleaseConfig(BaseModel):
         return full_defpaths
 
     def get_release(
-        self, config: RQConfig, branch: str, repo_name: str = "base"
+        self, config: RQConfig, branch: str, repo_name: str = "base"  # noqa: ARG002
     ) -> Release:
         return Release(release_config=self, branch=branch, repo_name=repo_name)
 

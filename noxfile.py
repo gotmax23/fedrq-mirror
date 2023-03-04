@@ -22,7 +22,7 @@ ALLOW_EDITABLE = os.environ.get("ALLOW_EDITABLE", str(not IN_CI)).lower() in (
 )
 
 
-def install(session: nox.Session, *args, use_pep517=True, editable=False, **kwargs):
+def install(session: nox.Session, *args, editable=False, **kwargs):
     if isinstance(session.virtualenv, nox.virtualenv.PassthroughEnv):
         session.warn(f"No venv. Skipping installation of {args}")
         return
