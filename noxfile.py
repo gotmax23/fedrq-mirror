@@ -176,14 +176,7 @@ def reuse(session: nox.Session):
 
 
 def install_fclogr(session: nox.Session):
-    install_system(session, "rpm-build")
-    try:
-        install_system(session, "python3-rpm")
-    except nox.command.CommandFailed:
-        session.warn("Failed to install python3-rpm. Falling back to rpm-py-installer.")
-        install(session, "rpm-py-installer", "--no-use-pep517")
-    else:
-        install(session, "./contrib/rpm-py-installer_dummy")
+    install_system(session, "rpm-build", "python3-rpm")
     if Path("../fclogr").exists():
         install(session, "-e", "../fclogr")
     else:
@@ -212,7 +205,7 @@ def clean(session: nox.Session):
         session.run("git", "restore", "fedrq.spec")
 
 
-@nox.session(venv_params=["--system-site-packages"])
+@nox.session
 def srpm(session: nox.Session, posargs=None):
     posargs = posargs or session.posargs
     install_fclogr(session)
@@ -220,7 +213,7 @@ def srpm(session: nox.Session, posargs=None):
     session.run("fclogr", "--debug", "dev-srpm", "-r", last_ref, *posargs)
 
 
-@nox.session(venv_params=["--system-site-packages"])
+@nox.session
 def mockbuild(session: nox.Session):
     install_system(session, "mock", "mock-core-configs")
     tmp = Path(session.create_tmp())
