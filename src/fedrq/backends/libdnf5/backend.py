@@ -200,10 +200,7 @@ class BaseMaker(BaseMakerBase):
         return self.base.get_vars()
 
     def _set(self, config, key: str, value: t.Any) -> None:
-        option_obj = getattr(config, key, None)
-        if not callable(option_obj):
-            raise ValueError(f"{key!r} is not a valid option.")
-        option_obj().set(Priority_RUNTIME, value)
+        self._get_option(config, key).set(Priority_RUNTIME, value)
 
     def set(self, key: str, value: t.Any) -> None:
         # if self.initialized:
@@ -275,9 +272,24 @@ class BaseMaker(BaseMakerBase):
         """
         self.rs.create_repos_from_file(str(file))
 
+    def _get_option(self, config: libdnf5.conf.Config, key: str) -> libdnf5.conf.Option:
+        """
+        Get an Option object from a libdnf5 Config object.
+        Maintains compatability with dnf5 versions before
+        https://github.com/rpm-software-management/dnf5/pull/327
+        """
+        if not hasattr(config, key):
+            raise ValueError(f"{key!r} is not a valid option.")
+        # dnf5 > 5.0.7
+        if option := getattr(config, f"get_{key}_option", None):
+            return option()
+        # dnf5 <= 5.0.7
+        # TODO: Add warning and deprecate
+        return getattr(config, key)()
+
     def load_filelists(self) -> None:
         LOG.debug("Loading filelists")
-        option: libdnf5.conf.OptionStringSet = self.config.optional_metadata_types()
+        option = self._get_option(self.config, "optional_metadata_types")
         option.add_item(libdnf5.conf.METADATA_TYPE_FILELISTS)
 
     def create_repo(self, repoid: str, **kwargs) -> None:
