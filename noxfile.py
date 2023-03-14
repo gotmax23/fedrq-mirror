@@ -253,6 +253,7 @@ def bump(session: nox.Session):
     session.run("bash", "-x", "contrib/bump.sh", *session.posargs)
 
 
-@nox.session(venv_backend="none")
+@nox.session
 def publish(session: nox.Session):
+    install(session, "flit")
     session.run("bash", "-x", "contrib/publish.sh", *session.posargs)
