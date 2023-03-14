@@ -20,4 +20,4 @@ sed -i 's|^version.*$|version = "'"${newversion}"'"|' pyproject.toml
 
 git add pyproject.toml fedrq.spec
 git commit -S -m "Release ${newversion}"
-git tag -a "${newversion}" -F NEWS.md
+git tag -a "v${newversion}" -F NEWS.md
