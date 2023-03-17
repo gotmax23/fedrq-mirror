@@ -270,6 +270,19 @@ class BaseMaker(BaseMakerBase):
         for repo in repoq:
             repo.enable()  # type: ignore
 
+    def disable_repo(self, repo: str, ignore_missing: bool = True) -> None:
+        """
+        Disable a repo by its id.
+        Raise a ValueError if the repoid is not in `self.base`'s configuration
+        when ignore_missing is False.
+        """
+        repoq = libdnf5.repo.RepoQuery(self.base)
+        repoq.filter_id(repo, libdnf5.common.QueryCmp_GLOB)
+        if not ignore_missing and not repoq:
+            raise ValueError(f"{repo} repo definition was not found.")
+        for repo in repoq:
+            repo.disable()  # type: ignore
+
     def read_repofile(self, file: StrPath) -> None:
         """
         Load repositories from a repo file

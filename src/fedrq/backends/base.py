@@ -283,6 +283,14 @@ class BaseMakerBase(abc.ABC):
         """
 
     @abc.abstractmethod
+    def disable_repo(self, repo: str, ignore_missing: bool = True) -> None:
+        """
+        Disable a repo by its id.
+        Raise a ValueError if the repoid is not in `self.base`'s configuration
+        when ignore_missing is False.
+        """
+
+    @abc.abstractmethod
     def read_repofile(self, file: StrPath) -> None:
         """
         Load repositories from a repo file

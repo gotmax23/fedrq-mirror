@@ -104,6 +104,17 @@ class BaseMaker(BaseMakerBase):
         else:
             raise ValueError(f"{repo} repo definition was not found.")
 
+    def disable_repo(self, repo: str, ignore_missing: bool = True) -> None:
+        """
+        Disable a repo by its id.
+        Raise a ValueError if the repoid is not in `self.base`'s configuration
+        when ignore_missing is False.
+        """
+        if repo_obj := self.base.repos.get_matching(repo):
+            repo_obj.disable()
+        elif not ignore_missing:
+            raise ValueError(f"{repo} repo definition was not found.")
+
     def read_repofile(self, file: StrPath) -> None:
         rr = dnf.conf.read.RepoReader(self.base.conf, None)
         for repo in rr._get_repos(str(file)):
