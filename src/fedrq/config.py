@@ -27,7 +27,7 @@ else:
 
 from pydantic import BaseModel, Field, validator
 
-from fedrq._utils import mklog
+from fedrq._utils import merge_dict, mklog
 from fedrq.backends import BACKENDS, get_default_backend
 
 if t.TYPE_CHECKING:
@@ -352,14 +352,6 @@ def _get_files(
     return sorted(files, key=lambda f: f.name, reverse=reverse)
 
 
-def _process_config(
-    data: dict[str, t.Any], config: dict[str, t.Any], releases: dict[str, t.Any]
-) -> None:
-    if r := data.pop("releases", None):
-        releases.update(r)
-    config.update(data)
-
-
 def get_config(**overrides: t.Any) -> RQConfig:
     """
     Retrieve config files from CONFIG_DIRS and fedrq.data.
@@ -368,7 +360,6 @@ def get_config(**overrides: t.Any) -> RQConfig:
     flog = mklog(__name__, "get_config")
     flog.debug(f"CONFIG_DIRS = {CONFIG_DIRS}")
     config: dict[str, t.Any] = {}
-    releases: dict[str, t.Any] = {}
     all_files: list[list[t.Union[Traversable, Path]]] = [
         _get_files(importlib_resources.files("fedrq.data"), ".toml"),
         *(_get_files(p, ".toml") for p in reversed(CONFIG_DIRS)),
@@ -378,9 +369,9 @@ def get_config(**overrides: t.Any) -> RQConfig:
         flog.debug("Loading config file: %s", path)
         with path.open("rb") as fp:
             data = tomllib.load(fp)
-        _process_config(data, config, releases)
-    _process_config(overrides, config, releases)
-    config["releases"] = _get_releases(releases)
+        merge_dict(data, config)
+    merge_dict(overrides, config)
+    config["releases"] = _get_releases(config["releases"])
     flog.debug("Final config: %s", config)
     return RQConfig(**config)
 

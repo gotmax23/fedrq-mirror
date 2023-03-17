@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import logging
 import typing as t
+from collections.abc import MutableMapping
 
 if t.TYPE_CHECKING:
     from fedrq.backends.base import PackageCompat, PackageQueryCompat
@@ -25,3 +26,17 @@ def filter_latest(query: PackageQueryCompat, latest: t.Optional[int]) -> None:
 
 def mklog(*args: str) -> logging.Logger:
     return logging.getLogger(".".join(args))
+
+
+def merge_dict(
+    data: MutableMapping[str, t.Any], dest: MutableMapping[str, t.Any]
+) -> None:
+    for key, value in tuple(data.items()):
+        if key not in dest:
+            pass
+        elif isinstance(value, MutableMapping) and isinstance(
+            dest[key], MutableMapping
+        ):
+            merge_dict(value, dest[key])
+            continue
+        dest[key] = value
