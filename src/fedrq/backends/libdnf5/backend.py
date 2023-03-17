@@ -305,7 +305,7 @@ class BaseMaker(BaseMakerBase):
         return getattr(config, key)()
 
     # This is private for now
-    def _read_repofile_new(self, file: StrPath) -> None:
+    def _read_repofile_new(self, file: StrPath, ensure_enabled: bool = False) -> None:
         """
         Load repositories from a repo file if they're not already in the
         configuration.
@@ -318,33 +318,34 @@ class BaseMaker(BaseMakerBase):
             if expanded_id == "main":
                 LOG.debug("Not reading main section.")
                 continue
-            if self._has_repo(expanded_id):
+            if repo := self._get_repo(expanded_id):
                 LOG.debug("Not adding %s. It's already in the config.", expanded_id)
-                continue
-            LOG.debug("Adding %s from %s", expanded_id, file)
-            repo: libdnf5.repo.Repo = self.rs.create_repo(expanded_id)
-            repo_config: libdnf5.repo.ConfigRepo = repo.get_config()
-            repo_config.load_from_parser(
-                parser,
-                expanded_id,
-                # base.get_vars() returns a WeakPtr, hence the .get()
-                self.base.get_vars().get(),
-                # base.get_logger() returns a WeakPtr, hence the .get()
-                self.base.get_logger().get(),
-                Priority_RUNTIME,
-            )
-            nameop = repo_config.name()
-            if nameop.get_priority() == libdnf5.conf.Option.Priority_DEFAULT:
-                nameop.set(Priority_RUNTIME, expanded_id)
+            else:
+                LOG.debug("Adding %s from %s", expanded_id, file)
+                repo = self.rs.create_repo(expanded_id)
+                repo_config: libdnf5.repo.ConfigRepo = repo.get_config()
+                repo_config.load_from_parser(
+                    parser,
+                    expanded_id,
+                    # base.get_vars() returns a WeakPtr, hence the .get()
+                    self.base.get_vars().get(),
+                    # base.get_logger() returns a WeakPtr, hence the .get()
+                    self.base.get_logger().get(),
+                    Priority_RUNTIME,
+                )
+                nameop = self._get_option(repo_config, "name")
+                if nameop.get_priority() == libdnf5.conf.Option.Priority_DEFAULT:
+                    nameop.set(Priority_RUNTIME, expanded_id)
+            if ensure_enabled:
+                repo.enable()
 
-    # Not part of the BaseMakerBase interface
-    def _has_repo(self, name: str) -> bool:
+    def _get_repo(self, name: str) -> libdnf5.repo.Repo | None:
         """
-        Check if a repo id exists
+        Get a repository. Returns None if the repository doesn't exist.
         """
         repoq = libdnf5.repo.RepoQuery(self.base)
-        repoq.filter_id(name)
-        return bool(repoq)
+        repoq.filter_id([name])
+        return next(iter(repoq), None)
 
     def load_filelists(self) -> None:
         LOG.debug("Loading filelists")

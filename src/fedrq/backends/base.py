@@ -313,7 +313,7 @@ class BaseMakerBase(abc.ABC):
 
     # Private for now
     @abc.abstractmethod
-    def _read_repofile_new(self, file: StrPath) -> None:
+    def _read_repofile_new(self, file: StrPath, ensure_enabled: bool = False) -> None:
         """
         Load repositories from a repo file if they're not already in the
         configuration.

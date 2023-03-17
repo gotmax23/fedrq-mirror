@@ -122,13 +122,16 @@ class BaseMaker(BaseMakerBase):
             self.base.repos.add(repo)
 
     # This is private for now
-    def _read_repofile_new(self, file: StrPath) -> None:
+    def _read_repofile_new(self, file: StrPath, ensure_enabled: bool = False) -> None:
         """
         Load repositories from a repo file if they're not already in the
         configuration.
         """
         rr = dnf.conf.read.RepoReader(self.base.conf, None)
         for repo in rr._get_repos(str(file)):
+            if ensure_enabled:
+                LOG.debug("Ensuring that %s is enabled.", repo.id)
+                self.base.repos[repo.id].enable()
             if repo.id in self.base.repos:
                 LOG.debug("Not adding %s. It's already in the config.", repo.id)
                 continue
