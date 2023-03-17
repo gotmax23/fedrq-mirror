@@ -26,4 +26,5 @@ tasks:
       $nox -e mockbuild -- --resultdir results_fedrq -r "${CHROOT}-$(rpm -E %_arch)"
       tar cvf results_fedrq.tar.gz results_fedrq
   - rpmlint: |
-      rpmlint fedrq/results_fedrq/*.rpm
+      cd fedrq/
+      rpmlint -r fedrq.rpmlintrc results_fedrq/*.rpm

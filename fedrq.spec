@@ -1,6 +1,8 @@
 # This specfile is licensed under:
+#
+# Copyright (C) 2022 Maxwell G <gotmax@e.email>
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+# License text: https://spdx.org/licenses/MIT.html
 
 %bcond libdnf5 %[0%{?fedora} >= 38]
 
@@ -75,7 +77,7 @@ FEDRQ_BACKEND=libdnf5 %pytest -v -m "not no_rpm_mock"
 %files -f %{pyproject_files}
 # Licenses are included in the wheel
 %license %{_licensedir}/fedrq/
-%doc README.md CONTRIBUTING.md doc/API.md
+%doc README.md CONTRIBUTING.md doc/API.md contrib/api_examples
 %{_bindir}/fedrq*
 %{_mandir}/man1/fedrq.1*
 %{_mandir}/man5/fedrq.5*
