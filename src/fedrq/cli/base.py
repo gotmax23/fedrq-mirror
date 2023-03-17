@@ -9,6 +9,7 @@ import argparse
 import collections.abc as cabc
 import json
 import logging
+import re
 import sys
 from functools import wraps
 from pathlib import Path
@@ -46,7 +47,28 @@ These modules are only available for the default system Python interpreter.
 """.strip()
 
 
-def _append_error(lst: list[str], error: cabc.Iterable | str | None) -> None:
+SPLIT_REGEX = re.compile(r"\s*[,\s]\s*")
+
+
+# Based on dnf.cli.option_parser._RepoCallback
+class _EnableDisableRepo(argparse.Action):
+    OPERATORS = {"-e": "enable", "--enablerepo": "enable", "--disablerepo": "disable"}
+
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,  # noqa: ARG002
+        namespace: argparse.Namespace,
+        values: str | cabc.Sequence[Any] | None,
+        option_string: str | None = None,
+    ) -> None:
+        assert isinstance(values, str) and isinstance(option_string, str)
+        operator = self.OPERATORS[option_string]
+        getattr(namespace, self.dest).extend(
+            (operator, repo) for repo in SPLIT_REGEX.split(values)
+        )
+
+
+def _append_error(lst: list[str], error: cabc.Iterable | str | None = None) -> None:
     if isinstance(error, str):
         lst.append(error)
     elif isinstance(error, cabc.Iterable):
@@ -200,6 +222,28 @@ class Command(abc.ABC):
         parser.add_argument(
             "--forcearch", help="Query a foreign architecture's repositories"
         )
+        parser.add_argument(
+            "-e",
+            "--enablerepo",
+            dest="enable_disable",
+            default=[],
+            action=_EnableDisableRepo,
+            metavar="REPO",
+            help="""
+            Enable certain repositories for the duration of this operation.
+            All repositories in the system configuration and any additional
+            defs in the selected branch are available.
+            """,
+        )
+        parser.add_argument(
+            "--disablerepo",
+            dest="enable_disable",
+            default=[],
+            action=_EnableDisableRepo,
+            metavar="REPO",
+            # PROVISIONAL
+            help=argparse.SUPPRESS,
+        )
         return parser
 
     @classmethod
@@ -287,8 +331,8 @@ class Command(abc.ABC):
             return str(err)
         return None
 
-    @v_add_errors
-    def v_rq(self) -> None:
+    @v_fatal_error
+    def v_rq(self) -> str | None:
         conf: dict[str, Any] = {}
         bvars: dict[str, Any] = {}
 
@@ -303,9 +347,20 @@ class Command(abc.ABC):
         if self.args.forcearch:
             conf["ignorearch"] = True
             bvars["arch"] = self.args.forcearch
-        self.rq = self.backend.Repoquery(
-            self.release.make_base(self.config, conf, bvars)
-        )
+        bm = self.backend.BaseMaker()
+        try:
+            self.release.make_base(self.config, conf, bvars, bm, False)
+            for func, repo in self.args.enable_disable:
+                if func == "enable":
+                    self.release.get_repog(repo).load(bm, self.config, self.release)
+                elif func == "disable":
+                    bm.disable_repo(repo, True)
+                else:
+                    raise ValueError
+        except ConfigError as exc:
+            return str(exc)
+        self.rq = self.backend.Repoquery(bm.fill_sack())
+        return None
 
     @v_fatal_error
     def v_backend(self) -> str | None:

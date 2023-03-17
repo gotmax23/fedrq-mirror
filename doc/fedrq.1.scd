@@ -68,6 +68,10 @@ These options have the same meaning across multiple subcommands.
 	Special repos may be specified for specific releases.
 	See BUILTIN RELEASES for the releases available out of the box. Extra
 	configurations may be specified by the user.
+*-e*, *--enablerepo* <repo class>
+	Enable certain repositories for the duration of this operation.
+	All repositories in the system configuration and any additional
+	defs in the selected branch are available.
 *-l*, *--latest* <integer|"all"> (default: _1_)
 	How many package versions to show for a given _name.arch_.
 	By default, only the latest is included.
