@@ -27,6 +27,7 @@ else:
 
 from pydantic import BaseModel, Field, validator
 
+from fedrq._config import ConfigError
 from fedrq._utils import merge_dict, mklog
 from fedrq.backends import BACKENDS, get_default_backend
 
@@ -38,11 +39,8 @@ if t.TYPE_CHECKING:
 
 CONFIG_DIRS = (Path.home() / ".config/fedrq", Path("/etc/fedrq"))
 DEFAULT_REPO_CLASS = "base"
+DEFAULT_COPR_BASEURL = "https://copr.fedoraproject.org"
 logger = logging.getLogger(__name__)
-
-
-class ConfigError(ValueError):
-    pass
 
 
 class LoadFilelists(StrEnum):
@@ -250,6 +248,32 @@ class Release:
         bm.load_release_repos(self, "releasever" not in base_vars)
         return bm.fill_sack() if fill_sack else bm.base
 
+    def _copr_repo(
+        self, value: str, default_copr_baseurl: str = DEFAULT_COPR_BASEURL
+    ) -> str:
+        value = value.rstrip("/")
+        if not self.copr_chroot_fmt:
+            raise ValueError(
+                f"{self.release_config.name} does not have 'copr_chroot_fmt' set"
+            )
+        chroot = re.sub("-{arch}$", "", self.copr_chroot_fmt).format(
+            version=self.version
+        )
+        if value.startswith(("http://", "https://")):
+            return value + "/" + chroot
+
+        frag = "coprs/"
+        if value.startswith("@"):
+            frag += "g/"
+            value = value[1:]
+        value, sep, copr_baseurl = value.partition("@")
+        if not sep:
+            copr_baseurl = default_copr_baseurl.rstrip("/")
+        elif not copr_baseurl.startswith(("http://", "https://")):
+            copr_baseurl = "https://" + copr_baseurl
+        frag += value
+        return f"{copr_baseurl}/{frag}/repo/{chroot}"
+
 
 class RQConfig(BaseModel):
     backend: t.Optional[str] = os.environ.get("FEDRQ_BACKEND")
@@ -258,6 +282,7 @@ class RQConfig(BaseModel):
     smartcache: bool = True
     load_filelists: LoadFilelists = LoadFilelists.auto
     _backend_mod = None
+    copr_baseurl: str = DEFAULT_COPR_BASEURL
 
     class Config:
         json_encoders: dict[t.Any, Callable[[t.Any], str]] = {

@@ -33,6 +33,7 @@ dependencies = [
     # "dnf",
     "pydantic ~= 1.0",
     "tomli; python_version<'3.11'",
+    "requests",
     # Optional dependency for `fedrq check-config --dump`
     # "tomli-w",
 ]
@@ -42,11 +43,12 @@ requires-python = ">=3.9"
 lint = [
     "black",
     "isort",
-    "ruff",
     "mypy",
     "reuse",
-    # Optional fedrq runtime dependency
+    "ruff",
     "tomli-w",
+    "types-requests",
+    # Optional fedrq runtime dependency
     "typing_extensions",
 ]
 test = [

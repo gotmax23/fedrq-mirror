@@ -131,7 +131,7 @@ def codeql(session: nox.Session):
 
 @nox.session(venv_params=["--system-site-packages"])
 def typing(session: nox.Session):
-    install(session, ".", "tomli_w", "mypy", editable=True)
+    install(session, ".[lint]", editable=True)
     session.run(
         "python", "-m", "mypy", "--enable-incomplete-feature=Unpack", "src/fedrq/"
     )
