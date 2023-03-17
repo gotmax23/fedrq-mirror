@@ -350,8 +350,7 @@ class BaseMakerBase(abc.ABC):
             with importlib.resources.as_file(path) as fp:
                 LOG.debug("Reading %s", fp)
                 self._read_repofile_new(fp)
-        LOG.debug("Enabling repos: %s", release.repos)
-        self.enable_repos(release.repos)
+        release.repog.load(self, release.config, release)
 
     @abc.abstractmethod
     def create_repo(self, repoid: str, **kwargs) -> None:

@@ -17,19 +17,19 @@ from enum import auto as auto_enum
 from importlib.abc import Traversable
 from pathlib import Path
 
-from fedrq._compat import StrEnum
-from fedrq.backends.base import BaseMakerBase
-
 if sys.version_info < (3, 11):
     import tomli as tomllib
 else:
     import tomllib
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, PrivateAttr, validator
 
+from fedrq._compat import StrEnum
 from fedrq._config import ConfigError
 from fedrq._utils import merge_dict, mklog
 from fedrq.backends import BACKENDS, get_default_backend
+from fedrq.backends.base import BaseMakerBase
+from fedrq.release_repo import AliasRepoG, DefaultRepoGs, RepoG, Repos
 
 if t.TYPE_CHECKING:
     import dnf
@@ -72,6 +72,18 @@ class ReleaseConfig(BaseModel):
     copr_chroot_fmt: t.Optional[str] = None
 
     full_def_paths: t.ClassVar[list[t.Union[Traversable, Path]]] = []
+    repo_aliases: dict[str, str] = {}
+    _repogs = PrivateAttr()
+
+    @property
+    def repogs(self) -> Repos:
+        return self._repogs
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._repogs = DefaultRepoGs.new(
+            self.defs | AliasRepoG.from_str_mapping(self.repo_aliases)
+        )
 
     @validator("defpaths")
     def v_defpaths(cls, value, values) -> dict[str, t.Any]:
@@ -98,10 +110,12 @@ class ReleaseConfig(BaseModel):
         return bool(re.match(self.matcher, val))
 
     def is_valid_repo(self, val: str) -> bool:
-        return val in self.defs
-
-    def release(self, branch: str, repo_name: str = "base") -> Release:
-        return Release(self, branch, repo_name)
+        try:
+            self.repogs.get_repo(val)
+        except ConfigError:
+            return False
+        else:
+            return True
 
     @staticmethod
     def _repo_dir_iterator(
@@ -161,42 +175,46 @@ class ReleaseConfig(BaseModel):
         return full_defpaths
 
     def get_release(
-        self, config: RQConfig, branch: str, repo_name: str = "base"  # noqa: ARG002
+        self, config: RQConfig, branch: str, repo_name: str = "base"
     ) -> Release:
-        return Release(release_config=self, branch=branch, repo_name=repo_name)
+        return Release(
+            config=config, release_config=self, branch=branch, repo_name=repo_name
+        )
 
 
 class Release:
+    """
+    Encapsulates a ReleaseConfig with a specific version and repo name.
+    This SHOULD NOT be instantiated directly.
+    The __init__() has no stability promises.
+    Use the RQConfig.get_config() factory instead.
+    """
+
     def __init__(
         self,
+        config: RQConfig,
         release_config: ReleaseConfig,
         branch: str,
         repo_name: str = "base",
     ) -> None:
+        self.config = config
         self.release_config = release_config
         if not self.release_config.is_match(branch):
             raise ConfigError(
                 f"Branch {branch} does not match {self.release_config.name}"
             )
-        if not self.release_config.is_valid_repo(repo_name):
-            raise ConfigError(
-                "{repo} is not a valid repo type for {name}".format(
-                    repo=repo_name, name=self.release_config.name
-                )
-                + " Valid repos are: {}".format(tuple(release_config.defs))
-            )
         self.branch = branch
         self.repo_name = repo_name
+        self.repog: RepoG = self.get_repog(repo_name)
+
+    def get_repog(self, key: str) -> RepoG:
+        return self.release_config.repogs.get_repo(key)
 
     @property
     def version(self) -> str:
         if match := re.match(self.release_config.matcher, self.branch):
             return match.group(1)
         raise ValueError(f"{self.branch} does not match {self.release_config.name}")
-
-    @property
-    def repos(self) -> tuple[str, ...]:
-        return tuple(self.release_config.defs[self.repo_name])
 
     @property
     def copr_chroot_fmt(self) -> str | None:
