@@ -150,6 +150,11 @@ class BaseMaker(BaseMakerBase):
     def backend(self) -> BackendMod:
         return sys.modules[__name__]
 
+    def repolist(self, enabled: bool | None = None) -> list[str]:
+        if enabled is None:
+            return list(self.base.repos)
+        return [r.id for r in self.base.repos.values() if r.enabled is bool(enabled)]
+
 
 class Repoquery(RepoqueryBase):
     def __init__(self, base: dnf.Base) -> None:

@@ -367,6 +367,10 @@ class BaseMakerBase(abc.ABC):
     def backend(self) -> BackendMod:
         ...
 
+    @abc.abstractmethod
+    def repolist(self, enabled: bool | None = None) -> list[str]:
+        ...
+
 
 class RepoqueryBase(abc.ABC):
     """

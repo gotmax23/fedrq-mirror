@@ -383,6 +383,12 @@ class BaseMaker(BaseMakerBase):
     def backend(self) -> BackendMod:
         return sys.modules[__name__]
 
+    def repolist(self, enabled: bool | None = None) -> list[str]:
+        repoq = libdnf5.repo.RepoQuery(self.base)
+        if enabled is not None:
+            repoq.filter_enabled(enabled)
+        return [r.get_id() for r in repoq]
+
 
 @functools.total_ordering
 class Package(libdnf5.rpm.Package):
