@@ -18,6 +18,7 @@ defs.buildroot = ["fedrq-koji-rawhide", "fedrq-koji-rawhide-source"]
 # paths if they're not available in your system configuration.
 defpaths = ["rawhide-buildroot.repo", "fedora-rawhide.repo"]
 system_repos = true
+repo_aliases.koji = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/$basearch"
 
 [releases.branched]
 # e.g. f36, f37
@@ -25,14 +26,15 @@ matcher = "^f(\\d{2})$"
 koschei_collection = "Fedora {version}"
 copr_chroot_fmt = "fedora-{version}"
 
-defs.base = ["fedora", "fedora-source", "updates", "updates-source"]
+defs.base = ["fedora", "fedora-source", "@updates"]
 defs.release = ["fedora", "fedora-source"]
-defs.updates = ["updates", "updates-source"]
+defs.updates = ["@repo:updates", "updates-source"]
 defs.testing =  ["fedora", "fedora-source", "updates", "updates-source",
                  "updates-testing", "updates-testing-source"]
 defs.testing-only =  ["updates-testing", "updates-testing-source"]
 
 defpaths = ["fedora.repo", "fedora-updates.repo", "fedora-updates-testing.repo"]
+repo_aliases.koji = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/$basearch"
 
 [releases.epel]
 # e.g. epel8, epel9, epel10
