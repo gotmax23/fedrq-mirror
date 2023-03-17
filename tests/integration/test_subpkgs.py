@@ -28,16 +28,23 @@ def test_subpkgs_match2(capsys):
     fedrq.cli.main(
         [
             "subpkgs",
-            "-b",
-            "f37",
-            "containerd",
+            "ansible-core",
             "moby-engine",
-            "--match",
-            "*-devel",
-            "-F",
-            "source_name",
+            "python-pip",
+            "yt-dlp",
+            "gh",  # no matches
+            "-M",
+            "*-fish-completion",
+            "-M",
+            "*-doc",
+            "-Fname",
         ]
     )
     stdout, stderr = capsys.readouterr()
-    assert stdout.splitlines() == ["containerd"]
+    assert stdout.splitlines() == [
+        "ansible-core-doc",
+        "moby-engine-fish-completion",
+        "python-pip-doc",
+        "yt-dlp-fish-completion",
+    ]
     assert not stderr
