@@ -248,5 +248,5 @@ def bump(session: nox.Session):
 
 @nox.session
 def publish(session: nox.Session):
-    install(session, "flit")
+    install(session, "copr", "dbus-python", "flit", "keyring", "twine")
     session.run("bash", "-x", "contrib/publish.sh", *session.posargs)

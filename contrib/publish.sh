@@ -14,15 +14,17 @@ check_license() {
     done
 }
 
+PYTHON="${PYTHON-$(which python3)}"
+
 
 rm -rf dist/* || :
-python -m flit build
-twine check --strict dist/*
+$PYTHON -m flit build
+$PYTHON -m twine check --strict dist/*
 check_license
-twine upload -s -i "$(git config user.email)" --non-interactive -u __token__ dist/*
+$PYTHON -m twine upload -s -i "$(git config user.email)" --non-interactive -u __token__ dist/*
 git push --follow-tags
 hut git artifact upload dist/*
-copr build fedrq fedrq.spec --nowait
+$(which copr) build fedrq fedrq.spec --nowait
 sed -i 's|^\(version.*=.*\)"$|\1.post0"|' pyproject.toml
 git add pyproject.toml
 git commit -S -m "Post release version bump"
