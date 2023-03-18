@@ -371,6 +371,14 @@ See fedrq(1) for more information about formatters.
 
 (*files* cannot fit on a single line)
 
+Find the latest version of `fedrq` available in the gotmax23/fedrq-dev copr:
+```
+$ fedrq pkgs -F nevrr -b f36 -r @copr:gotmax23/fedrq-dev fedrq
+fedrq-0.4.1^25.20230318.76d7910-1.fc36.noarch copr:copr.fedorainfracloud.org:gotmax23:fedrq-dev
+fedrq-0.4.1^25.20230318.76d7910-1.fc36.src copr:copr.fedorainfracloud.org:gotmax23:fedrq-dev
+```
+
+
 ## whatrequires
 
 Find the packages that require another package, at buildtime or runtime:
