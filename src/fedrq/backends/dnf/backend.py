@@ -129,14 +129,14 @@ class BaseMaker(BaseMakerBase):
         """
         rr = dnf.conf.read.RepoReader(self.base.conf, None)
         for repo in rr._get_repos(str(file)):
+            if repo.id in self.base.repos:
+                LOG.debug("Not adding %s. It's already in the config.", repo.id)
+            else:
+                LOG.debug("Adding %s from %s", repo.id, file)
+                self.base.repos.add(repo)
             if ensure_enabled:
                 LOG.debug("Ensuring that %s is enabled.", repo.id)
                 self.base.repos[repo.id].enable()
-            if repo.id in self.base.repos:
-                LOG.debug("Not adding %s. It's already in the config.", repo.id)
-                continue
-            LOG.debug("Adding %s from %s", repo.id, file)
-            self.base.repos.add(repo)
 
     def create_repo(self, repoid: str, **kwargs) -> None:
         """
