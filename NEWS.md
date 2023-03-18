@@ -1,3 +1,91 @@
+fedrq 0.5.0
+=============
+
+New dependencies
+----------------
+- requests
+
+Highlighted examples
+----------------
+
+Find the latest version of `fedrq` available in the gotmax23/fedrq-dev copr. No extra configuration is required!
+
+```
+$ fedrq pkgs -F nevrr -b f36 -r @copr:gotmax23/fedrq-dev fedrq
+fedrq-0.4.1^25.20230318.76d7910-1.fc36.noarch copr:copr.fedorainfracloud.org:gotmax23:fedrq-dev
+fedrq-0.4.1^25.20230318.76d7910-1.fc36.src copr:copr.fedorainfracloud.org:gotmax23:fedrq-dev
+```
+
+Find the packages in Fedora and RPMFusion that depend on any subpackage of
+ffmpeg. Currently, fedrq does not have a builtin rpmfusion configuration, but
+with the repo loading revamp, fedrq can read arbitrary repositories from the
+system configuration. It's just not as nice and convenient.
+
+```
+$ fedrq wrsrc ffmpeg -b f37 --enablerepo=rpmfusion-{non,}free{,-updates}{,-source} -Fline:na,repoid
+HandBrake.src : rpmfusion-free-source
+HandBrake.x86_64 : rpmfusion-free
+HandBrake-gui.x86_64 : rpmfusion-free
+[...]
+mpv.src : updates-source
+mpv.x86_64 : updates
+mpv-libs.i686 : updates
+mpv-libs.x86_64 : updates
+[...]
+```
+
+Changed
+--------
+- Release: use releasever as cache directory key (https://todo.sr.ht/~gotmax23/fedrq/18)
+- change format of copr_chroot_fmt in ReleaseConfig
+- config: improve Release repository loading.
+  Previously, a repository id that was defined in one of the repo files in a
+  release's `defpaths` and also defined in the system configuration (when
+  system_repos=true) would cause fedrq to crash when loading repositories. Now,
+  system repositories are loaded first and then only repositories that are not
+  already defined are loaded from defpaths. system_repos=false works the same as before
+- add new repository loading API and dep on requests
+  (https://todo.sr.ht/~gotmax23/fedrq/21,
+  [More details](https://git.sr.ht/~gotmax23/fedrq/commit/85655fa3251b8c21f000dc04c2a8f54720c786f2))
+- config: plug in new repository loading API
+  ([More details](https://git.sr.ht/~gotmax23/fedrq/commit/68fd6d31dc64bdffc3f3867992eb1d82ff0a9f03))
+- release.toml: update for new reoo loading API
+
+Added
+------
+- Add centos-stream8 release configuration
+- Add whatobsoletes subcommand
+- formatters: add full_nevra formatter
+- config: implement recursive config file merging
+- cli: add --enablerepo and --disablerepo
+- docs: elaborate on new repo classes
+
+BaseMaker API:
+
+This includes changes to the BaseMaker API
+(`fedrq.backends.(lib)dnf(5).backend.BaseMaker`).
+
+- add disable_repo() method
+- add repolist() method
+
+fedrq.spec:
+
+- include api_examples in %doc
+- explicitly require python3-rpm
+
+Fixed
+-------
+- releases.toml: Fix typo in epel_next release def
+
+Testing and development workflow
+--------------------------------
+- nox: remove fclogr venv workarounds
+- ruff: enable unused-arguments rules
+- improve test_subpkgs_match2 integration test
+- ruff: ignore no-explicit-stacklevel for now
+- test Release._copr_repo() formatting
+- nox publish: install all deps into the venv
+
 fedrq 0.4.1
 ============
 
