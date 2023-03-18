@@ -66,6 +66,10 @@ by creating a configuration file with higher precedence.
 	- /etc/fedrq/repos/
 	- ~/.config/fedrq/repos/
 
+*copr_chroot_fmt* <str> (e.g. _fedora-{version}_ or _epel-{version}_ or
+_fedora-rawhide_)
+	Name of the Copr chroot that corresponds to this release.
+	_{version}_ will be replaced with the releasever.
 *system_repos* <bool> (default: _true_)
 	Whether to load the system repository configuration.
 	If all of the repository definitions are specified in *defpaths*,

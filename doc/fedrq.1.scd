@@ -63,15 +63,21 @@ These options have the same meaning across multiple subcommands.
 *-b*, *--branch* <branch name> (default: _rawhide_)
 	Distribution release. This matches distgit branch names by convention.
 	See BUILTIN RELEASES for the releases available out of the box. Extra
-	configurations may be specified by the user.
-*-r*, *--repo* <repo class> (default: _base_)
-	Special repos may be specified for specific releases.
-	See BUILTIN RELEASES for the releases available out of the box. Extra
-	configurations may be specified by the user.
+	configurations may be specified by the user. The chosen release impacts
+	what the releasever will be set to and which repositories will be
+	enabled by default.
+*-r*, *--repo* <repo class> (default: _@base_)
+	Enable <repo class> and disable all others for this operation. <repo
+	class> can be a standard repoid that's configured in /etc/yum.repos.d in
+	a ReleaseConfig's *defpaths* (see fedrq(5)). In addition, release
+	specifc repo groups and generic release class macros (e.g. *@copr*) are
+	accepted. When *--repo* isn't specified, the repositories in a Release's
+	*@base* repo group are selected. See REPO CLASSES for more information.
 *-e*, *--enablerepo* <repo class>
-	Enable certain repositories for the duration of this operation.
-	All repositories in the system configuration and any additional
-	defs in the selected branch are available.
+	Enable certain repositories for this operation. All repositories in the
+	system configuration and any fedrq repo classes are accepted. Can be
+	specified multiple times. Accepts comma separated values. See REPO
+	CLASSES.
 *-l*, *--latest* <integer|"all"> (default: _1_)
 	How many package versions to show for a given _name.arch_.
 	By default, only the latest is included.
@@ -172,11 +178,44 @@ Custom formatters:
   (example line: *yt-dlp-2023.01.06-2.fc38.noarch rawhide*)
 - *-F nevrr*: alias to plainwithrepo formatter.
 
+# REPO CLASSES
+
+The following generic repo class macros are available for all releases:
+
+*@file:[url or local path]*
+	Load a .repo file from a local path or a url. Repositories with
+	*enabled=0* won't be loaded unless they are enabled explicitly with
+	*--enablerepo*.
+*@baseurl:[url]*
+	Load a repository from *url*. gpgcheck will be disabled.
+*@baseurl:[url],[gpgkey]*
+	Load a repository from *url* and set its gpgkey to *gpgkey*
+*@copr:[user/name]* or *@copr:[@group/name]*
+	Load a Copr repository. The Copr instance defaults to
+	*https://copr.fedoraproject.org* but may be configured in fedrq's
+	configuration. *copr_chroot_fmt* must be specifced in the selected
+	branch's release configuration for this repo class to work. This is
+	configured for the builtin releases.
+*@copr:[user/name@copr_baseurl]* or *@copr:[@group/name@copr_baseurl]*
+	The *@copr* repo class also accepts a custom Copr instance.
+	Append *@* and a url.
+*@base* or *base* or other group
+	The default repoistories for a release specified in a ReleaseConfig's
+	*defs.base*. Any other repo group specified in a release's is accepted,
+	with or without the *@*. See SPECIAL REPOS for which repo groups are
+	available for each release.
+*@repo:[key]* or *key* (fallback)
+	Accepts any repoid available in the system configuration or a .repo file
+	specific in the current ReleaseConfig's *defpaths*. If *key* is the name
+	of a release's repo group (see above), that will be enabled instead.
+
+
+
 # BUILTIN RELEASES
 
 [- Name
 :- Matcher (*--branch*)
-:- Repo classes (*--repo*)
+:- Release repo groups (*--repo*)
 :- Special cases
 |[ Fedora Rawhide
 :[ rawhide
@@ -208,18 +247,18 @@ Custom formatters:
 
 ## SPECIAL REPOS
 
-The examples are from Fedora stable.
 
 *base*
 	Release repositories enabled by default in the distribution++
-	(e.g. *fedora*, *fedora-source*, *updates*, *updates-source*)
+	(e.g. *fedora*, *fedora-source*, *updates*, *updates-source* for Fedora
+	stable)
 *testing*
 	Superset of *base* with *-testing* repos enabled.++
 	(e.g. *fedora*, *fedora-source*, *updates*, *updates-source*,
-	*updates-testing-source*)
+	*updates-testing-source* for Fedora stable)
 *testing-only*
 	Includes *-testing* repositories without *base*++
-	(e.g. *updates-testing*, *updates-testing-source*)
+	(e.g. *updates-testing*, *updates-testing-source* for Fedora stable)
 
 *buildroot* (rawhide only)
 	Koji buildroot repositories
