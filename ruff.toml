@@ -19,6 +19,8 @@ ignore = [
     # Class attribute is shadowing a python builtin
     "A003",
     "B008",
+    # no-explicit-stacklevel
+    "B028",
 ]
 exclude = [
     # Contains vendored code that we don't want to touch.
