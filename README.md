@@ -56,6 +56,8 @@ The RPM package weakly depends on `python3-tomli-w`.
 
 This project is in beta and its versioning scheme follows semver.
 
+See [NEWS.md](https://git.sr.ht/~gotmax23/fedrq/tree/main/NEWS.md).
+
 ## Python API
 
 The `fedrq.config` module and the `fedrq.backend` package are public API.
