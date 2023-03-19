@@ -45,7 +45,7 @@ tasks:
       if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
         echo "Submitting docs for main branch"
         ssh-keyscan fedrq.gtmx.me | tee -a ~/.ssh/known_hosts
-        rsync site/. deploy@fedrq.gtmx.me:/var/www/fedrq
+        rsync -Pr site/. deploy@fedrq.gtmx.me:/var/www/fedrq
       fi
   - submit-man: |
       sudo dnf copr enable -y gotmax23/scd2html
