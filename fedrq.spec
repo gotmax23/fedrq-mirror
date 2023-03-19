@@ -49,7 +49,8 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 
 %prep
 %autosetup -p1
-sed -i "s|^#!/usr/bin/env/python.*|#!%python3|" contrib/api_examples/*.py
+sed -i "s|^#!/usr/bin/env python.*|#!%python3|" contrib/api_examples/*.py
+(! grep -rq '#!/usr/bin/env python.*' contrib/api_examples/*.py)
 
 
 %generate_buildrequires
