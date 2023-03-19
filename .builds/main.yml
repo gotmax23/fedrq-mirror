@@ -5,10 +5,11 @@
 image: fedora/rawhide
 packages:
   - hut
-  - tar
-  - python3-libdnf5
   - pandoc
+  - python3-libdnf5
   - rsync
+  - scd2html
+  - tar
 secrets:
   # Production Copr
   # - 759db354-8651-427c-b00a-0755164c8cae
@@ -48,8 +49,6 @@ tasks:
         rsync -Pr site/. deploy@fedrq.gtmx.me:/var/www/fedrq
       fi
   - submit-man: |
-      sudo dnf copr enable -y gotmax23/scd2html
-      sudo dnf install -y scd2html
       cd fedrq/doc
       scd2html < fedrq.1.scd > fedrq.1.html
       scd2html < fedrq.5.scd > fedrq.5.html
