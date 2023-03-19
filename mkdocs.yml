@@ -9,6 +9,7 @@ repo_name: "sr.ht/~gotmax23/fedrq"
 docs_dir: doc
 theme:
   name: material
+  font: false
   icon:
     repo: "fontawesome/regular/circle"
     edit: "material/eye"
