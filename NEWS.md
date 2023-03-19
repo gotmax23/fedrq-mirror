@@ -1,12 +1,12 @@
-fedrq 0.5.0
-=============
+NEWS
+=====
 
-New dependencies
-----------------
+## fedrq 0.5.0
+
+### New dependencies
 - requests
 
-Highlighted examples
-----------------
+### Highlighted examples
 
 Find the latest version of `fedrq` available in the gotmax23/fedrq-dev copr. No extra configuration is required!
 
@@ -34,8 +34,7 @@ mpv-libs.x86_64 : updates
 [...]
 ```
 
-Changed
---------
+### Changed
 - Release: use releasever as cache directory key (https://todo.sr.ht/~gotmax23/fedrq/18)
 - change format of copr_chroot_fmt in ReleaseConfig
 - config: improve Release repository loading.
@@ -51,8 +50,7 @@ Changed
   ([More details](https://git.sr.ht/~gotmax23/fedrq/commit/68fd6d31dc64bdffc3f3867992eb1d82ff0a9f03))
 - release.toml: update for new reoo loading API
 
-Added
-------
+### Added
 - Add centos-stream8 release configuration
 - Add whatobsoletes subcommand
 - formatters: add full_nevra formatter
@@ -73,12 +71,10 @@ fedrq.spec:
 - include api_examples in %doc
 - explicitly require python3-rpm
 
-Fixed
--------
+### Fixed
 - releases.toml: Fix typo in epel_next release def
 
-Testing and development workflow
---------------------------------
+### Testing and development workflow
 - nox: remove fclogr venv workarounds
 - ruff: enable unused-arguments rules
 - improve test_subpkgs_match2 integration test
@@ -86,13 +82,11 @@ Testing and development workflow
 - test Release._copr_repo() formatting
 - nox publish: install all deps into the venv
 
-fedrq 0.4.1
-============
+## fedrq 0.4.1
 
 This is a minor bugfix release that accounts for breaking libdnf5 API changes.
 
-Fixed
-------
+### Fixed
 
 - BaseMaker: make compatible with libdnf5 changes. libdnf5 [changed its
   configuration API](https://github.com/rpm-software-management/dnf5/pull/327)
@@ -100,31 +94,26 @@ Fixed
   compatibility with both API versions.
 - Clarify explanatory comments in api_examples
 
-Added
-------
+### Added
 
 - Add location attr to PackageCompat and formatters.
   Example: `fedrq pkgs ansible -Flocation`
 
-Testing and Dev Workflow
-------------------------
+### Testing and Dev Workflow
 
 - Add nox targets to release fedrq
 
 
-fedrq 0.4.0
-===========
+## fedrq 0.4.0
 
-Changed
---------
+### Changed
 
 - fedrq is now in beta.
 - fedrq.spec: Always Require distribution-gpg-keys
 - Command: simplify smartcache and load_filelists
 - change logging format to include line numbers
 
-Added
------
+### Added
 
 CLI:
 
@@ -146,25 +135,21 @@ API:
 - BaseMaker and Repoquery: add `backend` property to access the current backend module
 - libdnf5: add `config_loaded` param to BaseMaker
 
-Tests
-------
+### Tests
 
 - .builds f36: don't run unit tests twice
 - Remove lint.sh in favor of nox and switch to ruff
 - Fix ruff linting errors
 
-New Contributors
------------------
+### New Contributors
 
 - Thanks to Alfredo Moralejo (~amoralej) for contributing the `plainwithrepo`
   formatter.
 
 
-fedrq 0.3.0
-============
+## fedrq 0.3.0
 
-Changed
----------
+### Changed
 - Get rid of importlib_resources on Python 3.9. We can use the stdlib version.
 - Stop excluding files from the sdist.
 - Abstract dnf code into backends. (INTERNAL API)
@@ -176,8 +161,7 @@ Changed
     `fedrq.backends`.
 - Make loading filelists optional.
 
-Added
--------
+### Added
 - **Add a libdnf5 backend.**
     - Use *-b* / *--backend* or `backend` in the config file to explicitly
       choose a backend. Otherwise, the default backend (currently dnf) will be
@@ -189,18 +173,15 @@ Added
   This provides more flexibility than `fedrq.repoquery` which is now a shim
   module and is the recommended approach. (INTERNAL API)
 
-Fixed
--------
+### Fixed
 - whatrequires -P: don't resolve SRPM names
 - Repoquery: ensure all Provides are resolved
 
-Documentation
--------------
+### Documentation
 - fedrq.1: add --backend and --filelists.
 - fedrq.5: document `backend` and `filelist` config options
 
-Testing
----------
+### Testing
 - .builds: Use fclogr main branch
 - Fix Copr dev builds
 - .builds: Run rpmlint
@@ -213,26 +194,22 @@ Testing
 - nox: add testa target to test both backends at once
 
 
-fedrq 0.2.0
-============
+## fedrq 0.2.0
 
-Changed
--------
+### Changed
 - Use $XDG_CACHE_HOME/fedrq to store instead of /var/tmp to store
   smartcache. This removes `fedrq.cli.Command.v_cachedir()`,
   `fedrq._utils.make_cachedir()`, and `fedrq.config.SMARTCACHE_BASEDIR`;
   they're no longer needed after this change.
 
-Fixed
------
+### Fixed
 - Fix EL 9 and Python 3.9 compatibility
     - Add fallback Fedora repository definitions.
     - Use `importlib_resources` backport.
     - Don't use @staticmethod as a decorator. This doesn't work with
       Python 3.9.
 
-Dev Changes
------------
+### Dev Changes
 - Remove unnecessary `argparse.ArgumentParser.parse_args` workaround
 - Fix importlib_resources.abc.Traversable type checking
 - Test and lint on EPEL 9 and Fedora 36 in CI
@@ -240,11 +217,9 @@ Dev Changes
 - Ditch rpmautospec in favor of fclogr
 
 
-fedrq 0.1.0
-============
+## fedrq 0.1.0
 
-Summary
---------
+### Summary
 - New JSON formatter
 - `fedrq subpkgs --match` to filter `fedrq subpkgs` output packages
 - Add smartcache CLI flag and config option to avoid clearing the system
@@ -254,8 +229,7 @@ Summary
 - More test coverage
 - Docs improvements
 
-Bugfixes
-----------
+### Bugfixes
 - Tweak README wording
 - Command: Fix configuration error handling
 - Make _v_fatal_error and _v_handle_errors DRY
@@ -263,8 +237,7 @@ Bugfixes
 - Fix cli.Subpkgs v_arch() method
 - Add more config validation
 
-Tests
-------
+### Tests
 - Reorganize tests
 - tests: Don't hardcode x86_64
 - Add basic `fedrq pkgs` integration test
@@ -274,8 +247,7 @@ Tests
 - formatters: Add tests and improve error handling
 - Test smartcache config option
 
-New Features
--------------
+### New Features
 - Add initial --smartcache implementation
 - Allow setting smartcache in config file and enable it by default
 - formatters: Add missing attrs
@@ -283,8 +255,7 @@ New Features
 - subpkgs: Add --match option
 - Add fedrq(5) manpage
 
-Breaking API Changes
----------------------
+### Breaking API Changes
 *Note that fedrq's API is currently unstable and not intended for
 outside usage.*
 
@@ -293,10 +264,20 @@ outside usage.*
 - Reimplement FormatterContainer (private API)
 
 
-fedrq 0.0.2
-===========
+## fedrq 0.0.2
 
 - pyproject.toml: Add project.urls
+- pyproject.toml: Change Development Status to Alpha
+- Truncate RPM changelog
+- Exclude rpmautospec `changelog` from sdist
+- fedrq.spec: Workaround F36's old flit-core
+- fedrq.spec: Remove unnecessary rpmdevtools BR
+- Add fedrq-dev copr
+
+
+## fedrq 0.0.1
+Initial release
+rls
 - pyproject.toml: Change Development Status to Alpha
 - Truncate RPM changelog
 - Exclude rpmautospec `changelog` from sdist

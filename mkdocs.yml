@@ -1,0 +1,75 @@
+---
+# Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+site_name: fedrq
+repo_url: "https://git.sr.ht/~gotmax23/fedrq/tree/main"
+edit_uri: "item/doc"
+repo_name: "sr.ht/~gotmax23/fedrq"
+docs_dir: doc
+theme:
+  name: material
+  icon:
+    repo: "fontawesome/regular/circle"
+    edit: "material/eye"
+  features:
+    - content.code.copy
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      primary: pink
+      accent: pink
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: pink
+      accent: pink
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: sphinx
+            show_if_no_docstring: true
+            merge_init_into_class: true
+            filters: ["!^__?", "!LOG", "!logger"]
+          paths:
+            - src/
+          import:
+            - https://docs.python.org/3/objects.inv
+  - exclude:
+      glob:
+        - "*.tar.gz"
+        - "fedrq.1*"
+        - "fedrq.5*"
+watch:
+  - "README.md"
+  - "NEWS.md"
+  - "src/fedrq"
+nav:
+  - Home: index.md
+  - News.md
+  - man fedrq: fedrq1.md
+  - man 5 fedrq: fedrq5.md
+  - API:
+    - API/Summary.md
+    - "fedrq.config": API/config.md
+    # Undocumented
+    # - "fedrq.release_repo": API/release_repo.md
+    - "fedrq.backends":
+      - "fedrq.backends.base": API/backends/base.md
+      - "fedrq.backends.dnf.backend": API/backends/dnf.md
+      - "fedrq.backends.libdnf5.backend": API/backends/libdnf5.md

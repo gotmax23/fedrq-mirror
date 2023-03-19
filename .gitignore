@@ -14,3 +14,5 @@ fedrq.1
 /doc/fedrq*.tar.gz
 /venv/
 FRAG.md
+/doc/fedrq?.md
+/site/

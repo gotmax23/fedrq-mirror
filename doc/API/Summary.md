@@ -22,34 +22,34 @@ related functionality. The main primitives are:
 
 ### BaseMaker
 
-**Base class**: `fedrq.backends.base.BaseMakerBase`
+**Base class**: [`fedrq.backends.base.BaseMakerBase`][fedrq.backends.base.BaseMakerBase]
 
-**dnf backend:** `fedrq.backends.dnf.backend.BaseMaker`
+**dnf backend:** [`fedrq.backends.dnf.backend.BaseMaker`][fedrq.backends.dnf.backend.BaseMaker]
 
-**libdnf5 backend:** `fedrq.backends.libdnf5.backend.BaseMaker`
+**libdnf5 backend:** [`fedrq.backends.libdnf5.backend.BaseMaker`][fedrq.backends.libdnf5.backend.BaseMaker]
 
 `BaseMaker` allows configuring a dnf Base session and loading repositories.
 
 ### Repoquery
 
-**Base class**: `fedrq.backends.base.RepoqueryBase`
+**Base class**: [`fedrq.backends.base.RepoqueryBase`][fedrq.backends.base.RepoqueryBase]
 
-**dnf backend:** `fedrq.backends.dnf.backend.Repoquery`
+**dnf backend:** [`fedrq.backends.dnf.backend.Repoquery`][fedrq.backends.dnf.backend.Repoquery]
 
-**libdnf5 backend:** `fedrq.backends.libdnf5.backend.Repoquery`
+**libdnf5 backend:** [`fedrq.backends.libdnf5.backend.Repoquery`][fedrq.backends.libdnf5.backend.Repoquery]
 
-`BaseMaker` takes an initialized Base object (see `BaseMaker`) and allows
+`Repoquery` takes an initialized Base object (see `BaseMaker`) and allows
 preforming a large range of queries. Most of its methods return
 `PackageQueryCompat` or `PackageCompat` objects.
 
 
 ### PackageQueryCompat
 
-**Protocol:** `fedrq.backends.base.PackageCompat`
+**Protocol:** [`fedrq.backends.base.PackageQueryCompat`][fedrq.backends.base.PackageQueryCompat]
 
-**dnf backend:** `fedrq.backends.dnf.backend.PackageQuery` -> `hawkey.Query`
+**dnf backend:** [`fedrq.backends.dnf.backend.PackageQuery`][fedrq.backends.dnf.backend.PackageQuery] -> `hawkey.Query`
 
-**libdnf5 backend:** `fedrq.backends.libdnf5.backend.Package`
+**libdnf5 backend:** [`fedrq.backends.libdnf5.backend.Package`](fedrq.backends.libdnf5.backend.Package)
 (`libdnf5.package.Package` subclass)
 
 PackageQueryCompat is a set like object of PackageCompat objects. It contains
@@ -63,11 +63,11 @@ access these through the Repoquery class.
 ### PackageCompat
 
 
-**Protocol:** `fedrq.backends.base.PackageCompat`
+**Protocol:** [`fedrq.backends.base.PackageCompat`][fedrq.backends.base.PackageCompat]
 
-**dnf backend:** `fedrq.backends.dnf.backend.Package` -> `dnf.package.Package`
+**dnf backend:** [`fedrq.backends.dnf.backend.Package`][fedrq.backends.dnf.backend.Package] -> `dnf.package.Package`
 
-**libdnf5 backend:** `fedrq.backends.libdnf5.backend.Package`
+**libdnf5 backend:** [`fedrq.backends.libdnf5.backend.Package`][fedrq.backends.libdnf5.backend.Package]
 (`libdnf5.package.Package` subclass)
 
 - `fedrq.backends.libdnf5.backend.Package` - subclass of `libdnf5.rpm.Package`
@@ -81,13 +81,13 @@ access these through the Repoquery class.
     Importing `fedrq.backends.libdnf5.backend` registers the `Package` subclass
     so PackageQuery contains our subclass.
 
-## fedrq.config
+## [`fedrq.config`][fedrq.config]
 
 Most of the code here should not be called directly. Use `get_config()` to load
 the configuration from the filesystem. Create an `RQConfig` object manually if
 you must.
 
-This exaple shows how to load the configuration and preform a basic query.
+This example shows how to load the configuration and preform a basic query.
 
 ``` python
 # SPDX-License-Identifier: Unlicense

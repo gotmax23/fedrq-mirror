@@ -56,6 +56,12 @@ test = [
     "pytest-mock",
     "tomli-w",
 ]
+doc = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]>=0.18",
+    "mkdocs-exclude",
+]
 dev = [
     "fedrq[test]",
     "fedrq[lint]",

@@ -23,6 +23,8 @@ more user friendly interface than `dnf repoquery` for certain common tasks.
 
 [![copr build status][badge-copr-dev]][link-copr-dev] (dev)
 
+[![docsite][badge-docsite]][link-docsite]
+
 [![fedrq on sr.ht][badge-hub]][link-hub]
 
 [![fedrq on git.sr.ht][badge-repo]][link-repo]
@@ -67,20 +69,17 @@ API's main purpose is repoquerying, but you can use the fedrq functionality
 you'd like and then access the underlying dnf Base object to preform other
 tasks if needed.
 
-See [API.md] for more information. See [api-examples] for some example code. As
-always, direct any feedback, questions, or issues to the mailing list (see ##
-Contributing).
+See the [API Summary] on the docsite for more information. See [api-examples]
+for some example code. As always, direct any feedback, questions, or issues to
+the mailing list (see ## Contributing).
+
+[API Summary]: https://fedrq.gtmx.me/API/Summary/
 
 
 ## Documentaion
 
-See [fedrq(1)][fedrq1] ([source][fedrq1-source]) for the CLI interface
-and [fedrq(5)][fedrq5] ([source][fedrq5-source]) for the config file format.
-
-[fedrq1]: https://gotmax23.srht.site/fedrq/fedrq.1.html
-[fedrq1-source]: https://git.sr.ht/~gotmax23/fedrq/tree/main/doc/fedrq.1.scd
-[fedrq5]: https://gotmax23.srht.site/fedrq/fedrq.5.html
-[fedrq5-source]: https://git.sr.ht/~gotmax23/fedrq/tree/main/doc/fedrq.5.scd
+See our new [docsite][link-docsite] for rendered manpages, changelogs, and
+Python API documentation.
 
 
 ## Contributing
@@ -131,3 +130,5 @@ SPDX-License-Identifier: GPL-2.0-or-later AND Unlicense AND MIT AND PSF-2.0
 [link-copr]: https://copr.fedorainfracloud.org/coprs/gotmax23/fedrq/
 [badge-copr-dev]: https://copr.fedorainfracloud.org/coprs/gotmax23/fedrq-dev/package/fedrq/status_image/last_build.png
 [link-copr-dev]: https://copr.fedorainfracloud.org/coprs/gotmax23/fedrq-dev/
+[badge-docsite]: https://img.shields.io/badge/docs-fedrq-blue?style=for-the-badge&logo=readthedocs
+[link-docsite]: https://fedrq.gtmx.me

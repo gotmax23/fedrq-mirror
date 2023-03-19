@@ -1,6 +1,12 @@
 # SPDX-FileCopyrightText: 2023 Maxwell G <gotmax@e.email>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+"""
+This module contains a fedrq backend (i.e. an implementation of the
+[`fedrq.backends.base.BackendMod`][fedrq.backends.base.BackendMod] interface)
+that uses the dnf Python bindings.
+"""
+
 from __future__ import annotations
 
 import logging

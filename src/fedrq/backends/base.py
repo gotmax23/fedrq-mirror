@@ -417,13 +417,14 @@ class RepoqueryBase(abc.ABC):
         """
         Filter a query's architectures in place and return it.
         It includes a little more functionality than query.filterm(arch=...).
-            - When arch is None, the query is left untouched.
-            - If arch equals 'notsrc', all src and multilib packages are
-              excluded.
-            - If arch equals 'arched', all noarch, multilib, and source
-              packages are excluded.
-            - Otherwise, arch is passed to query.filterm(arch=...) and no other
-              validation is preformed.
+
+        - When arch is None, the query is left untouched.
+        - If arch equals 'notsrc', all src and multilib packages are
+          excluded.
+        - If arch equals 'arched', all noarch, multilib, and source
+          packages are excluded.
+        - Otherwise, arch is passed to query.filterm(arch=...) and no other
+          validation is preformed.
         """
         if not arch:
             return query
@@ -440,13 +441,14 @@ class RepoqueryBase(abc.ABC):
         """
         Filter a query's architectures and return it.
         It includes a little more functionality than query.filter(arch=...).
-            - When arch is None, the query is left untouched.
-            - If arch equals 'notsrc', all src and multilib packages are
-              excluded.
-            - If arch equals 'arched', all noarch, multilib, and source
-              packages are excluded.
-            - Otherwise, arch is passed to query.filterm(arch=...) and no other
-              validation is preformed.
+
+        - When arch is None, the query is left untouched.
+        - If arch equals 'notsrc', all src and multilib packages are
+          excluded.
+        - If arch equals 'arched', all noarch, multilib, and source
+          packages are excluded.
+        - Otherwise, arch is passed to query.filterm(arch=...) and no other
+          validation is preformed.
         """
         if not arch:
             return query
@@ -500,7 +502,6 @@ class RepoqueryBase(abc.ABC):
         by {packages}.
 
         :param package: A :class:`PackageQueryCompat` containing source packages
-        :param package: Set this to filter out subpackages with a specific arch
         """
         arch = kwargs.get("arch")
         if arch == "src":
@@ -529,7 +530,10 @@ class RepoqueryBase(abc.ABC):
 
 class BackendMod(Protocol):
     """
-    Protocol for a backend module
+    Protocol for a fedrq backend module.
+    Each backend module (e.g.
+    [`fedrq.backends.dnf.backend`][fedrq.backends.dnf.backend])
+    implements this interface.
     """
 
     BACKEND: str

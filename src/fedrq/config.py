@@ -1,6 +1,11 @@
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+"""
+This module houses code to load configuration from the filesystem and validate
+it.
+"""
+
 from __future__ import annotations
 
 import importlib.resources as importlib_resources

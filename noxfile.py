@@ -250,3 +250,20 @@ def bump(session: nox.Session):
 def publish(session: nox.Session):
     install(session, "copr", "dbus-python", "flit", "keyring", "twine")
     session.run("bash", "-x", "contrib/publish.sh", *session.posargs)
+
+
+@nox.session
+def mkdocs(session: nox.Session):
+    install(session, "-e", ".[doc]")
+    for i in ("1", "5"):
+        # ruff: noqa: W605
+        session.run(
+            "sh",
+            "-c",
+            f"scd2html < doc/fedrq.{i}.scd"
+            "| pandoc --from html --to markdown_strict"
+            "| sed -e '/:::/d' -e 's| \[¶\].*||'"
+            f"> doc/fedrq{i}.md",
+            external=True,
+        )
+    session.run("mkdocs", *session.posargs)
