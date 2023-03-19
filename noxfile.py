@@ -259,6 +259,7 @@ def mkdocs(session: nox.Session):
         # ruff: noqa: W605
         session.run(
             "sh",
+            "-e -u -o pipefail",
             "-c",
             f"scd2html < doc/fedrq.{i}.scd"
             "| pandoc --from html --to markdown_strict"
