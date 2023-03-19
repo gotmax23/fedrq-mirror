@@ -7,11 +7,15 @@ packages:
   - hut
   - tar
   - python3-libdnf5
+  - pandoc
+  - rsync
 secrets:
   # Production Copr
   # - 759db354-8651-427c-b00a-0755164c8cae
   # Dev Copr
   - 9683b939-5f2b-4a0a-966e-acd99b5944a0
+  # fedrq.gtmx.me
+  - 1ec4d132-f9e9-4e00-9ba6-eb5528e6945e
 environment:
   nox: ./venv/bin/nox
 oauth: pages.sr.ht/PAGES:RW
@@ -31,6 +35,18 @@ tasks:
         exit
       fi
       ~/.copr-dev-hook
+  - setup-venv: |
+      cd fedrq
+      python3 -m venv venv
+      ./venv/bin/pip install nox
+  - submit-docs: |
+      cd fedrq
+      $nox -e mkdocs -- build
+      if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
+        echo "Submitting docs for main branch"
+        ssh-keyscan fedrq.gtmx.me | tee -a ~/.ssh/known_hosts
+        rsync site/. deploy@fedrq.gtmx.me:/var/www/fedrq
+      fi
   - submit-man: |
       sudo dnf copr enable -y gotmax23/scd2html
       sudo dnf install -y scd2html
@@ -60,10 +76,6 @@ tasks:
 
       tar czvf fedrq.tar.gz *.html
       hut pages publish fedrq.tar.gz -d gotmax23.srht.site -s "${site}"
-  - setup-venv: |
-      cd fedrq
-      python3 -m venv venv
-      ./venv/bin/pip install nox
   - lint: |
       cd fedrq
       $nox -e lint -- --check

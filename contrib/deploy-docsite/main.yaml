@@ -1,0 +1,24 @@
+# Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+---
+- name: Set up fedrq docs server
+  hosts: gtmx-web
+  become: true
+  remote_user: "{{ control_user | default('deploy') }}"
+  tasks:
+    - include_vars: "{{ playbook_dir }}/vars.yaml"
+    - import_role:
+          name: "{{ playbook_dir }}/roles/configure"
+
+- name: Set up fedrq docs server
+  hosts: gtmx-web
+  remote_user: "deploy"
+  vars_files:
+    - "{{ playbook_dir }}/vars.yaml"
+  tags:
+    - deploy
+  tasks:
+    - include_vars: "{{ playbook_dir }}/vars.yaml"
+    - import_role:
+          name: "{{ playbook_dir }}/roles/deploy"

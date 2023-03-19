@@ -1,0 +1,18 @@
+---
+# Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+- name: Prepare locally
+  delegate_to: localhost
+  connection: local
+  block:
+  - name: Build docsite
+    ansible.builtin.command:
+      chdir: "{{ fedrq_topdir }}"
+      cmd: nox -e mkdocs -- build
+
+- name: rsync sources
+  ansible.posix.synchronize:
+    src: "{{ fedrq_topdir }}/site/."
+    dest: "/var/www/fedrq"

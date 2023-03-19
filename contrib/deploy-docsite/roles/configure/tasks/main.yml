@@ -1,0 +1,43 @@
+# Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+---
+- name: Install caddy
+  ansible.builtin.package:
+    name: caddy
+
+- name: Copy config file
+  notify:
+    - reload caddy
+  ansible.builtin.template:
+    src: "fedrq.caddyfile"
+    dest: "/etc/caddy/Caddyfile.d/fedrq.caddyfile"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create deploy user
+  ansible.builtin.user:
+    name: deploy
+
+- name: Copy deploy user key
+  ansible.posix.authorized_key:
+    user: deploy
+    key: "{{ lookup('file', '/home/gotmax/.ssh/fedrq-deploy.pub') }}"
+
+- name: Create www directory
+  loop:
+    - "{{ fedrq_wwwdir }}"
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    owner: deploy
+    group: deploy
+    mode: 0755
+
+- name: Enable caddy service
+  ansible.builtin.service:
+    name: caddy
+    enabled: true
+    state: started
