@@ -76,3 +76,67 @@ _fedora-rawhide_)
 	then it's a good idea to turn this off to avoid conflicts
 	(if e.g. the system configuration defines the same repository IDs)
 	and save time.
+
+## EXAMPLES
+
+
+Here are some example configuration snippets.
+
+Configuring RPMFusion:
+
+1. Install the applicable rpmfusion release packages.
+```
+$ sudo dnf install \
+	rpmfusion-free-release rpmfusion-free-release-rawhide \
+	rpmfusion-nonfree-release rpmfusion-nonfree-release-rawhide \
+```
+
+2. Create a configuration
+```
+# ~/.config/fedrq/rpmfusion.toml
+
+# `releases.rawhide` exists in the default configuration.
+# fedrq will merge the extras keys in the `defs` table with the default config.
+[releases.rawhide]
+# Note that the corresponding -source repositories are enabled.
+# All fedrq release defs must have these to ensure all functionality works
+# properly (notably subpkgs and whatrequires-src).
+
+# `fedrq CMD -b rawhide -r fusion-free` will enable the following two
+# repositories and nothing more.
+#
+# Use `fedrq CMD -b rawhide -e fusion-free` to enable these repositories
+# *in addition* to the default rawhide repositories.
+defs.fusion-free = [
+    "rpmfusion-free-rawhide", "rpmfusion-free-rawhide-source",
+]
+defs.fusion-nonfree-only = [
+    "rpmfusion-nonfree-rawhide", "rpmfusion-nonfree-rawhide-source"
+]
+# Enable everything
+defs.rpmfusion = [
+    # Include all repositories in defs.rpmfusion-free above
+    "@fusion-free",
+    # Include all repositories in defs.rpmfusion-nonfree-only above.
+    "@fusion-nonfree-only",
+]
+# Make sure that fedrq loads repositories from the system configuration.
+# This is the default but better to explicitly specify.
+system_repos = true
+
+[releases.branched]
+defs.fusion-free = [
+    "rpmfusion-free", "rpmfusion-free-source",
+    "rpmfusion-free-updates", "rpmfusion-free-updates-source"
+]
+defs.fusion-nonfree-only = [
+    "rpmfusion-nonfree", "rpmfusion-nonfree-source",
+    "rpmfusion-nonfree-updates", "rpmfusion-nonfree-updates-source"
+]
+defs.rpmfusion = [
+    "@fusion-free",
+    "@fusion-nonfree-only",
+]
+
+system_repos = true
+```
