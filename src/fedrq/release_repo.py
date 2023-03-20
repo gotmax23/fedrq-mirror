@@ -8,11 +8,11 @@ from __future__ import annotations
 import abc
 import logging
 import os
-import re
 import tempfile
 from collections.abc import (
     Callable,
     ItemsView,
+    Iterable,
     Iterator,
     KeysView,
     Mapping,
@@ -190,20 +190,40 @@ class CoprRepoG(RepoG):
             base_maker._read_repofile_new(path, True)
 
 
+def _clean_invalid(string: str, valid_chars: Iterable[str], repl: str) -> str:
+    final = ""
+    for char in string:
+        if char not in valid_chars:
+            char = repl
+        final += char
+    return final
+
+
 class BaseurlRepoG(RepoG):
-    _ALLOWED_REPOID = re.compile(
-        "[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.:]"
+    _ALLOWED_REPOID_CHARS = (
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.:"
     )
+    _ATTR = "baseurl"
+    _COERCE_TO_LIST: bool = True
 
     def load(
         self, base_maker: BaseMakerBase, config: RQConfig, release: Release
     ) -> None:
         url, _, key = self.args.partition(";")
-        repoid = self._ALLOWED_REPOID.sub("_", url)
-        repo_kwargs: dict[str, Any] = dict(baseurl=[url], gpgcheck=bool(key))
+        repoid = _clean_invalid(url, self._ALLOWED_REPOID_CHARS, "_")
+        repo_kwargs: dict[str, Any] = {
+            self._ATTR: ([url] if self._COERCE_TO_LIST else url),
+            "gpgcheck": bool(key),
+            "name": repoid,
+        }
         if key:
             repo_kwargs["gpgkey"] = key
         base_maker.create_repo(repoid, **repo_kwargs)
+
+
+class MirrorlistRepoG(BaseurlRepoG):
+    _ATTR = "mirrorlist"
+    _COERCE_TO_LIST = False
 
 
 class Repos(Mapping[str, type[RepoG]]):
@@ -280,5 +300,11 @@ class Repos(Mapping[str, type[RepoG]]):
 
 
 DefaultRepoGs = Repos(
-    dict(file=FileRepoG, copr=CoprRepoG, repo=SimpleRepoG, baseurl=BaseurlRepoG)
+    dict(
+        file=FileRepoG,
+        copr=CoprRepoG,
+        repo=SimpleRepoG,
+        baseurl=BaseurlRepoG,
+        mirrorlist=MirrorlistRepoG,
+    )
 )

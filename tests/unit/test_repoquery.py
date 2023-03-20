@@ -3,6 +3,7 @@
 
 
 from pathlib import Path
+
 from fedrq import config as rqconfig
 from fedrq.backends.base import PackageCompat, PackageQueryCompat, RepoqueryBase
 
