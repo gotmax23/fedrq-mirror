@@ -253,8 +253,10 @@ def publish(session: nox.Session):
 
 
 @nox.session
-def mkdocs(session: nox.Session):
-    install(session, "-e", ".[doc]")
+def docgen(session: nox.Session):
+    """
+    Generate extra content for the docsite
+    """
     for i in ("1", "5"):
         # Long, terrible pipeline to convert scdoc to markdown
         # fmt: off
@@ -275,4 +277,10 @@ def mkdocs(session: nox.Session):
             external=True,
         )
         # fmt: on
+
+
+@nox.session
+def mkdocs(session: nox.Session):
+    install(session, "-e", ".[doc]")
+    docgen.func(session)
     session.run("mkdocs", *session.posargs)
