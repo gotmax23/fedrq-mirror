@@ -301,14 +301,17 @@ class BaseMaker(BaseMakerBase):
         Maintains compatability with dnf5 versions before
         https://github.com/rpm-software-management/dnf5/pull/327
         """
-        if not hasattr(config, key):
-            raise ValueError(f"{key!r} is not a valid option.")
+        LOG.debug("Getting option %s", key)
         # dnf5 > 5.0.7
         if option := getattr(config, f"get_{key}_option", None):
+            LOG.debug(f"option = get_{key}_options")
             return option()
         # dnf5 <= 5.0.7
         # TODO: Add warning and deprecate
-        return getattr(config, key)()
+        elif option := getattr(config, key, None):
+            return option()
+        else:
+            raise ValueError(f"{key!r} is not a valid option.")
 
     # This is private for now
     def _read_repofile_new(self, file: StrPath, ensure_enabled: bool = False) -> None:
