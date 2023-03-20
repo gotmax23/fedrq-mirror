@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 
+from pathlib import Path
 from fedrq import config as rqconfig
 from fedrq.backends.base import PackageCompat, PackageQueryCompat, RepoqueryBase
 
@@ -24,3 +25,13 @@ def test_package_protocol(repo_test_rq: RepoqueryBase):
 def test_query_protocol(repo_test_rq: RepoqueryBase):
     query = repo_test_rq.query()
     assert isinstance(query, PackageQueryCompat)
+
+
+def test_baseurl_repog(repo_test_rq: RepoqueryBase, data_path: Path):
+    for i in ("", "file://"):
+        second_rq = rqconfig.get_config().get_rq(
+            "rawhide", f"@baseurl:{i}{data_path/ 'repos' / 'repo1' / 'repo'}"
+        )
+        assert sorted(map(str, repo_test_rq.query())) == sorted(
+            map(str, second_rq.query())
+        )
