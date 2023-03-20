@@ -256,18 +256,23 @@ def publish(session: nox.Session):
 def mkdocs(session: nox.Session):
     install(session, "-e", ".[doc]")
     for i in ("1", "5"):
-        # ruff: noqa: W605
+        # Long, terrible pipeline to convert scdoc to markdown
+        # fmt: off
         session.run(
-            "sh",
-            "-e",
-            "-u",
-            "-o",
-            "pipefail",
-            "-c",
+            "sh", "-euo", "pipefail", "-c",
+            # Convert scdoc to html
             f"scd2html < doc/fedrq.{i}.scd"
-            "| pandoc --from html --to markdown_strict"
-            "| sed -e '/:::/d' -e 's| \[¶\].*||'"
+            # Remove aria-hidden attributes so pandoc doesn't try to convert them
+            "| sed 's|aria-hidden=\"true\"||'"
+            "| pandoc --from html "
+            # mkdocs doesn't support most of the pandoc markdown extensions.
+            # Use markdown_strict and only enable pipe_tables.
+            "--to markdown_strict+pipe_tables"
+            "| sed "
+            # Remove anchors that scd2html inserts
+            "-e 's| \[¶\].*||' " # noqa: W605
             f"> doc/fedrq{i}.md",
             external=True,
         )
+        # fmt: on
     session.run("mkdocs", *session.posargs)
