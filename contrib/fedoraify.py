@@ -30,16 +30,7 @@ def main():
             sources.insert_numbered(2, "https://meta.sr.ht/~gotmax23.pgp")
         with spec.sections() as sections:
             prep = sections.prep
-            lines = ["%gpgverify -d0 -s1 -k2", "", ""]
-            # Remove trailing newlines
-            at_end = True
-            for line in reversed(prep):
-                if line.strip():
-                    at_end = False
-                if at_end:
-                    continue
-                lines.insert(0, line)
-            prep[:] = lines
+            prep.insert(0, "%gpgverify -d0 -s1 -k2")
 
 
 if __name__ == "__main__":
