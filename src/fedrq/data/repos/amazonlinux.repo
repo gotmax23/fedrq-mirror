@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Unlicense
+# SPDX-FileCopyrightText: None
+
+[amazonlinux]
+name=Amazon Linux $releasever repository - $basearch
+mirrorlist=https://cdn.amazonlinux.com/al$releasever/core/mirrors/latest/$basearch/mirror.list
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/amazon-linux/RPM-GPG-KEY-amazon-linux-$releasever
+
+[amazonlinux-source]
+name=Amazon Linux $releasever repository - Source packages
+mirrorlist=https://cdn.amazonlinux.com/al$releasever/core/mirrors/latest/SRPMS/mirror.list
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/amazon-linux/RPM-GPG-KEY-amazon-linux-$releasever

@@ -244,6 +244,10 @@ The following generic repo class macros are available for all releases:
 :  *base*, *epel*, *no-powertools*
 :  *epel* contains epel, epel-next, and crb.
    *no-powertools* contains base minus the powertools repo.
+|  Amazon Linux
+:  amazon2023
+:  *base*
+: 
 
 ## SPECIAL REPOS
 

@@ -141,3 +141,8 @@ defs.no-powertools = [
     "centos-stream8-appstream",
     "centos-stream8-appstream-source",
 ]
+
+[releases.amazonlinux]
+matcher = '^amazon(\d+)$'
+defs.base = ["amazonlinux", "amazonlinux-source"]
+defpaths = ["amazonlinux.repo"]
