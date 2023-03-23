@@ -16,8 +16,9 @@ Summary:        A tool to query the Fedora and EPEL repositories
 # - Embeded repo defs are MIT.
 # - PSF-2.0 code copied from Cpython 3.11 for older Python versions
 License:        GPL-2.0-or-later AND Unlicense AND MIT AND PSF-2.0
-URL:            https://git.sr.ht/~gotmax23/fedrq
-Source0:        %{url}/refs/download/v%{version}/fedrq-%{version}.tar.gz
+URL:            https://fedrq.gtmx.me
+%global furl    https://git.sr.ht/~gotmax23/fedrq
+Source0:        %{furl}/refs/download/v%{version}/fedrq-%{version}.tar.gz
 
 BuildArch:      noarch
 
