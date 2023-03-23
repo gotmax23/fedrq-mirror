@@ -41,17 +41,31 @@ released versions.
 Development snapshots are available at [gotmax23/fedrq-dev][link-copr-dev].
 The RPM specfile is in the repository root.
 
-The package can also be installed from source with `pip` or any other PEP 517
-frontend. The following additional system package is required for DNF4:
-- python3-dnf
+fedrq is also [published to PyPI](https://pypi.org/project/fedrq/) so you can
+`pip install fedrq`.
 
-For DNF5, the following additional system packages are required:
+When installing the package with pip, some additional system packages
+are needed.
+
+The following additional system package is required for the dnf backend:
+
+- python3-dnf (dnf is currently the default Fedora package manager, so this
+  should already be installed)
+
+The following additional system packages are required for the libdnf5 backend:
+
 - python3-libdnf5
 - python3-rpm
 
+fedrq defaults to the dnf backend, but fedrq falls back to the libdnf5 backend
+if the former's dependencies aren't installed.
+Users can explicitly choose a backend with the
+`--backend` [CLI option](https://fedrq.gtmx.me/fedrq1/#shared-options)
+or globally in the [fedrq config file](https://fedrq.gtmx.me/fedrq5).
+
 Note that fedrq can only be installed for the system python interpreter.
 fedrq cannot be installed in a venv unless it has `--system-site-packages`,
-as it needs to find dnf.
+as it needs to find the aforementioned system bindings.
 
 `fedrq check-config --dump` requires `tomli-w`.
 The RPM package weakly depends on `python3-tomli-w`.
