@@ -42,10 +42,12 @@ Development snapshots are available at [gotmax23/fedrq-dev][link-copr-dev].
 The RPM specfile is in the repository root.
 
 The package can also be installed from source with `pip` or any other PEP 517
-frontend. The following additional system packages are required:
-
+frontend. The following additional system package is required for DNF4:
 - python3-dnf
-- fedora-repos-rawhide
+
+For DNF5, the following additional system packages are required:
+- python3-libdnf5
+- python3-rpm
 
 Note that fedrq can only be installed for the system python interpreter.
 fedrq cannot be installed in a venv unless it has `--system-site-packages`,
@@ -71,7 +73,7 @@ tasks if needed.
 
 See the [API Summary] on the docsite for more information. See [api-examples]
 for some example code. As always, direct any feedback, questions, or issues to
-the mailing list (see ## Contributing).
+the mailing list (see [Contributing](##Contributing)).
 
 [API Summary]: https://fedrq.gtmx.me/API/Summary/
 
