@@ -5,8 +5,6 @@ SPDX-License-Identifier: GPL-2.0-or-later
 
 # fedrq
 
-⚠️ This project is a work in progress. ⚠️
-
 A tool for querying the Fedora and EPEL repositories
 
 fedrq makes it easy to query any branch of Fedora or EPEL. It uses the dnf
@@ -87,7 +85,7 @@ tasks if needed.
 
 See the [API Summary] on the docsite for more information. See [api-examples]
 for some example code. As always, direct any feedback, questions, or issues to
-the mailing list (see [Contributing](##Contributing)).
+the mailing list (see [Contributing](#contributing)).
 
 [API Summary]: https://fedrq.gtmx.me/API/Summary/
 
