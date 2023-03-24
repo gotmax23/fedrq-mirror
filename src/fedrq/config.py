@@ -192,7 +192,8 @@ class Release:
     Encapsulates a ReleaseConfig with a specific version and repo name.
     This SHOULD NOT be instantiated directly.
     The __init__() has no stability promises.
-    Use the RQConfig.get_config() factory instead.
+    Use the [`RQConfig.get_release()`][fedrq.config.RQConfig.get_release]
+    factory instead.
     """
 
     def __init__(
@@ -439,8 +440,9 @@ def get_rq(
     load_filelists: bool | None = None,
 ) -> RepoqueryBase:
     """
-    DEPRECATED since 0.4.0
-    ----------------------
+    **DEPRECATED since 0.4.0.** Use
+    [`RQConfig.get_rq()`][fedrq.config.RQConfig.get_rq] instead.
+
     Higher level interface that creates an RQConfig object, finds the Release
     object that mathces {branch} and {repo}, creates a dnf.Base, and finally
     returns a Repoquery object.
