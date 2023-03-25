@@ -276,16 +276,5 @@ outside usage.*
 
 
 ## fedrq 0.0.1
-Initial release
-rls
-- pyproject.toml: Change Development Status to Alpha
-- Truncate RPM changelog
-- Exclude rpmautospec `changelog` from sdist
-- fedrq.spec: Workaround F36's old flit-core
-- fedrq.spec: Remove unnecessary rpmdevtools BR
-- Add fedrq-dev copr
 
-
-fedrq 0.0.1
-=======
 Initial release
