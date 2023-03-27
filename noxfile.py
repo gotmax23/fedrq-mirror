@@ -272,7 +272,7 @@ def docgen(session: nox.Session):
             "--to markdown_strict+pipe_tables"
             "| sed "
             # Remove anchors that scd2html inserts
-            "-e 's| \[¶\].*||' " # noqa: W605
+            r"-e 's| \[¶\].*||' "
             f"> doc/fedrq{i}.md",
             external=True,
         )
