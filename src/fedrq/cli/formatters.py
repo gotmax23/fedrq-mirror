@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import abc
+import argparse
 import logging
 import warnings
 from collections.abc import Callable, ItemsView, Iterable, Iterator, Mapping
@@ -244,6 +245,22 @@ class Formatters(Mapping[str, type[Formatter]]):
             else:
                 raise TypeError
         return formatters
+
+    def _argcompleter(
+        self,
+        *,
+        prefix: str,  # noqa: ARG002
+        action: argparse.Action,  # noqa: ARG002
+        parser: argparse.ArgumentParser,  # noqa: ARG002
+        parsed_args: argparse.Namespace,  # noqa: ARG002
+    ) -> list[str]:
+        opts: list[str] = [*_ATTRS]
+        for name, formatter in self.items():
+            if issubclass(formatter, SpecialFormatter):
+                opts.append(f"{name}:")
+            else:
+                opts.append(name)
+        return opts
 
 
 class SourceFromatter(Formatter):

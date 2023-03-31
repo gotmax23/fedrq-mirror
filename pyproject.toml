@@ -49,6 +49,7 @@ lint = [
     "tomli-w",
     "types-requests",
     # Optional fedrq runtime dependency
+    "argcomplete",
     "typing_extensions",
 ]
 test = [

@@ -7,6 +7,13 @@ from __future__ import annotations
 import argparse
 from collections.abc import Sequence
 
+try:
+    import argcomplete
+except ImportError:
+    HAS_ARGCOMPLETE = False
+else:
+    HAS_ARGCOMPLETE = True
+
 from fedrq.cli.base import CheckConfig, Command
 from fedrq.cli.commands.pkgs import Pkgs
 from fedrq.cli.commands.subpkgs import Subpkgs
@@ -46,6 +53,8 @@ def main(argv: Sequence | None = None, **kwargs) -> None:
     )
     for name, cls in COMMANDS.items():
         cls.make_parser(subparsers.add_parser, name=name, add_help=True)
+    if HAS_ARGCOMPLETE:
+        argcomplete.autocomplete(parser)
     args = parser.parse_args(argv)
     return COMMANDS[args.action](args).run()
 

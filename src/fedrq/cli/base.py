@@ -1,3 +1,4 @@
+# PYTHON_ARGCOMPLETE_OK
 # SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
@@ -168,9 +169,9 @@ class Command(abc.ABC):
     @classmethod
     def parent_parser(cls) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(add_help=False)
-        parser.add_argument(
+        parser.add_argument(  # type: ignore[attr-defined]
             "names", metavar="NAME", nargs="*", help="Mutually exclusive with --stdin"
-        )
+        ).completer = lambda **_: ()
         parser.add_argument(
             "-i", "--stdin", help="Read package names from stdin.", action="store_true"
         )
@@ -182,11 +183,11 @@ class Command(abc.ABC):
         )
         parser.add_argument("-r", "--repos", default="base")
         parser.add_argument("-l", "--latest", default=1, help="'all' or an intenger")
-        parser.add_argument(
+        parser.add_argument(  # type: ignore[attr-defined]
             "-F",
             "--formatter",
             default="plain",
-        )
+        ).completer = cls.formatters._argcompleter
         cachedir_group = parser.add_mutually_exclusive_group()
         cachedir_group.add_argument(
             "--system-cache",
