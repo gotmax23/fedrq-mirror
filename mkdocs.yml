@@ -67,6 +67,7 @@ nav:
   - News.md
   - man fedrq: fedrq1.md
   - man 5 fedrq: fedrq5.md
+  - dnf repoquery comparison: dnf-repoquery-diff.md
   - API:
     - API/Summary.md
     - "fedrq.config": API/config.md
