@@ -242,8 +242,8 @@ The following generic repo class macros are available for all releases:
 |  CentOS Stream 8 (legacy)
 :  c8s
 :  *base*, *epel*, *no-powertools*
-:  *epel* contains epel, epel-next, and crb.
-   *no-powertools* contains base minus the powertools repo.
+:  *epel* contains epel, epel-next, baseos, appstream, and powertools.
+   *no-powertools* contains *base* minus the powertools repo.
 |  Amazon Linux
 :  amazon2023
 :  *base*
@@ -297,7 +297,7 @@ python(abi) = 3.11
 (python3.11dist(ansible-core) >= 2.14.1 with python3.11dist(ansible-core) < 2.15)
 ```
 
-Find a package's runtime dependencies:
+Resolve a package's runtime dependencies:
 ```
 $ fedrq pkgs -S -F requires ansible | fedrq pkgs -iSP
 ansible-core-2.14.1-1.fc38.noarch
