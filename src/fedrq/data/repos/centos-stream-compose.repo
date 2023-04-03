@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: None
+# SPDX-License-Identifier: Unlicense
+
+[centos-stream-compose-latest-appstream]
+name = centos-stream-compose-latest-appstream
+baseurl = https://composes.stream.centos.org/production/latest-CentOS-Stream/compose/AppStream/$basearch/os/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream-compose-latest-baseos]
+name = centos-stream-compose-latest-baseos
+baseurl = https://composes.stream.centos.org/production/latest-CentOS-Stream/compose/BaseOS/$basearch/os/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream-compose-latest-crb]
+name = centos-stream-compose-latest-crb
+baseurl = https://composes.stream.centos.org/production/latest-CentOS-Stream/compose/CRB/$basearch/os/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream-compose-latest-appstream-source]
+name = centos-stream-compose-latest-appstream-source
+baseurl = https://composes.stream.centos.org/production/latest-CentOS-Stream/compose/AppStream/$basearch/os/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream-compose-latest-baseos-source]
+name = centos-stream-compose-latest-baseos-source
+baseurl = https://composes.stream.centos.org/production/latest-CentOS-Stream/compose/BaseOS/source/tree/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream-compose-latest-crb-source]
+name = centos-stream-compose-latest-crb-source
+baseurl = https://composes.stream.centos.org/production/latest-CentOS-Stream/compose/CRB/source/tree/
+enabled = 0
+gpgcheck = 0

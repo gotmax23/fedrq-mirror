@@ -236,12 +236,12 @@ The following generic repo class macros are available for all releases:
    *next-base*, *next-testing*, and *next-testing-only* only contain epel-next.
 |  CentOS Stream
 :  cXs
-:  *base*, *epel*, *no-crb*
+:  *base*, *epel*, *no-crb*, *compose-latest*
 :  *epel* contains epel, epel-next, and crb.
    *no-crb* contains base minus the crb repo.
 |  CentOS Stream 8 (legacy)
 :  c8s
-:  *base*, *epel*, *no-powertools*
+:  *base*, *epel*, *no-powertools*, *compose-latest*
 :  *epel* contains epel, epel-next, baseos, appstream, and powertools.
    *no-powertools* contains *base* minus the powertools repo.
 |  Amazon Linux

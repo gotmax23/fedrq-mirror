@@ -78,7 +78,11 @@ defs.next-testing-only = ["epel-next-testing", "epel-next-testing-source"]
 [releases.centos-stream]
 matcher = '^c(9|1\d)s'
 copr_chroot_fmt = "centos-stream-{version}"
-defpaths = ["epel.repo", "centos-stream.repo"]
+defpaths = [
+    "centos-stream.repo",
+    "centos-stream-compose.repo",
+    "epel.repo", 
+]
 system_repos = false
 defs.base = [
     "fedrq-centos-stream-baseos",
@@ -108,11 +112,20 @@ defs.no-crb = [
     "fedrq-centos-stream-appstream",
     "fedrq-centos-stream-appstream-source",
 ]
+defs.compose-latest = [
+    "centos-stream-compose-latest-*",
+]
+
+repo_aliases.kojihub = "@baseurl:https://kojihub.stream.centos.org/kojifiles/repos/{}/latest/$basearch"
 
 [releases.centos-stream8]
 matcher = "^c(8)s$"
 copr_chroot_fmt = "centos-stream-{version}"
-defpaths = ["epel.repo", "centos-stream8.repo"]
+defpaths = [
+    "centos-stream8.repo",
+    "centos-stream8-compose.repo",
+    "epel.repo",
+]
 defs.base = [
     "centos-stream8-baseos",
     "centos-stream8-baseos-source",
@@ -141,6 +154,10 @@ defs.no-powertools = [
     "centos-stream8-appstream",
     "centos-stream8-appstream-source",
 ]
+defs.compose-latest = [
+    "centos-stream8-compose-latest-*",
+]
+repo_aliases.kojihub = "@baseurl:https://kojihub.stream.centos.org/kojifiles/repos/{}/latest/$basearch"
 
 [releases.amazonlinux]
 matcher = '^amazon(\d+)$'

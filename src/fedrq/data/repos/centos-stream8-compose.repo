@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: None
+# SPDX-License-Identifier: Unlicense
+
+[centos-stream8-compose-latest-appstream]
+name = centos-stream8-compose-latest-appstream
+baseurl = https://composes.stream.centos.org/stream-8/production/latest-CentOS-Stream/compose/AppStream/$basearch/os/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream8-compose-latest-baseos]
+name = centos-stream8-compose-latest-baseos
+baseurl = https://composes.stream.centos.org/stream-8/production/latest-CentOS-Stream/compose/BaseOS/$basearch/os/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream8-compose-latest-powertools]
+name = centos-stream8-compose-latest-powertools
+baseurl = https://composes.stream.centos.org/stream-8/production/latest-CentOS-Stream/compose/PowerTools/$basearch/os/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream8-compose-latest-appstream-source]
+name = centos-stream8-compose-latest-appstream-source
+baseurl = https://composes.stream.centos.org/stream-8/production/latest-CentOS-Stream/compose/AppStream/$basearch/os/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream8-compose-latest-baseos-source]
+name = centos-stream8-compose-latest-baseos-source
+baseurl = https://composes.stream.centos.org/stream-8/production/latest-CentOS-Stream/compose/BaseOS/source/tree/
+enabled = 0
+gpgcheck = 0
+
+[centos-stream8-compose-latest-powertools-source]
+name = centos-stream8-compose-latest-powertools-source
+baseurl = https://composes.stream.centos.org/stream-8/production/latest-CentOS-Stream/compose/PowerTools/source/tree/
+enabled = 0
+gpgcheck = 0
