@@ -140,3 +140,12 @@ defs.rpmfusion = [
 
 system_repos = true
 ```
+
+# AUTHOR
+
+fedrq is maintained by Maxwell G <maxwell@gtmx.me>.
+See https://fedrq.gtmx.me/ for more information about fedrq.
+
+# SEE ALSO
+
+fedrq(1)

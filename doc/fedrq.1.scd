@@ -460,8 +460,8 @@ stellarium
 
 # AUTHOR
 
-fedrq is maintained by Maxwell G <gotmax@e.email>.
-See https://sr.ht/~gotmax23/fedrq/ for more information about fedrq.
+fedrq is maintained by Maxwell G <maxwell@gtmx.me>.
+See https://fedrq.gtmx.me/ for more information about fedrq.
 
 # SEE ALSO
 
