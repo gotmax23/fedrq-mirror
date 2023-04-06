@@ -97,7 +97,7 @@ defs.epel = [
     "fedrq-centos-stream-crb",
     "fedrq-centos-stream-crb-source",
     # epel
-    "epel",
+    "@repo:epel",
     "epel-source",
     "epel-next",
     "epel-next-source"
@@ -130,7 +130,7 @@ defs.epel = [
     "centos-stream8-powertools",
     "centos-stream8-powertools-source",
     # epel
-    "epel",
+    "@repo:epel",
     "epel-source",
     "epel-next",
     "epel-next-source"
