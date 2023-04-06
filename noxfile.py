@@ -41,7 +41,7 @@ def run_silent(*args, return_stdout: bool = False, **kwargs):
 
 def _to_install_system(session, *packages: str):
     for package in packages:
-        for whatprovides in [(), ("-whatprovides",), "yield"]:
+        for whatprovides in [(), ("--whatprovides",), "yield"]:
             if whatprovides == "yield":
                 session.log(f"Installing RPM package {package!r}")
                 yield package
