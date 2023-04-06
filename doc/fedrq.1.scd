@@ -219,61 +219,64 @@ The following generic repo class macros are available for all releases:
 :- Special cases
 |[ Fedora Rawhide
 :[ rawhide
-:[ base, buildroot
+:[ *@base*, *@buildroot*
 :[
 |  Fedora stable and branched
 :  fXX
-:  base, testing, release, updates, testing-only
-:  *release* only contains *fedora* and *fedora-source* (i.e. no *updates*)
+:  *@base*, *@testing*, *@release*, *@updates*, *@testing-only*
+:  *@release* only contains fedora and fedora-source (i.e. no updates)
 |  EPEL
 :  epelX
-:  base, testing, testing-only
+:  *@base*, *@testing*, *@testing-only*
 :  does not include any EL distribution
 |  EPEL Next
 :  epelX-next
-:  base, testing, testing-only, next-base, next-testing, next-testing-only
-:  *base*, *testing*, *testing-only* are supersets of the *epelX* equivalent.
-   *next-base*, *next-testing*, and *next-testing-only* only contain epel-next.
+:  *@base*, *@testing*, *@testing-only*, *@next-base*, *@next-testing*,
+   *@next-testing-only*
+:  *@base*, *@testing*, and *@testing-only* are supersets of the _epelX_
+   equivalent.
+   *@next-base*, *@next-testing*, and *@next-testing-only* only contain epel-next.
 |  CentOS Stream
 :  cXs
-:  *base*, *epel*, *no-crb*, *compose-latest*
-:  *epel* contains epel, epel-next, and crb.
-   *no-crb* contains base minus the crb repo.
+:  *@base*, *@epel*, *@no-crb*, *@compose-latest*
+:  *@epel* contains epel, epel-next, and crb.
+   *@no-crb* contains base minus the crb repo.
 |  CentOS Stream 8 (legacy)
 :  c8s
-:  *base*, *epel*, *no-powertools*, *compose-latest*
-:  *epel* contains epel, epel-next, baseos, appstream, and powertools.
-   *no-powertools* contains *base* minus the powertools repo.
+:  *@base*, *@epel*, *@no-powertools*, *@compose-latest*
+:  *@epel* contains epel, epel-next, baseos, appstream, and powertools.
+   *@no-powertools* contains *@base* minus the powertools repo.
 |  Almalinux
 :  alX
-:  *base*, *epel*, *no-crb*
-:  *base* always includes crb. *epel* contains *base* along with the EPEL
-   repository. *no-crb* contains *base* minus the *crb* repository.
+:  *@base*, *@epel*, *@no-crb*
+:  *@base* always includes crb. *@epel* contains *@base* along with the EPEL
+   repository. *@no-crb* contains *@base* minus the crb repository.
 |  Almalinux 8 (Legacy)
-:  *base*, *epel*, *no-powertools*
-:  *base* always includes powertools. *epel* contains *base* along with the EPEL
-   repository. *no-powertools* contains *base* minus the *powertools* repository.
+:  al8
+:  @*base*, *@epel*, *@no-powertools*
+:  *@base* always includes powertools. *@epel* contains *@base* along with the EPEL
+   repository. *@no-powertools* contains *@base* minus the powertools repository.
 |  Amazon Linux
 :  amazon2023
-:  *base*
+:  *@base*
 : 
 
 ## SPECIAL REPOS
 
 
-*base*
+*@base*
 	Release repositories enabled by default in the distribution++
 	(e.g. *fedora*, *fedora-source*, *updates*, *updates-source* for Fedora
 	stable)
-*testing*
+*@testing*
 	Superset of *base* with *-testing* repos enabled.++
 	(e.g. *fedora*, *fedora-source*, *updates*, *updates-source*,
 	*updates-testing-source* for Fedora stable)
-*testing-only*
+*@testing-only*
 	Includes *-testing* repositories without *base*++
 	(e.g. *updates-testing*, *updates-testing-source* for Fedora stable)
 
-*buildroot* (rawhide only)
+*@buildroot* (rawhide only)
 	Koji buildroot repositories
 	Buildroot repositories are available for stable Fedora releases, but
 	they don't have corresponding source repos. This causes problems for
