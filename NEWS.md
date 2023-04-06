@@ -1,7 +1,7 @@
 NEWS
 =====
 
-## fedrq 0.5.0
+## 0.5.0 - 2023-03-18 <a id="0.5.0"></a>
 
 ### New dependencies
 - requests
@@ -82,7 +82,7 @@ fedrq.spec:
 - test Release._copr_repo() formatting
 - nox publish: install all deps into the venv
 
-## fedrq 0.4.1
+## 0.4.1 - 2023-03-13 <a id="0.4.1"></a>
 
 This is a minor bugfix release that accounts for breaking libdnf5 API changes.
 
@@ -104,7 +104,7 @@ This is a minor bugfix release that accounts for breaking libdnf5 API changes.
 - Add nox targets to release fedrq
 
 
-## fedrq 0.4.0
+## 0.4.0 - 2023-02-21 <a id="0.4.0"></a>
 
 ### Changed
 
@@ -147,7 +147,7 @@ API:
   formatter.
 
 
-## fedrq 0.3.0
+## 0.3.0 - 2023-02-13 <a id="0.3.0"></a>
 
 ### Changed
 - Get rid of importlib_resources on Python 3.9. We can use the stdlib version.
@@ -194,7 +194,7 @@ API:
 - nox: add testa target to test both backends at once
 
 
-## fedrq 0.2.0
+## 0.2.0 - 2023-01-14 <a id="0.2.0"></a>
 
 ### Changed
 - Use $XDG_CACHE_HOME/fedrq to store instead of /var/tmp to store
@@ -217,7 +217,7 @@ API:
 - Ditch rpmautospec in favor of fclogr
 
 
-## fedrq 0.1.0
+## 0.1.0 - 2033-01-02 <a id="0.1.0"></a>
 
 ### Summary
 - New JSON formatter
@@ -264,7 +264,7 @@ outside usage.*
 - Reimplement FormatterContainer (private API)
 
 
-## fedrq 0.0.2
+## 0.0.2 - 2022-12-20
 
 - pyproject.toml: Add project.urls
 - pyproject.toml: Change Development Status to Alpha
@@ -275,6 +275,6 @@ outside usage.*
 - Add fedrq-dev copr
 
 
-## fedrq 0.0.1
+## 0.0.1 - 2022-12-19
 
 Initial release
