@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: None
+# SPDX-License-Identifier: Unlicense
+
+[almalinux-baseos]
+name=AlmaLinux $releasever - BaseOS
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/baseos
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/alma/RPM-GPG-KEY-AlmaLinux-$releasever
+
+[almalinux-baseos-source]
+name=AlmaLinux $releasever - BaseOS Source
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/baseos-source
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/alma/RPM-GPG-KEY-AlmaLinux-$releasever
+
+
+[almalinux-appstream]
+name=AlmaLinux $releasever - Appstream
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/appstream
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/alma/RPM-GPG-KEY-AlmaLinux-$releasever
+
+[almalinux-appstream-source]
+name=AlmaLinux $releasever - Appstream Source
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/appstream-source
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/alma/RPM-GPG-KEY-AlmaLinux-$releasever
+
+
+[almalinux8-powertools]
+name=AlmaLinux $releasever - PowerTools
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/powertools
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/alma/RPM-GPG-KEY-AlmaLinux-$releasever
+
+[almalinux8-powertools-source]
+name=AlmaLinux $releasever - PowerTools Source
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/powertools-source
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/alma/RPM-GPG-KEY-AlmaLinux-$releasever
+
+
+[almalinux-crb]
+name=AlmaLinux $releasever - CRB
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/crb
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/alma/RPM-GPG-KEY-AlmaLinux-$releasever
+
+[almalinux-crb-source]
+name=AlmaLinux $releasever - CRB Source
+mirrorlist=https://mirrors.almalinux.org/mirrorlist/$releasever/crb-source
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/share/distribution-gpg-keys/alma/RPM-GPG-KEY-AlmaLinux-$releasever

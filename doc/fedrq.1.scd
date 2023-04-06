@@ -244,6 +244,15 @@ The following generic repo class macros are available for all releases:
 :  *base*, *epel*, *no-powertools*, *compose-latest*
 :  *epel* contains epel, epel-next, baseos, appstream, and powertools.
    *no-powertools* contains *base* minus the powertools repo.
+|  Almalinux
+:  alX
+:  *base*, *epel*, *no-crb*
+:  *base* always includes crb. *epel* contains *base* along with the EPEL
+   repository. *no-crb* contains *base* minus the *crb* repository.
+|  Almalinux 8 (Legacy)
+:  *base*, *epel*, *no-powertools*
+:  *base* always includes powertools. *epel* contains *base* along with the EPEL
+   repository. *no-powertools* contains *base* minus the *powertools* repository.
 |  Amazon Linux
 :  amazon2023
 :  *base*

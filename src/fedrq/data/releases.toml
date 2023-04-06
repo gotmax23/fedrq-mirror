@@ -81,7 +81,7 @@ copr_chroot_fmt = "centos-stream-{version}"
 defpaths = [
     "centos-stream.repo",
     "centos-stream-compose.repo",
-    "epel.repo", 
+    "epel.repo",
 ]
 system_repos = false
 defs.base = [
@@ -163,3 +163,57 @@ repo_aliases.kojihub = "@baseurl:https://kojihub.stream.centos.org/kojifiles/rep
 matcher = '^amazon(\d+)$'
 defs.base = ["amazonlinux", "amazonlinux-source"]
 defpaths = ["amazonlinux.repo"]
+
+[releases.almalinux]
+matcher = '^al(9|1\d)$'
+copr_chroot_fmt = "epel-{version}"
+defpaths = [
+    "almalinux.repo",
+    "epel.repo",
+]
+defs.base = [
+    "almalinux-appstream",
+    "almalinux-appstream-source",
+    "almalinux-baseos",
+    "almalinux-baseos-source",
+    "almalinux-crb",
+    "almalinux-crb-source",
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
+defs.no-crb = [
+    "almalinux-appstream",
+    "almalinux-appstream-source",
+    "almalinux-baseos",
+    "almalinux-baseos-source",
+]
+
+[releases.almalinux8]
+matcher = '^al(8)$'
+copr_chroot_fmt = "epel-{version}"
+defpaths = [
+    "almalinux.repo",
+    "epel.repo",
+]
+defs.base = [
+    "almalinux-appstream",
+    "almalinux-appstream-source",
+    "almalinux-baseos",
+    "almalinux-baseos-source",
+    "almalinux8-powertools",
+    "almalinux8-powertools-source",
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
+defs.no-powertools = [
+    "almalinux-appstream",
+    "almalinux-appstream-source",
+    "almalinux-baseos",
+    "almalinux-baseos-source",
+]
