@@ -23,4 +23,4 @@ if ! grep "fedrq ${newversion}" NEWS.md -q; then
 fi
 git add pyproject.toml fedrq.spec NEWS.md
 git commit -S -m "Release ${newversion}"
-git tag -a "v${newversion}" -F FRAG.md
+git tag -a "v${newversion}" -F FRAG.md --edit
