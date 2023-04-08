@@ -12,7 +12,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "fedrq"
 description = "fedrq is a tool to query the Fedora and EPEL repositories"
-version = "0.6.0"
+version = "0.6.0.post0"
 authors = [{ name = "Maxwell G", email = "gotmax@e.email" }]
 readme = "README.md"
 license = { text = "GPL-2.0-or-later AND Unlicense AND MIT" }
