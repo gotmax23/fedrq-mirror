@@ -1,3 +1,6 @@
+NEWS
+=====
+
 ## 0.6.0 - 2023-04-06 <a id="0.6.0"></a>
 
 ### Changed
@@ -28,9 +31,6 @@ This release shouldn't introduce any backwards incompatibilities.
 
 Thank you to Benson Muite (~bvkcm) for improving the README and correcting
 outdated information.
-
-NEWS
-=====
 
 ## 0.5.0 - 2023-03-18 <a id="0.5.0"></a>
 
