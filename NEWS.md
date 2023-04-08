@@ -1,3 +1,34 @@
+## 0.6.0 - 2023-04-06 <a id="0.6.0"></a>
+
+### Changed
+
+This release shouldn't introduce any backwards incompatibilities.
+
+### Added
+
+- add `@metaurl` repo class
+- add builtin amazonlinux release configuration
+- add builtin almalinux release configuration
+- add @kojihub alias to the cXs (CentOS Stream) release configuration.
+- add @compose-latest repo group to the the cXs (CentOS Stream) release
+  configuration.
+- add initial shell completions
+- README: update links (by Benson Muite)
+- README: expand section about installation with pip
+- doc: create a mkdocs docsite at https://fedrq.gtmx.me
+- doc: add dnf repoquery comparison
+
+### Fixed
+
+- releases: fix regression in @epel from the CentOS Stream release configurations.
+  previously, `fedrq CMD -b cXs -r epel` resulted in an Exception.
+- config: fix docstring typos and add links
+
+### New contributors
+
+Thank you to Benson Muite (~bvkcm) for improving the README and correcting
+outdated information.
+
 NEWS
 =====
 
