@@ -129,7 +129,12 @@ Real world examples:
 - [mkblocker.py] - given a list of source packages names, use jinja2 to
   template a specfile that Conflicts on every subpackage produced by the source
   packages. This was used as part of the [Mass_Retire_Golang_Leaves] Fedora Change.
+- [sig_policy.py] - enforces the FESCo [SIG Policy][sig-policy] by using fedrq
+  to find packages that meet certain criteria and adding the corresponding SIG
+  to the distgit repo's ACLs.
 
 [api-examples]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/contrib/api_examples
 [mkblocker.py]: https://git.sr.ht/~gotmax23/fedora-scripts/tree/main/item/go-sig/blocker/mkblocker.py
 [Mass_Retire_Golang_Leaves]: https://fedoraproject.org/wiki/Changes/Mass_Retire_Golang_Leaves#Implementation
+[sig_policy.py]: https://pagure.io/releng/blob/main/f/scripts/fesco/sig-policy/sig_policy.py
+[sig-policy]: https://docs.fedoraproject.org/en-US/fesco/SIG_policy/
