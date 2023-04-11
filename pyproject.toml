@@ -58,6 +58,8 @@ test = [
     "tomli-w",
 ]
 doc = [
+    # mkdocstrings-python uses this to format function signatures
+    "black",
     "mkdocs",
     "mkdocs-material",
     "mkdocstrings[python]>=0.18",

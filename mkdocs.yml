@@ -49,6 +49,8 @@ plugins:
             show_if_no_docstring: true
             merge_init_into_class: true
             filters: ["!^__?", "!LOG", "!logger"]
+            show_signature_annotations: true
+            separate_signature: true
           paths:
             - src/
           import:
