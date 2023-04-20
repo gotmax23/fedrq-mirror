@@ -209,8 +209,7 @@ def clean(session: nox.Session):
 def srpm(session: nox.Session, posargs=None):
     posargs = posargs or session.posargs
     install_fclogr(session)
-    last_ref = run_silent("git", "describe", "--abbrev=0", "HEAD").stdout.strip()
-    session.run("fclogr", "--debug", "dev-srpm", "-r", last_ref, *posargs)
+    session.run("fclogr", "--debug", "dev-srpm", *posargs)
 
 
 @nox.session
