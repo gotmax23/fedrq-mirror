@@ -16,3 +16,9 @@ SPDX-License-Identifier: GPL-2.0-or-later
             - RepoError
             - Repoquery
             - get_releasever
+
+## See also
+
+- [`libdnf5.base.Base`][libdnf5.base.Base]
+- [`libdnf5.rpm.Package`][libdnf5.rpm.Package]
+- [`libdnf5.rpm.PackageQuery`][libdnf5.rpm.PackageQuery]

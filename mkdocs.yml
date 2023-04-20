@@ -55,6 +55,8 @@ plugins:
             - src/
           import:
             - https://docs.python.org/3/objects.inv
+            - https://dnf.readthedocs.io/en/latest/objects.inv
+            - https://dnf5.readthedocs.io/en/latest/objects.inv
   - exclude:
       glob:
         - "*.tar.gz"
