@@ -802,19 +802,8 @@ class Repoquery(RepoqueryBase):
         return sys.modules[__name__]
 
 
-def get_releasever() -> str:
-    """
-    Return the system releasever
-    """
-    # # Creating a second Base object just to retrieve this value is
-    # # prohibitively expensive.
-    # base = libdnf5.base.Base()
-    # base.load_config_from_file()
-    # base.setup()
-    # return base.get_vars().get_value("releasever")
-
-    # This is taken from dnf and slightly modified until
-    # https://github.com/rpm-software-management/dnf5/issues/281 is resolved.
+def _dnf_getreleasever() -> str:
+    # This is taken from dnf and slightly modified
     #
     # SPDX-License-Identifier: GPL-2.0-or-later
     # Copyright (C) 2012-2015  Red Hat, Inc.
@@ -862,6 +851,19 @@ def get_releasever() -> str:
         return ""
     finally:
         ts.closeDB()
+
+
+def get_releasever() -> str:
+    """
+    Return the system releasever
+    """
+    # libdnf5 > 5.0.10
+    if hasattr(libdnf5.conf.Vars, "detect_release"):
+        base = libdnf5.base.Base()
+        return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/")
+    # Fall back to our copy of dnf4's code
+    else:
+        return _dnf_getreleasever()
 
 
 RepoError = RuntimeError
