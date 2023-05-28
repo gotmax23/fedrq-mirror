@@ -13,13 +13,14 @@ import nox
 import nox.command
 import nox.virtualenv
 
-nox.options.sessions = ("lint", "test", "libdnf5_test")
-
 IN_CI = "JOB_ID" in os.environ
 ALLOW_EDITABLE = os.environ.get("ALLOW_EDITABLE", str(not IN_CI)).lower() in (
     "1",
     "true",
 )
+LINT_SESSIONS = ("formatters", "codeql", "typing", "reuse")
+
+nox.options.sessions = (*LINT_SESSIONS, "test", "libdnf5_test")
 
 
 def install(session: nox.Session, *args, editable=False, **kwargs):
@@ -107,7 +108,7 @@ def lint(session: nox.Session):
     """
     Run format, codeql, typing, and reuse sessions
     """
-    for notify in ("formatters", "codeql", "typing", "reuse"):
+    for notify in LINT_SESSIONS:
         session.notify(notify)
 
 
