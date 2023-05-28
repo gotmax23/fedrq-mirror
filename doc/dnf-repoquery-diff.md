@@ -23,6 +23,8 @@ with the `default_branch` option in the configuration.
 See the [BUILTIN RELEASES](../fedrq1/#builtin-releases) section of `man fedrq`
 for valid `--branch` options.
 Users can of course configure their own custom release profiles.
+You can use the pseudo `-b local` release which uses the default repositories
+with `enabled=1` in /etc/yum.repos.d and the system's releasever.
 
 ## Source repositories
 

@@ -260,6 +260,11 @@ The following generic repo class macros are available for all releases:
 :  amazon2023
 :  *@base*
 : 
+|  Default local system repositories
+:  local
+:  N/A
+:  This uses the default repositories with *enabled=1* in /etc/yum.repos.d and
+   and the system's releasever.
 
 ## SPECIAL REPOS
 

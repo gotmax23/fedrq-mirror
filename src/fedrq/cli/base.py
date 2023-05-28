@@ -325,15 +325,13 @@ class Command(abc.ABC):
         return None
 
     @v_fatal_error
-    def v_release(self) -> str | None:
+    def v_rq(self) -> str | None:
         try:
-            self.release = self.config.get_release(self.args.branch, self.args.repos)
+            if self.args.branch != "local":
+                release = self.config.get_release(self.args.branch, self.args.repos)
         except ConfigError as err:
             return str(err)
-        return None
 
-    @v_fatal_error
-    def v_rq(self) -> str | None:
         conf: dict[str, Any] = {}
         bvars: dict[str, Any] = {}
 
@@ -350,10 +348,13 @@ class Command(abc.ABC):
             bvars["arch"] = self.args.forcearch
         bm = self.backend.BaseMaker()
         try:
-            self.release.make_base(self.config, conf, bvars, bm, False)
+            if self.args.branch == "local":
+                bm.read_system_repos(False)
+            else:
+                release.make_base(self.config, conf, bvars, bm, False)
             for func, repo in self.args.enable_disable:
                 if func == "enable":
-                    self.release.get_repog(repo).load(bm, self.config, self.release)
+                    release.get_repog(repo).load(bm, self.config, release)
                 elif func == "disable":
                     bm.disable_repo(repo, True)
                 else:
@@ -377,7 +378,6 @@ class Command(abc.ABC):
         self.v_arch()
         # Fatal
         self.v_backend()
-        self.v_release()
         self.v_rq()
         self._v_handle_errors()
 
