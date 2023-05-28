@@ -25,7 +25,6 @@ BuildArch:      noarch
 BuildRequires:  python3-devel
 # Test deps
 BuildRequires:  createrepo_c
-BuildRequires:  fedora-repos-rawhide
 BuildRequires:  distribution-gpg-keys
 BuildRequires:  python3-argcomplete
 BuildRequires:  python3-dnf
