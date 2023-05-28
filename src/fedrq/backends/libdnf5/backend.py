@@ -860,7 +860,7 @@ def get_releasever() -> str:
     # libdnf5 > 5.0.10
     if hasattr(libdnf5.conf.Vars, "detect_release"):
         base = libdnf5.base.Base()
-        return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/")
+        return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/").get()
     # Fall back to our copy of dnf4's code
     else:
         return _dnf_getreleasever()
