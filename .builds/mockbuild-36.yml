@@ -33,7 +33,6 @@ tasks:
       sudo dnf install -y python3-libdnf5
       # Only run the integration tests. Units are run in the RPM build.
       FEDRQ_BACKEND=dnf $nox -e test -- -v -k 'no_rpm_mock' --durations=7
-      FEDRQ_BACKEND=libdnf5 $nox -e test -- -v -k 'no_rpm_mock' --durations=7
   - typing-py310: |
       cd fedrq
       $nox -e typing
