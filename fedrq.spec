@@ -22,6 +22,7 @@ Source0:        %{furl}/refs/download/v%{version}/fedrq-%{version}.tar.gz
 
 BuildArch:      noarch
 
+BuildRequires:  tomcli+tomlkit
 BuildRequires:  python3-devel
 # Test deps
 BuildRequires:  createrepo_c
@@ -52,6 +53,9 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 %prep
 %autosetup -p1
 
+# See the comments in pyproject.toml
+tomcli-set pyproject.toml del tool.flit.external-data
+tomcli-set pyproject.toml list build-system.requires "flit_core >=3.2,<4"
 
 %generate_buildrequires
 %pyproject_buildrequires -x test
@@ -85,7 +89,7 @@ FEDRQ_BACKEND=libdnf5 %pytest -v -m "not no_rpm_mock"
 
 %files -f %{pyproject_files}
 # Licenses are included in the wheel
-%license %{_licensedir}/fedrq/
+%license LICENSES/*.txt
 %doc README.md CONTRIBUTING.md NEWS.md contrib/api_examples
 %{_bindir}/fedrq*
 %{bash_completions_dir}/fedrq
