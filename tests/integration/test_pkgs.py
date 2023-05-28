@@ -6,6 +6,9 @@ import pytest
 import fedrq.cli
 
 
+@pytest.mark.skip(
+    "This test loads rawhide metadata and is expensive. We already load f37."
+)
 @pytest.mark.no_rpm_mock
 def test_pkgs_basic_rawhide(capsys, target_cpu):
     fedrq.cli.main(["pkgs", "bash", "-Fna", "--sc"])
