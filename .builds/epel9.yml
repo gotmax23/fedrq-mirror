@@ -19,6 +19,6 @@ tasks:
       podman run -d -v $(pwd):/pwd:z -w /pwd --name c9ss --init centos:stream9 sleep infinity
       podman exec c9ss bash -xeu -o pipefail ./install.sh
   - pytest-py39: |
-      podman exec c9ss ./venv/bin/nox -e test -- -v
+      podman exec c9ss ./venv/bin/nox -e test -- -v --durations=7
   - typing-py39: |
       podman exec c9ss ./venv/bin/nox -e typing

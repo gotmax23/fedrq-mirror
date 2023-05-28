@@ -80,5 +80,5 @@ tasks:
       $nox -e lint -- --check
   - pytest: |
       cd fedrq
-      FEDRQ_BACKEND=dnf $nox -e test -- -v
-      FEDRQ_BACKEND=libdnf5 $nox -e test -- -v
+      FEDRQ_BACKEND=dnf $nox -e test -- -v --durations=7
+      FEDRQ_BACKEND=libdnf5 $nox -e test -- -v --durations=7
