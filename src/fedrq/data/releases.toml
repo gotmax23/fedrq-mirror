@@ -236,3 +236,9 @@ defs.base = [
     "eln-crb",
     "eln-crb-source",
 ]
+
+[releases.local]
+matcher = "local"
+version = "$releasever"
+append_system_repos = true
+defs.base = []
