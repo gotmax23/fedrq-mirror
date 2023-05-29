@@ -13,6 +13,7 @@ import logging
 import sys
 import typing as t
 from collections.abc import Collection
+from functools import cache
 
 from fedrq._utils import filter_latest
 from fedrq.backends import MissingBackendError
@@ -202,6 +203,7 @@ class Repoquery(RepoqueryBase):
         return sys.modules[__name__]
 
 
+@cache
 def get_releasever():
     """
     Return the system releasever

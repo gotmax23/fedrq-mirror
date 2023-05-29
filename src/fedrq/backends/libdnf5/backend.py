@@ -853,6 +853,7 @@ def _dnf_getreleasever() -> str:
         ts.closeDB()
 
 
+@functools.cache
 def get_releasever() -> str:
     """
     Return the system releasever
