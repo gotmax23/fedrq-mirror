@@ -22,6 +22,7 @@ defpaths = ["rawhide-buildroot.repo", "fedora-rawhide.repo"]
 system_repos = true
 # Example usage: `fedrq CMD -r @koji:f39-build-side-XXXX`
 repo_aliases.koji = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/$basearch"
+repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/src"
 
 [releases.branched]
 # e.g. f36, f37
@@ -38,6 +39,7 @@ defs.testing-only =  ["updates-testing", "updates-testing-source"]
 
 defpaths = ["fedora.repo", "fedora-updates.repo", "fedora-updates-testing.repo"]
 repo_aliases.koji = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/$basearch"
+repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/src"
 
 [releases.epel]
 # e.g. epel8, epel9, epel10
