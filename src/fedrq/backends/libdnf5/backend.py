@@ -10,6 +10,7 @@ that uses the libdnf5 Python bindings.
 from __future__ import annotations
 
 import functools
+import inspect
 import logging
 import sys
 import typing as t
@@ -359,7 +360,11 @@ class BaseMaker(BaseMakerBase):
     def load_filelists(self) -> None:
         LOG.debug("Loading filelists")
         option = self._get_option(self.config, "optional_metadata_types")
-        option.add_item(libdnf5.conf.METADATA_TYPE_FILELISTS)
+        func = option.add_item
+        if "priority" in inspect.signature(func).parameters:
+            func(Priority_RUNTIME, libdnf5.conf.METADATA_TYPE_FILELISTS)
+        else:
+            func(libdnf5.conf.METADATA_TYPE_FILELISTS)
 
     def create_repo(self, repoid: str, **kwargs) -> None:
         """
