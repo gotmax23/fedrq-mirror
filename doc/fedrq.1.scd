@@ -209,6 +209,17 @@ The following generic repo class macros are available for all releases:
 	specific in the current ReleaseConfig's *defpaths*. If *key* is the name
 	of a release's repo group (see above), that will be enabled instead.
 
+The following generic repo class macros are available for Fedora releases:
+
+*@koji:[key]*
+	Load the repositories for a koji.fedoraproject.org tag. ++
+	Example: *@koji:f39-build-side-XXXX*
+*@koji-src:[key]*
+	Load the source repositories for a koji.fedoraproject.org tag.
+	It does not seem that Fedora Koji provides source repositories
+	for tags other than *rawhide* and *eln-build*.
+	For rawhide, see the preconfigured *@buildroot* repository group.
+
 
 
 # BUILTIN RELEASES
