@@ -447,3 +447,32 @@ class CheckConfig(Command):
             flog.debug("Removing Nones from configuration dict")
             data_dict = self._strip_nones(json.loads(self.config.json()))
             tomli_w.dump(data_dict, sys.stdout.buffer)
+
+
+# class CommandBoilerplate(Command):
+#     """
+#     Help text
+#     """
+#     def __init__(self, args: argparse.Namespace) -> None:
+#         super().__init__(args)
+#         self.v_default()
+
+#     @classmethod
+#     def make_parser(
+#         cls,
+#         parser_func: cabc.Callable = argparse.ArgumentParser,
+#         *,
+#         add_help: bool = False,
+#         **kwargs,
+#     ) -> argparse.ArgumentParser:
+#         kwargs["description"] = cls.__doc__
+#         kwargs["parents"] = [cls.parent_parser()]
+#         if add_help:
+#             kwargs["help"] = cls.__doc__
+
+#         parser = parser_func(**kwargs)
+#         ...
+#         return parser
+
+#     def run(self) -> None:
+#         ...
