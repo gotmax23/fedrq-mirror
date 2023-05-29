@@ -242,3 +242,8 @@ matcher = "local"
 version = "$releasever"
 append_system_repos = true
 defs.base = []
+
+[releases.local-custom]
+matcher = "local:(.*)"
+append_system_repos = true
+defs.base = []

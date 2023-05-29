@@ -280,6 +280,11 @@ The following generic repo class macros are available for Fedora releases:
 :  N/A
 :  This uses the default repositories with *enabled=1* in /etc/yum.repos.d and
    and the system's releasever.
+|  Default local system repositories with a different releasever
+:  local:[releasever]
+:  N/A
+:  This uses the default repositories with *enabled=1* in /etc/yum.repos.d and
+   and a custom releasever.
 
 ; local should always be last in the above table
 
