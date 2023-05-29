@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: Unlicense
+# SPDX-FileCopyrightText: None
 
 [centos-stream-compose-latest-appstream]
 name = centos-stream-compose-latest-appstream

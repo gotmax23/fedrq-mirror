@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: Unlicense
+# SPDX-FileCopyrightText: None
 
 [almalinux-baseos]
 name=AlmaLinux $releasever - BaseOS
