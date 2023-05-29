@@ -112,7 +112,7 @@ class ReleaseConfig(BaseModel):
         return [Path(directory) for directory in value.split(":")]
 
     def is_match(self, val: str) -> bool:
-        return bool(re.match(self.matcher, val))
+        return bool(re.fullmatch(self.matcher, val))
 
     def is_valid_repo(self, val: str) -> bool:
         try:
