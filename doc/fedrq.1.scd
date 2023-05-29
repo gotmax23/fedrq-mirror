@@ -260,11 +260,17 @@ The following generic repo class macros are available for all releases:
 :  amazon2023
 :  *@base*
 : 
+|  Fedora ELN
+:  eln
+:  *@base*, *no-crb*
+: 
 |  Default local system repositories
 :  local
 :  N/A
 :  This uses the default repositories with *enabled=1* in /etc/yum.repos.d and
    and the system's releasever.
+
+; local should always be last in the above table
 
 ## SPECIAL REPOS
 

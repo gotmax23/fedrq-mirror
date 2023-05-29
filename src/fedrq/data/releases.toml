@@ -217,3 +217,20 @@ defs.no-powertools = [
     "almalinux-baseos",
     "almalinux-baseos-source",
 ]
+
+[releases.eln]
+matcher = "^(eln)$"
+defpaths = [
+    "fedora-eln.repo",
+]
+defs.no-crb = [
+    "eln-baseos",
+    "eln-baseos-source",
+    "eln-appstream",
+    "eln-appstream-source",
+]
+defs.base = [
+    "@no-crb",
+    "eln-crb",
+    "eln-crb-source",
+]
