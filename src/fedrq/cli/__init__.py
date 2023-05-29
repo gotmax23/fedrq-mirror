@@ -16,6 +16,7 @@ else:
 
 from fedrq.cli.base import CheckConfig, Command
 from fedrq.cli.commands.pkgs import Pkgs
+from fedrq.cli.commands.repolist import Repolist
 from fedrq.cli.commands.subpkgs import Subpkgs
 from fedrq.cli.commands.whatrequires import (
     WhatCommand,
@@ -31,6 +32,7 @@ from fedrq.cli.commands.whatrequires import (
 __all__ = (
     "Command",
     "Pkgs",
+    "Repolist",
     "Subpkgs",
     "WhatCommand",
     "Whatenhances",
@@ -63,6 +65,7 @@ COMMANDS: dict[str, type[Command]] = {
     "check-config": CheckConfig,
     "pkgs": Pkgs,
     "subpkgs": Subpkgs,
+    "repolist": Repolist,
     "whatenhances": Whatenhances,
     "whatobsoletes": Whatobsoletes,
     "whatrecommends": Whatrecommends,

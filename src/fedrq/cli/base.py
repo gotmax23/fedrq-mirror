@@ -16,6 +16,8 @@ from functools import wraps
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from fedrq.backends.base import BaseMakerBase
+
 try:
     import tomli_w
 except ImportError:
@@ -167,14 +169,8 @@ class Command(abc.ABC):
         return query
 
     @classmethod
-    def parent_parser(cls) -> argparse.ArgumentParser:
+    def branch_repo_parser(cls) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(add_help=False)
-        parser.add_argument(  # type: ignore[attr-defined]
-            "names", metavar="NAME", nargs="*", help="Mutually exclusive with --stdin"
-        ).completer = lambda **_: ()
-        parser.add_argument(
-            "-i", "--stdin", help="Read package names from stdin.", action="store_true"
-        )
         parser.add_argument(
             "-b",
             "--branch",
@@ -182,6 +178,41 @@ class Command(abc.ABC):
             "(e.g. epel7, rawhide, epel9-next, f37) to query",
         )
         parser.add_argument("-r", "--repos", default="base")
+        parser.add_argument(
+            "-e",
+            "--enablerepo",
+            dest="enable_disable",
+            default=[],
+            action=_EnableDisableRepo,
+            metavar="REPO",
+            help="""
+            Enable certain repositories for the duration of this operation.
+            All repositories in the system configuration and any additional
+            defs in the selected branch are available.
+            """,
+        )
+        parser.add_argument(
+            "--disablerepo",
+            dest="enable_disable",
+            default=[],
+            action=_EnableDisableRepo,
+            metavar="REPO",
+            # PROVISIONAL
+            help=argparse.SUPPRESS,
+        )
+        return parser
+
+    @classmethod
+    def parent_parser(cls) -> argparse.ArgumentParser:
+        parser = argparse.ArgumentParser(
+            add_help=False, parents=[cls.branch_repo_parser()]
+        )
+        parser.add_argument(  # type: ignore[attr-defined]
+            "names", metavar="NAME", nargs="*", help="Mutually exclusive with --stdin"
+        ).completer = lambda **_: ()
+        parser.add_argument(
+            "-i", "--stdin", help="Read package names from stdin.", action="store_true"
+        )
         parser.add_argument("-l", "--latest", default=1, help="'all' or an intenger")
         parser.add_argument(  # type: ignore[attr-defined]
             "-F",
@@ -222,28 +253,6 @@ class Command(abc.ABC):
         parser.add_argument("-B", "--backend", choices=tuple(BACKENDS))
         parser.add_argument(
             "--forcearch", help="Query a foreign architecture's repositories"
-        )
-        parser.add_argument(
-            "-e",
-            "--enablerepo",
-            dest="enable_disable",
-            default=[],
-            action=_EnableDisableRepo,
-            metavar="REPO",
-            help="""
-            Enable certain repositories for the duration of this operation.
-            All repositories in the system configuration and any additional
-            defs in the selected branch are available.
-            """,
-        )
-        parser.add_argument(
-            "--disablerepo",
-            dest="enable_disable",
-            default=[],
-            action=_EnableDisableRepo,
-            metavar="REPO",
-            # PROVISIONAL
-            help=argparse.SUPPRESS,
         )
         return parser
 
@@ -332,6 +341,15 @@ class Command(abc.ABC):
             return str(err)
         return None
 
+    def _enable_disable_bm(self, bm: BaseMakerBase):
+        for func, repo in self.args.enable_disable:
+            if func == "enable":
+                self.release.get_repog(repo).load(bm, self.config, self.release)
+            elif func == "disable":
+                bm.disable_repo(repo, True)
+            else:
+                raise ValueError
+
     @v_fatal_error
     def v_rq(self) -> str | None:
         conf: dict[str, Any] = {}
@@ -351,13 +369,7 @@ class Command(abc.ABC):
         bm = self.backend.BaseMaker()
         try:
             self.release.make_base(self.config, conf, bvars, bm, False)
-            for func, repo in self.args.enable_disable:
-                if func == "enable":
-                    self.release.get_repog(repo).load(bm, self.config, self.release)
-                elif func == "disable":
-                    bm.disable_repo(repo, True)
-                else:
-                    raise ValueError
+            self._enable_disable_bm(bm)
         except ConfigError as exc:
             return str(exc)
         self.rq = self.backend.Repoquery(bm.fill_sack())
