@@ -64,6 +64,7 @@ class LoadFilelists(StrEnum):
 class ReleaseConfig(BaseModel):
     name: str = Field(exclude=True)
     defs: dict[str, list[str]]
+    version: str | None = None
     matcher: t.Pattern
     repo_dirs: list[Path] = Field(
         default_factory=lambda: [
@@ -72,6 +73,7 @@ class ReleaseConfig(BaseModel):
     )
     defpaths: set[str] = Field(default_factory=set)
     system_repos: bool = True
+    append_system_repos: bool = False
 
     koschei_collection: t.Optional[str] = None
     copr_chroot_fmt: t.Optional[str] = None
@@ -100,8 +102,8 @@ class ReleaseConfig(BaseModel):
         return value
 
     @validator("matcher")
-    def v_matcher(cls, value: t.Pattern) -> t.Pattern:
-        if value.groups != 1:
+    def v_matcher(cls, value: t.Pattern, values: dict[str, t.Any]) -> t.Pattern:
+        if not values["version"] and value.groups != 1:
             raise ValueError("'matcher' must have exactly one capture group")
         return value
 
@@ -110,6 +112,12 @@ class ReleaseConfig(BaseModel):
         if not isinstance(value, str):
             return value
         return [Path(directory) for directory in value.split(":")]
+
+    @validator("append_system_repos", always=True)
+    def v_append_system_repos(cls, value: bool, values: dict[str, t.Any]) -> bool:
+        if value:
+            values["system_repos"] = True
+        return value
 
     def is_match(self, val: str) -> bool:
         return bool(re.fullmatch(self.matcher, val))
@@ -218,9 +226,17 @@ class Release:
 
     @property
     def version(self) -> str:
-        if match := re.match(self.release_config.matcher, self.branch):
-            return match.group(1)
-        raise ValueError(f"{self.branch} does not match {self.release_config.name}")
+        v: str | None = None
+        if self.release_config.version:
+            v = self.release_config.version
+        elif match := re.fullmatch(self.release_config.matcher, self.branch):
+            v = match.group(1)
+        if v is None:
+            raise ValueError(f"{self.branch} does not match {self.release_config.name}")
+        # Special case
+        if v == "$releasever":
+            v = self.config.backend_mod.get_releasever()
+        return v
 
     @property
     def copr_chroot_fmt(self) -> str | None:

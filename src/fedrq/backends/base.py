@@ -345,7 +345,9 @@ class BaseMakerBase(abc.ABC):
         if set_releasever:
             self.set_var("releasever", release.version)
         if release.release_config.system_repos:
-            self.read_system_repos()
+            self.read_system_repos(
+                disable=not release.release_config.append_system_repos
+            )
         for path in release.release_config.full_def_paths:
             with importlib.resources.as_file(path) as fp:
                 LOG.debug("Reading %s", fp)
