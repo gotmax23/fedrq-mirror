@@ -361,6 +361,7 @@ class BaseMaker(BaseMakerBase):
         LOG.debug("Loading filelists")
         option = self._get_option(self.config, "optional_metadata_types")
         func = option.add_item
+        # https://github.com/rpm-software-management/dnf5/commit/ba011ff
         if "priority" in inspect.signature(func).parameters:
             func(Priority_RUNTIME, libdnf5.conf.METADATA_TYPE_FILELISTS)
         else:
