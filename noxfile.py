@@ -409,10 +409,10 @@ def docgen(session: nox.Session):
 def copr_release(session: nox.Session):
     install(session, "copr-cli", "requests-gssapi", "specfile")
     tmp = Path(session.create_tmp())
-    dest = tmp / "tomcli.spec"
-    copy2("tomcli.spec", dest)
+    dest = tmp / f"{PROJECT}.spec"
+    copy2(f"{PROJECT}.spec", dest)
     session.run("python", "contrib/fedoraify.py", str(dest))
-    session.run("copr-cli", "build", "--nowait", "gotmax23/tomcli", str(dest))
+    session.run("copr-cli", "build", "--nowait", f"gotmax23/{PROJECT}", str(dest))
 
 
 @nox.session(python="none")
