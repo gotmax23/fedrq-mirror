@@ -183,9 +183,9 @@ def reuse(session: nox.Session):
     session.run("reuse", "lint")
 
 
-def install_fclogr(session: nox.Session):
+def install_fclogr(session: nox.Session, allow_local: bool = True):
     install_system(session, "rpm-build", "python3-rpm")
-    if Path("../fclogr").exists():
+    if allow_local and Path("../fclogr").exists():
         install(session, "-e", "../fclogr")
     else:
         install(session, "git+https://git.sr.ht/~gotmax23/fclogr#main")
@@ -268,6 +268,7 @@ def bump(session: nox.Session):
     ensure_clean(session)
 
     install(session, "flit>=3.9", "tomcli[tomlkit]", "twine")
+    install_fclogr(session, False)
 
     # Download generate_changelog
     tmp = Path(session.create_tmp())
