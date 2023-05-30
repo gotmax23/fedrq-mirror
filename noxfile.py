@@ -348,22 +348,24 @@ def publish(session: nox.Session):
     # Setup
     ensure_clean(session)
     install(session, "twine", "tomcli[tomlkit]")
+
+    # Upload to PyPI
     session.run(
         "twine",
         "upload",
         "--non-interactive",
         "--username",
         "__token__",
-        *_get_artifacts(("*.whl", "*.tar.gz"), extra_allowed=False, expected_count=2),
+        *_get_artifacts(("*.whl", "*.tar.gz"), expected_count=2),
     )
 
-    # Copr build
-    copr_release(session)
-
-    # Push to git
-    if session.interactive and input("Push to Sourcehut (Y/n)").lower() != "n":
+    # Push to git, publish artifacts to sourcehut, and release to copr
+    if not session.interactive or input(
+        "Push to Sourcehut and copr build (Y/n)"
+    ).lower() in ("", "y"):
         git(session, "push", "--follow-tags")
         srht_artifacts(session)
+        copr_release(session)
 
     # Post-release bump
     version = session.run(  # type: ignore[union-attr]
