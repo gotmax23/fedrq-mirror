@@ -7,7 +7,7 @@
 %bcond libdnf5 %[0%{?fedora} >= 38]
 
 Name:           fedrq
-Version:        0.6.0
+Version:        0.7.0
 Release:        1%{?dist}
 Summary:        A tool to query the Fedora and EPEL repositories
 
@@ -99,6 +99,9 @@ FEDRQ_BACKEND=libdnf5 %pytest -v -m "not no_rpm_mock"
 
 
 %changelog
+* Tue May 30 2023 Maxwell G <maxwell@gtmx.me> - 0.7.0-1
+- Release 0.7.0.
+
 * Sat Apr 08 2023 Maxwell G <maxwell@gtmx.me> - 0.6.0-1
 - Release 0.6.0
 

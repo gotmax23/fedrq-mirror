@@ -1,6 +1,86 @@
 NEWS
 =====
 
+## 0.7.0 - 2023-05-30 <a id='0.7.0'></a>
+
+### Highlighted examples
+
+fedrq now has a Fedora ELN release configuration builtin!
+
+You can preform simple queries
+
+```
+$ fedrq pkgs -b eln -F plainwithrepo ansible-core
+ansible-core-2.15.0-2.eln126.noarch eln-appstream
+ansible-core-2.15.0-2.eln126.src eln-appstream-source
+```
+
+or use more complex pipelines to determine how a package's build dependencies differ between ELN and Rawhide
+
+```
+$ comm -13 \
+    <(fedrq pkgs -b eln -s -F requires ansible-core | sort -u) \
+    <(fedrq pkgs -b rawhide -s -F requires ansible-core | sort -u)
+git-core
+glibc-all-langpacks
+python3dist(bcrypt)
+python3dist(passlib)
+python3dist(pexpect)
+python3dist(pytest)
+python3dist(pytest-forked)
+python3dist(pytest-mock)
+python3dist(pytest-xdist)
+python3dist(pywinrm)
+python3dist(pyyaml)
+python3-systemd
+/usr/bin/python
+```
+
+(This difference is expected, as tests are disabled when `%rhel` is defined.)
+
+fedrq also has a new `repolist` command to list enabled repos for a release.
+
+```
+$ fedrq repolist -b eln -r @no-crb
+eln-baseos
+eln-baseos-source
+eln-appstream
+eln-appstream-source
+```
+
+
+### Added
+
+- add `local` and `local:...` branches to allow querying the enabled system repos in
+- add `repolist` sucommand to display enabled repos
+  the same way that plain `dnf repoquery` does.
+- add Fedora ELN release configuration
+- add/document `@koji` and `@koji-src` generic repo classes
+
+---
+
+- add EPEL 9 packages to the upstream gotmax23/copr and gotmax23/copr-dev repositories
+- doc: add sig_policy.py to API examples
+- doc: add dnf and libdnf5 intersphinx
+
+### Changed
+
+- docs: show full function signatures w/ annotations
+- relicense CI files that are shared with tomcli to MIT
+- libdnf5 backend: use `libdnf5.conf.Vars.detect_release()` when available (libdnf5 >= 5.0.10)
+- backends: cache result of get_releasever()
+- config: check that release `matcher`s match the entire `--branch` not just
+  the beginning of it.
+
+### Fixed
+
+- doc: fix improper NEWS.md formatting
+- doc: correct `smartcache` description in fedrq(5).
+- libdnf5 backend: make the `BaseMaker.load_filelists()` method compatible with
+  libdnf5 >= 5.0.12.
+- packaging: remove remanent rpmautospec changelog file
+- packaging: remove unneeded fedora-repos-rawhide BR
+
 ## 0.6.0 - 2023-04-06 <a id="0.6.0"></a>
 
 ### Changed
