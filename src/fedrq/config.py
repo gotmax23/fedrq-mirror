@@ -64,7 +64,7 @@ class LoadFilelists(StrEnum):
 class ReleaseConfig(BaseModel):
     name: str = Field(exclude=True)
     defs: dict[str, list[str]]
-    version: str | None = None
+    version: t.Optional[str] = None
     matcher: t.Pattern
     repo_dirs: list[Path] = Field(
         default_factory=lambda: [
