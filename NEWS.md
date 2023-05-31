@@ -1,6 +1,16 @@
 NEWS
 =====
 
+## 0.7.1 - 2023-05-31 <a id='0.7.1'></a>
+
+### Fixed
+
+- libdnf5: fix downloadsize and size formatters compat.
+  This change is needed to maintain compat after
+  [rpm-software-management/dnf5#766fb3a][766fb3a].
+
+[766fb3a]: https://github.com/rpm-software-management/dnf5/commit/766fb3ad8745e42e4d5b73417aa54898e2d0f89f
+
 ## 0.7.0 - 2023-05-30 <a id='0.7.0'></a>
 
 ### Highlighted examples
