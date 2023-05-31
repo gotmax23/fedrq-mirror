@@ -515,11 +515,15 @@ class Package(libdnf5.rpm.Package):
 
     @property
     def size(self) -> int:
-        return self.get_package_size()
+        return self.downloadsize
 
     @property
     def downloadsize(self) -> int:
-        return self.get_package_size()
+        # https://github.com/rpm-software-management/dnf5/pull/558
+        try:
+            return self.get_download_size()
+        except AttributeError:
+            return self.get_package_size()
 
     @property
     def installsize(self) -> int:
