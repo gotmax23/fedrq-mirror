@@ -72,7 +72,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://fedrq.gtmx.me"
-Changelog = "https://fedrq.gtmx.me/Changelog"
+Changelog = "https://fedrq.gtmx.me/News"
 "Mailing List" = "https://lists.sr.ht/~gotmax23/fedrq"
 Source = "https://git.sr.ht/~gotmax23/fedrq"
 
