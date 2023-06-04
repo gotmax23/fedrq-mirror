@@ -255,9 +255,7 @@ class Release:
         fill_sack: bool = True,
     ) -> dnf.Base | libdnf5.base.Base:
         """
-        :param config: An RQConfig object. Not passing this argument is deprecated.
-                       DEPRECATED since 0.4.0: A new RQConfig object will be
-                                               created if this is None.
+        :param config: An RQConfig object. If this is not passed, `self.config` is used.
         :param base_conf: Base session configuration
         :param base_vars: Base session vars/substitutions (arch, basearch,
                                                            releasever, etc.)
@@ -267,10 +265,7 @@ class Release:
                           just return the Base object after applying configuration.
         """
         if config is None:
-            warnings.warn(
-                "DEPRECATED since 0.4.0: Provide an RQConfig object for 'config'"
-            )
-            config = get_config()
+            config = self.config
         base_conf = base_conf or {}
         base_vars = base_vars or {}
         releasever = config.backend_mod.get_releasever()
