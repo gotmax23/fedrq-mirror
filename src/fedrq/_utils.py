@@ -11,7 +11,6 @@ if t.TYPE_CHECKING:
     from fedrq.backends.base import PackageCompat, PackageQueryCompat
 
 logger = logging.getLogger(__name__)
-# PkgIter = t.Union[hawkey.Query, t.Iterable[dnf.package.Package]]
 
 
 def get_source_name(package: PackageCompat) -> str:
