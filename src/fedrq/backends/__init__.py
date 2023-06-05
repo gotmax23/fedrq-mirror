@@ -82,7 +82,7 @@ class _DefaultBackend:
             return backend.get_backend()
         _split = ", ".join(backends.missing)
         raise MissingBackendError(
-            f"Neither of the following backends were available: {_split}"
+            f"None of the following backends were available: {_split}"
         )
 
 
