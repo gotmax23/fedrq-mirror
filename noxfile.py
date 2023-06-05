@@ -162,19 +162,9 @@ def formatters(session: nox.Session):
             "noxfile.py",
         )
     finally:
-        try:
-            session.run(
-                "python",
-                "-m",
-                "isort",
-                "--add-import",
-                "from __future__ import annotations",
-                *posargs,
-                "src/fedrq/",
-                "noxfile.py",
-            )
-        finally:
-            session.run("python", "-m", "isort", *posargs, "tests/")
+        session.run(
+            "python", "-m", "isort", *posargs, "src/fedrq/", "noxfile.py", "tests/"
+        )
 
 
 @nox.session
