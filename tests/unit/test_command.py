@@ -3,6 +3,8 @@
 """
 Generic tests for fedrq.cli.Command
 """
+from __future__ import annotations
+
 import os
 import shutil
 from pathlib import Path

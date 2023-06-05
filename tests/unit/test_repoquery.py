@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from fedrq import config as rqconfig
