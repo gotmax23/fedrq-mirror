@@ -27,7 +27,7 @@ if sys.version_info < (3, 11):
 else:
     import tomllib
 
-from pydantic import BaseModel, Field, PrivateAttr, validator
+from pydantic import BaseModel, Field, validator
 
 from fedrq._compat import StrEnum
 from fedrq._config import ConfigError
@@ -80,16 +80,15 @@ class ReleaseConfig(BaseModel):
 
     full_def_paths: t.ClassVar[list[t.Union[Traversable, Path]]] = []
     repo_aliases: dict[str, str] = {}
-    _repogs = PrivateAttr()
+    repogs: Repos = Field(DefaultRepoGs, exclude=True)
 
-    @property
-    def repogs(self) -> Repos:
-        return self._repogs
+    class Config:
+        arbitrary_types_allowed = True
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._repogs = DefaultRepoGs.new(
-            self.defs | AliasRepoG.from_str_mapping(self.repo_aliases)
+    @validator("repogs", always=True)
+    def v_repogs(cls, value: Repos, values: dict[str, t.Any]) -> Repos:
+        return (
+            value | values["defs"] | AliasRepoG.from_str_mapping(values["repo_aliases"])
         )
 
     @validator("defpaths")
