@@ -7,6 +7,7 @@ packages:
   - mock
   - mock-core-configs
   - rpmlint
+  - rpm-build
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
 environment:

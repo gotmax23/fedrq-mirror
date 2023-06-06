@@ -17,6 +17,7 @@ tasks:
       ./venv/bin/pip install nox
       EOF
       podman run -d -v $(pwd):/pwd:z -w /pwd --name c9ss --init centos:stream9 sleep infinity
+      podman exec c9ss dnf install -y createrepo_c rpm-build
       podman exec c9ss bash -xeu -o pipefail ./install.sh
   - pytest-py39: |
       podman exec c9ss ./venv/bin/nox -e test -- -v --durations=7

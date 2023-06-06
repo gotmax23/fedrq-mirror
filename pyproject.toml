@@ -11,8 +11,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "fedrq"
-description = "fedrq is a tool to query the Fedora and EPEL repositories"
-version = "0.7.1.post0"
+dynamic = ["description", "version"]
 authors = [{ name = "Maxwell G", email = "gotmax@e.email" }]
 readme = "README.md"
 license = { text = "GPL-2.0-or-later AND Unlicense AND MIT" }
@@ -40,34 +39,41 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
-lint = [
-    "black",
-    "isort",
-    "mypy",
-    "reuse",
+codeqa = [
     "ruff",
-    "tomli-w",
-    "types-requests",
-    # Optional fedrq runtime dependency
-    "argcomplete",
-    "typing_extensions",
-]
-test = [
-    "pytest",
-    "pytest-mock",
-    "tomli-w",
+    "reuse",
 ]
 doc = [
-    # mkdocstrings-python uses this to format function signatures
+    # mkdocstrings-python uses black to format function signatures
     "black",
     "mkdocs",
     "mkdocs-material",
     "mkdocstrings[python]>=0.18",
     "mkdocs-exclude",
 ]
+formatters = [
+    "black",
+    "isort",
+]
+typing = [
+    "mypy",
+    "types-requests",
+    # Optional fedrq runtime dependency
+    "argcomplete",
+    "typing_extensions",
+    "tomli-w",
+]
+test = [
+    "pytest",
+    "pytest-mock",
+    "tomli-w",
+]
 dev = [
+    "fedrq[doc]",
+    "fedrq[formatters]",
     "fedrq[test]",
-    "fedrq[lint]",
+    "fedrq[typing]",
+    "nox",
 ]
 
 [project.urls]

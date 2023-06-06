@@ -1,8 +1,10 @@
-# SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+# Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 outdir ::= results_fedrq
-COPR_DIR ::= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 srpm:
-	$(COPR_DIR)/mk.sh "$(outdir)"
+	command -v pipx || $(sudo) dnf install -y pipx
+	command -v git || $(sudo) dnf install -y git-core
+	pipx run nox -e srpm -- -o $(outdir)
+

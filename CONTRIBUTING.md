@@ -73,6 +73,7 @@ This project uses isort and black to format code, ruff for linting, and mypy
 for type checking.
 `reuse lint` is used to ensure that code follows the REUSE specification.
 You can run all of these tools using nox. Simply install nox with pip or dnf.
+The tests also require the `rpm-build` and createrepo_c` and packages.
 
 CI also runs a mock build against rawhide.
 Run `nox -e srpm` to build an SRPM containing the git HEAD
