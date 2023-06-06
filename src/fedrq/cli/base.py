@@ -213,7 +213,7 @@ class Command(abc.ABC):
         parser.add_argument(
             "-i", "--stdin", help="Read package names from stdin.", action="store_true"
         )
-        parser.add_argument("-l", "--latest", default=1, help="'all' or an intenger")
+        parser.add_argument("-l", "--latest", default=1, help="'all' or an integer")
         parser.add_argument(  # type: ignore[attr-defined]
             "-F",
             "--formatter",
