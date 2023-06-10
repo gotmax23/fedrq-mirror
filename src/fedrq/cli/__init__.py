@@ -45,11 +45,18 @@ __all__ = (
 )
 
 
+def version() -> str:
+    from fedrq import __version__
+
+    return __version__
+
+
 def main(argv: Sequence | None = None, **kwargs) -> None:
     parser = argparse.ArgumentParser(
         description="fedrq is a tool for querying the Fedora and EPEL repositories.",
         **kwargs,
     )
+    parser.add_argument("--version", action="version", version=version())
     subparsers = parser.add_subparsers(
         title="Subcommands", dest="action", required=True
     )
