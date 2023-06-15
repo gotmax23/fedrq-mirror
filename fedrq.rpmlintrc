@@ -1,3 +1,4 @@
 # Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
 # SPDX-License-Identifier: MIT
 # License text: https://spdx.org/licenses/MIT.html
+addFilter("%changelog not in descending chronological order")
