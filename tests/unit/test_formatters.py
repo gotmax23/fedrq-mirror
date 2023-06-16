@@ -4,10 +4,17 @@
 from __future__ import annotations
 
 import json
+from functools import cache
 
 import pytest
 
-import fedrq.cli.formatters as formatters
+from fedrq import config as rqconfig
+from fedrq.cli import formatters
+
+
+@cache
+def get_rq():
+    return rqconfig.get_config(load_filelists="always").get_rq("tester", "base")
 
 
 def formatter(query, formatter_name="plain", *args, attr=False, **kwargs):
@@ -32,7 +39,8 @@ def formatter(query, formatter_name="plain", *args, attr=False, **kwargs):
 
 
 # @pytest.mark.parametrize("special_repos", ("repo1",), indirect=["special_repos"])
-def test_plain_formatter(repo_test_rq, target_cpu):
+def test_plain_formatter(patch_config_dirs, target_cpu):
+    repo_test_rq = get_rq()
     expected = sorted(
         (
             "packagea-1-1.fc36.noarch",
@@ -51,7 +59,8 @@ def test_plain_formatter(repo_test_rq, target_cpu):
     assert formatter(query, "plain") == expected
 
 
-def test_plainwithrepo_formatter(repo_test_rq, target_cpu):
+def test_plainwithrepo_formatter(patch_config_dirs, repo_test_rq, target_cpu):
+    repo_test_rq = get_rq()
     expected = sorted(
         (
             "packagea-1-1.fc36.noarch testrepo1",
@@ -70,7 +79,8 @@ def test_plainwithrepo_formatter(repo_test_rq, target_cpu):
     assert formatter(query, "nevrr") == expected
 
 
-def test_name_formatter(repo_test_rq):
+def test_name_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     expected = sorted(
         (
             "packagea",
@@ -89,7 +99,8 @@ def test_name_formatter(repo_test_rq):
     assert formatter(query, "attr:name") == expected
 
 
-def test_evr_formatter(repo_test_rq):
+def test_evr_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(name__glob="packageb*")
     result = sorted(
         (
@@ -105,13 +116,15 @@ def test_evr_formatter(repo_test_rq):
     assert formatter(query, "attr:evr") == result
 
 
-def test_nv_formatter(repo_test_rq):
+def test_nv_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(name__glob="packagea*")
     expected = sorted(("packagea-1", "packagea-1", "packagea-sub-1"))
     assert formatter(query, "nv") == expected
 
 
-def test_source_formatter(repo_test_rq):
+def test_source_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query()
     assert formatter(query, "source") == ["packagea", "packageb"]
 
@@ -123,19 +136,22 @@ def test_source_formatter(repo_test_rq):
         (1, ["2", "2"]),
     ),
 )
-def test_version_formatter(repo_test_rq, latest, expected):
+def test_version_formatter(patch_config_dirs, latest, expected):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(name="packageb", latest=latest)
     assert formatter(query, "version") == expected
     assert formatter(query, "attr:version") == expected
 
 
-def test_epoch_formatter(repo_test_rq):
+def test_epoch_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(name="packageb-sub")
     assert formatter(query, "epoch") == ["0", "11111"]
     assert formatter(query, "attr:epoch") == ["0", "11111"]
 
 
-def test_requires_formatter(repo_test_rq):
+def test_requires_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(name=("packagea-sub", "packageb-sub"))
     assert len(query) == 3
     expected = [
@@ -147,36 +163,41 @@ def test_requires_formatter(repo_test_rq):
     assert formatter(query, "requires", attr=True) == expected
 
 
-def test_repo_formatter(repo_test_rq):
+def test_repo_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query()
     result = formatter(query, "reponame", attr=True)
     assert len(query) == len(result)
     assert {"testrepo1"} == set(result)
 
 
-def test_repo_license_formatter(repo_test_rq):
+def test_repo_license_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(name__glob="packagea*")
     result = formatter(query, "license", attr=True)
     assert result == ["Unlicense"] * 3
 
 
-def test_debug_name_formatter(repo_test_rq):
+def test_debug_name_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(name="packageb")
     result = formatter(query, "debug_name", attr=True)
     assert result == ["packageb-debuginfo"] * len(query)
 
 
-def test_repo_files_formatter(repo_test_rq):
+def test_repo_files_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(name=["packagea", "packageb"], arch="notsrc", latest=1)
     result = formatter(query, "files", attr=True)
     assert result == ["/usr/share/packagea", "/usr/share/packageb"]
 
 
 @pytest.mark.parametrize("attr", formatters._ATTRS)
-def test_formatter_sanity(repo_test_rq, attr):
+def test_formatter_sanity(patch_config_dirs, attr):
     """
     Sanity test to ensure that supported formatters work at all
     """
+    repo_test_rq = get_rq()
     query = repo_test_rq.query(
         name=["packagea", "packagea-sub", "packageb", "packageb-sub"], latest=1
     )
@@ -194,7 +215,7 @@ def test_formatter_sanity(repo_test_rq, attr):
         assert len(result) == len(query)
 
 
-def test_json_formatter(repo_test_rq):
+def test_json_formatter(patch_config_dirs):
     expected = [
         {
             "name": "packagea",
@@ -228,6 +249,7 @@ def test_json_formatter(repo_test_rq):
             "source_name": "packagea",
         },
     ]
+    repo_test_rq = get_rq()
     query = repo_test_rq.resolve_pkg_specs(["packagea*"], latest=1)
     output = formatter(
         query, "json:name,evr,arch,requires,conflicts,provides,source_name"
