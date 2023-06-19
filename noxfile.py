@@ -33,7 +33,7 @@ nox.options.sessions = (*LINT_SESSIONS, "dnf_test", "libdnf5_test")
 def install(session: nox.Session, *args, editable=False, **kwargs):
     if editable and ALLOW_EDITABLE:
         args = ("-e", *args)
-    session.install(*args, "-U", **kwargs)
+    session.install(*args, **kwargs)
 
 
 def git(session: nox.Session, *args, **kwargs):
@@ -45,10 +45,24 @@ def git(session: nox.Session, *args, **kwargs):
 
 @nox.session(venv_params=["--system-site-packages"])
 def test(session: nox.Session, backend=None):
-    install(session, ".[test]", "pytest", editable=True)
-    session.run(
-        "pytest", *session.posargs, env={"FEDRQ_BACKEND": backend} if backend else {}
-    )
+    if not backend:
+        # Make sure pytest is updated, as using the version from system
+        # site-packages causes problems with plugins.
+        install(session, ".[test]", "pytest", "-U", editable=True)
+    tmp = Path(session.create_tmp())
+    env = {"FEDRQ_BACKEND": backend} if backend else {}
+    if any(i.startswith("--cov") for i in session.posargs):
+        install(session, "coverage[toml]", "pytest-cov")
+        env |= {"COVERAGE_FILE": str(tmp / ".coverage")}
+    session.run("pytest", *session.posargs, env=env)
+
+
+@nox.session
+def coverage(session: nox.Session):
+    install(session, "coverage[toml]")
+    session.run("coverage", "combine", "--keep", *iglob(".nox/*test/tmp/.coverage"))
+    session.run("coverage", "report")
+    session.run("coverage", "html")
 
 
 @nox.session(venv_backend="none")
@@ -214,9 +228,11 @@ def testa(session):
 
 @nox.session(venv_params=["--system-site-packages"])
 def dnf_test(session: nox.Session):
+    install(session, ".[test]", "pytest", "-U", editable=True)
     test(session, "dnf")
 
 
-@nox.session(venv_params=["--system-site-packages"])
+@nox.session
 def libdnf5_test(session: nox.Session):
+    install(session, ".[test]", "libdnf5-shim", "rpm", editable=True)
     test(session, "libdnf5")

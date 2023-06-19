@@ -812,7 +812,7 @@ class Repoquery(RepoqueryBase):
         return sys.modules[__name__]
 
 
-def _dnf_getreleasever() -> str:
+def _dnf_getreleasever() -> str:  # pragma: no cover
     # This is taken from dnf and slightly modified
     #
     # SPDX-License-Identifier: GPL-2.0-or-later
@@ -873,7 +873,7 @@ def get_releasever() -> str:
         base = libdnf5.base.Base()
         return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/").get()
     # Fall back to our copy of dnf4's code
-    else:
+    else:  # pragma: no cover
         return _dnf_getreleasever()
 
 

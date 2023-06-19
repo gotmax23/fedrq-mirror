@@ -20,7 +20,7 @@ LOG = logging.getLogger("fedrq.backends")
 
 
 @runtime_checkable
-class PackageCompat(Protocol):
+class PackageCompat(Protocol):  # pragma: no cover
     """
     Common interface provided by dnf.package.Package and other backends
     """
@@ -198,7 +198,7 @@ class PackageCompat(Protocol):
 
 
 @runtime_checkable
-class PackageQueryCompat(Protocol):
+class PackageQueryCompat(Protocol):  # pragma: no cover
     """
     Common PackageQuery interface provided by hawkey.Query and other backends.
     """
