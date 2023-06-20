@@ -30,6 +30,8 @@ def test_subpkgs_match2(capsys):
     fedrq.cli.main(
         [
             "subpkgs",
+            "-b",
+            "f37",
             "ansible-core",
             "moby-engine",
             "python-pip",
