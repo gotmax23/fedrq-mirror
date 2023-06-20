@@ -543,5 +543,5 @@ class BackendMod(Protocol):
     Package: type[PackageCompat]
     PackageQuery: type[PackageQueryCompat]
     Repoquery: type[RepoqueryBase]
-    RepoError: Exception
+    RepoError: type[BaseException]
     get_releasever: Callable[[], str]
