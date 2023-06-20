@@ -352,6 +352,7 @@ class Command(abc.ABC):
 
     @v_fatal_error
     def v_rq(self) -> str | None:
+        flog = mklog("fedrq.cli.Command", "v_rq")
         conf: dict[str, Any] = {}
         bvars: dict[str, Any] = {}
 
@@ -372,7 +373,12 @@ class Command(abc.ABC):
             self._enable_disable_bm(bm)
         except ConfigError as exc:
             return str(exc)
-        self.rq = self.backend.Repoquery(bm.fill_sack())
+        try:
+            filled = bm.fill_sack()
+        except self.backend.RepoError as exc:
+            flog.debug("RepoError: ", exc_info=exc)
+            return str(exc)
+        self.rq = self.backend.Repoquery(filled)
         return None
 
     @v_fatal_error
