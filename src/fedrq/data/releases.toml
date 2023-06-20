@@ -161,6 +161,23 @@ defs.compose-latest = [
 ]
 repo_aliases.kojihub = "@baseurl:https://kojihub.stream.centos.org/kojifiles/repos/{}/latest/$basearch"
 
+[releases.centos7]
+matcher = "^c(7)$"
+defpaths = [
+    "centos7.repo",
+    "epel.repo",
+]
+defs.base = [
+    "centos", "centos-source",
+    "centos-updates", "centos-updates-source",
+    "centos-extras", "centos-extras-source",
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
+
 [releases.amazonlinux]
 matcher = '^amazon(\d+)$'
 defs.base = ["amazonlinux", "amazonlinux-source"]
