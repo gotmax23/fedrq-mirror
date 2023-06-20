@@ -5,11 +5,14 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
+from io import StringIO
 
 import pytest
+from pytest_mock import MockerFixture
 
 import fedrq.backends
 import fedrq.cli
+import fedrq.cli.base
 from fedrq.backends.base import BackendMod
 
 
@@ -68,3 +71,37 @@ def test_local_release(
         assert releasever(backend) == base_maker.base.conf.substitutions["releasever"]
     else:
         assert releasever(backend) == base_maker.base.get_vars().get_value("releasever")
+
+
+def test_repo_error(
+    patch_config_dirs, mocker: MockerFixture, capsys: pytest.CaptureFixture
+):
+    backend = fedrq.backends.get_default_backend()
+    mocker.patch.object(
+        backend.BaseMaker,
+        "fill_sack",
+        side_effect=backend.RepoError("Failed to load repos!!!"),
+    )
+    with pytest.raises(SystemExit, match="^1$"):
+        fedrq.cli.main(["pkgs", "packagea"])
+    _, err = capsys.readouterr()
+    assert err == "FATAL ERROR: Failed to load repos!!!\n"
+
+
+def test_packages_stdin_error(capsys: pytest.CaptureFixture):
+    with pytest.raises(
+        SystemExit, match="Postional NAMEs can not be used with --stdin"
+    ):
+        fedrq.cli.main(["pkgs", "-i", "packagea"])
+
+
+def test_package_stdin(
+    patch_config_dirs,
+    capsys: pytest.CaptureFixture,
+    monkeypatch: pytest.MonkeyPatch,
+    target_cpu: str,
+):
+    monkeypatch.setattr(fedrq.cli.base.sys, "stdin", StringIO("packageb\n"))
+    fedrq.cli.main(["pkgs", "-i", "-F", "line:name,arch", "-A", "arched"])
+    out, _ = capsys.readouterr()
+    assert out == f"packageb : {target_cpu}\n"
