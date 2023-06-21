@@ -69,6 +69,7 @@ test = [
     "tomli-w",
 ]
 dev = [
+    "fedrq[codeqa]",
     "fedrq[doc]",
     "fedrq[formatters]",
     "fedrq[test]",
