@@ -144,7 +144,7 @@ def publish(session: nox.Session):
 
     # Post-release bump
     session.run("releaserr", "post-version", "-s", "file")
-    git(session, "add", "src/{PROJECT}/__init__.py")
+    git(session, "add", f"src/{PROJECT}/__init__.py")
     git(session, "commit", "-S", "-m", "Post release version bump")
 
 
