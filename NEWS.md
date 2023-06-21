@@ -1,6 +1,35 @@
 NEWS
 =====
 
+## 0.8.0 - 2023-06-21 <a id='0.8.0'></a>
+
+### Added
+
+- add --version flag to CLI
+- improve repo loading error handling ([#31])
+- add CentOS 7 release configuration
+
+### Changed
+
+- `fedrq.config.Release.get_base` - allow omitting `config` arg.
+  This previously emitted a deprecation warning ([`efc2828`][efc2828]).
+- `ReleaseConfig` - make `repogs` a proper pydantic model field ([`d8cff5a`][d8cff5a]).
+
+### Fixed
+
+- fix Changelog URL in Python/PyPI metadata
+- fix typo in help message for `--latest`. Contributed by Sandro (~penguinpee).
+- backends - fix MissingBackendError message grammar
+
+
+### New contributors
+
+Thanks to Sandro (~penguinpee) for your first fedrq contribution!
+
+[#31]: https://todo.sr.ht/~gotmax23/fedrq/31
+[efc2828]: https://git.sr.ht/~gotmax23/fedrq/commit/efc2828b75b60fe325429ddff39f9082d7f03b1e
+[d8cff5a]: https://git.sr.ht/~gotmax23/fedrq/commit/d8cff5af8696d4c1df8e90cf0d76f9dde09ae45c
+
 ## 0.7.1 - 2023-05-31 <a id='0.7.1'></a>
 
 ### Fixed
