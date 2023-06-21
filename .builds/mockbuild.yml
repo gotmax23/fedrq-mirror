@@ -28,4 +28,4 @@ tasks:
       tar cvf results_fedrq.tar.gz results_fedrq
   - rpmlint: |
       cd fedrq/
-      rpmlint -r fedrq.rpmlintrc results_fedrq/*.rpm
+      rpmlint --ignore-unused-rpmlintrc -r fedrq.rpmlintrc results_fedrq/*.rpm
