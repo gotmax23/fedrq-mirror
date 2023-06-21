@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 
-__version__ = "0.8.0"
+__version__ = "0.8.0.post0"
 
 fmt = "{levelname}:{name}:{lineno}: {message}"
 logging.basicConfig(format=fmt, style="{")
