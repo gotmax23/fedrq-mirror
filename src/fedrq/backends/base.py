@@ -181,6 +181,11 @@ class PackageCompat(Protocol):  # pragma: no cover
     def location(self) -> str:
         ...
 
+    def remote_location(
+        self, schemes: Collection[str] | None = ("http", "ftp", "file", "https")
+    ) -> str | None:
+        ...
+
     def __hash__(self) -> int:
         ...
 

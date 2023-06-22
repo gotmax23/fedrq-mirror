@@ -15,6 +15,8 @@ import logging
 import sys
 import typing as t
 from collections.abc import Collection, Iterable
+from os.path import join as path_join
+from urllib.parse import urlparse
 
 from fedrq._utils import filter_latest
 from fedrq.backends import MissingBackendError
@@ -165,6 +167,25 @@ class _QueryFilterKwargs(t.TypedDict, total=False):
     pkg__neq: Iterable[libdnf5.rpm.Package]
 
 
+def _get_option(config: libdnf5.conf.Config, key: str) -> libdnf5.conf.Option:
+    """
+    Get an Option object from a libdnf5 Config object.
+    Maintains compatability with dnf5 versions before
+    https://github.com/rpm-software-management/dnf5/pull/327
+    """
+    LOG.debug("Getting option %s", key)
+    # dnf5 > 5.0.7
+    if option := getattr(config, f"get_{key}_option", None):
+        LOG.debug(f"option = get_{key}_options")
+        return option()
+    # dnf5 <= 5.0.7
+    # TODO: Add warning and deprecate
+    elif option := getattr(config, key, None):
+        return option()
+    else:
+        raise ValueError(f"{key!r} is not a valid option.")
+
+
 class BaseMaker(BaseMakerBase):
     """
     Create a Base object and load repos
@@ -302,17 +323,7 @@ class BaseMaker(BaseMakerBase):
         Maintains compatability with dnf5 versions before
         https://github.com/rpm-software-management/dnf5/pull/327
         """
-        LOG.debug("Getting option %s", key)
-        # dnf5 > 5.0.7
-        if option := getattr(config, f"get_{key}_option", None):
-            LOG.debug(f"option = get_{key}_options")
-            return option()
-        # dnf5 <= 5.0.7
-        # TODO: Add warning and deprecate
-        elif option := getattr(config, key, None):
-            return option()
-        else:
-            raise ValueError(f"{key!r} is not a valid option.")
+        return _get_option(config, key)
 
     # This is private for now
     def _read_repofile_new(self, file: StrPath, ensure_enabled: bool = False) -> None:
@@ -610,6 +621,28 @@ class Package(libdnf5.rpm.Package):
     @property
     def location(self) -> str:
         return self.get_location()
+
+    def remote_location(
+        self, schemes: Collection[str] | None = ("http", "ftp", "file", "https")
+    ) -> str | None:
+        location = self.location
+        if not location:  # pragma: no cover
+            return None
+        repo_obj: libdnf5.repo.RepoWeakPtr = self.get_repo()
+        mirrors = (
+            repo_obj.get_mirrors()
+            or _get_option(repo_obj.get_config(), "baseurl").get_value()
+        )
+        if not mirrors:  # pragma: no cover
+            return None
+
+        for url in mirrors:
+            if not schemes:
+                return path_join(url, location)
+            scheme = urlparse(url).scheme
+            if scheme in schemes:
+                return path_join(url, location)
+        return None
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}<{str(self)}>"
