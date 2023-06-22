@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable, Collection
 from functools import cache
+from pathlib import Path
 
 import pytest
 
@@ -190,6 +192,56 @@ def test_repo_files_formatter(patch_config_dirs):
     query = repo_test_rq.query(name=["packagea", "packageb"], arch="notsrc", latest=1)
     result = formatter(query, "files", attr=True)
     assert result == ["/usr/share/packagea", "/usr/share/packageb"]
+
+
+@pytest.mark.parametrize(
+    "args, expected_call",
+    [
+        pytest.param([], lambda x: x),
+        pytest.param([None], lambda x: x),
+        pytest.param([{"file"}], lambda x: x),
+        pytest.param([{"ftp"}], lambda _: None),
+    ],
+)
+def test_remote_location(
+    patch_config_dirs,
+    data_path: Path,
+    args: list[Collection[str] | None],
+    expected_call: Callable[[str], str | None],
+):
+    path = (
+        data_path
+        / "repos"
+        / "repo1"
+        / "repo"
+        / "SRPMS"
+        / "specs"
+        / "packagea-1-1.fc36.src.rpm"
+    )
+    expected = expected_call(f"file://{path}")
+
+    repo_test_rq = get_rq()
+    package = repo_test_rq.get_package("packagea", "src")
+    result = package.remote_location(*args)
+    assert result == expected
+
+
+def test_formatter_remote_location(patch_config_dirs, data_path: Path):
+    path = (
+        data_path
+        / "repos"
+        / "repo1"
+        / "repo"
+        / "SRPMS"
+        / "specs"
+        / "packagea-1-1.fc36.src.rpm"
+    )
+    expected = f"file://{path}"
+
+    repo_test_rq = get_rq()
+    package = repo_test_rq.get_package("packagea", "src")
+    result = formatter([package], "remote_location")
+    assert result == [expected]
 
 
 @pytest.mark.parametrize("attr", formatters._ATTRS)
