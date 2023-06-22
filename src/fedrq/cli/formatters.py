@@ -415,6 +415,10 @@ class SingleLineFormatter(SpecialFormatter):
         return out
 
 
+def remote_location(_, package: PackageCompat) -> str:
+    return _stringify(package.remote_location())
+
+
 class _DefaultFormatters(Formatters):
     def __call__(self) -> Any:
         warnings.warn(
@@ -441,6 +445,7 @@ DefaultFormatters = _DefaultFormatters(
         attr=AttrFormatter,
         json=JsonFormatter,
         line=SingleLineFormatter,
+        remote_location=remote_location,
     ),
     AttrFallbackFormatter,
 )
