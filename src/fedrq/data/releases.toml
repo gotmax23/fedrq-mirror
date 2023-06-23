@@ -237,6 +237,30 @@ defs.no-powertools = [
     "almalinux-baseos-source",
 ]
 
+[releases.ubi]
+matcher = '^ubi(\d+)$'
+copr_chroot_fmt = "epel-{version}"
+defpaths = [
+    "ubi.repo",
+    "epel.repo",
+]
+defs.no-crb = [
+    "ubi-baseos-rpms",
+    "ubi-baseos-source",
+    "ubi-appstream-rpms",
+    "ubi-appstream-source",
+]
+defs.base = [
+    "@no-crb",
+    "ubi-codeready-builder-rpms",
+    "ubi-codeready-builder-source",
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
+
 [releases.eln]
 matcher = "^(eln)$"
 defpaths = [

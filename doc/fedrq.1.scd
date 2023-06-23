@@ -271,6 +271,9 @@ The following generic repo class macros are available for Fedora releases:
 :  @*base*, *@epel*, *@no-powertools*
 :  *@base* always includes powertools. *@epel* contains *@base* along with the EPEL
    repository. *@no-powertools* contains *@base* minus the powertools repository.
+|  UBI
+:  ubiX
+:  *@base*, *@epel*, *@no-crb*
 |  Amazon Linux
 :  amazon2023
 :  *@base*
