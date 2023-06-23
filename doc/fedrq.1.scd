@@ -247,6 +247,10 @@ The following generic repo class macros are available for Fedora releases:
 :  *@base*, *@testing*, and *@testing-only* are supersets of the _epelX_
    equivalent.
    *@next-base*, *@next-testing*, and *@next-testing-only* only contain epel-next.
+|  CentOS 7
+:  c7
+:  *@base*
+:  
 |  CentOS Stream
 :  cXs
 :  *@base*, *@epel*, *@no-crb*, *@compose-latest*
