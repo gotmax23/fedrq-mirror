@@ -274,6 +274,11 @@ The following generic repo class macros are available for Fedora releases:
 |  UBI
 :  ubiX
 :  *@base*, *@epel*, *@no-crb*
+:  
+|  Oracle Linux 8 and 9
+:  ol8 / ol9
+:  *@base*, *@epel*, *@no-crb*, *@extra*
+:  *@extra* contains the distro_builder and UEK repos
 |  Amazon Linux
 :  amazon2023
 :  *@base*

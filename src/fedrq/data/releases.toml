@@ -261,6 +261,59 @@ defs.epel = [
     "epel-source",
 ]
 
+[releases.oracle8]
+matcher = "^ol(8)$"
+copr_chroot_fmt = "epel-{version}"
+defpaths = [
+    "oraclelinux-8.repo",
+    "epel.repo",
+]
+defs.no-crb = [
+    "ol8_baseos_latest",
+    "ol8_appstream",
+]
+defs.base = [
+    "@no-crb",
+    "ol8_codeready_builder",
+]
+defs.extra = [
+    "@base",
+    "ol8_distro_builder",
+    "ol8_UEKR6",
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
+
+[releases.oracle9]
+matcher = "^ol(9)$"
+copr_chroot_fmt = "epel-{version}"
+defpaths = [
+    "oraclelinux-9.repo",
+    "epel.repo",
+]
+defs.no-crb = [
+    "ol9_baseos_latest",
+    "ol9_appstream",
+]
+defs.base = [
+    "@no-crb",
+    "ol9_codeready_builder",
+]
+defs.extra = [
+    "@base",
+    "ol9_distro_builder",
+    "ol9_UEKR7",
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
+
+
 [releases.eln]
 matcher = "^(eln)$"
 defpaths = [

@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: Unlicense
+# SPDX-FileCopyrightText: None
+
+[ol8_baseos_latest]
+name=Oracle Linux 8 BaseOS Latest ($basearch)
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL8/baseos/latest/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol8
+gpgcheck=1
+enabled=0
+
+[ol8_appstream]
+name=Oracle Linux 8 Application Stream ($basearch)
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL8/appstream/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol8
+gpgcheck=1
+enabled=0
+
+[ol8_codeready_builder]
+name=Oracle Linux 8 CodeReady Builder ($basearch) - Unsupported
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL8/codeready/builder/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol8
+gpgcheck=1
+enabled=0
+
+[ol8_distro_builder]
+name=Oracle Linux 8 Distro Builder ($basearch) - Unsupported
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL8/distro/builder/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol8
+gpgcheck=1
+enabled=0
+
+[ol8_UEKR6]
+name=Latest Unbreakable Enterprise Kernel Release 6 for Oracle Linux $releasever ($basearch)
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL8/UEKR6/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol8
+gpgcheck=1
+enabled=0

@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: Unlicense
+# SPDX-FileCopyrightText: None
+
+[ol9_baseos_latest]
+name=Oracle Linux 9 BaseOS Latest ($basearch)
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL9/baseos/latest/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol9
+gpgcheck=1
+enabled=1
+
+[ol9_appstream]
+name=Oracle Linux 9 Application Stream ($basearch)
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL9/appstream/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol9
+gpgcheck=1
+enabled=1
+
+[ol9_codeready_builder]
+name=Oracle Linux 9 CodeReady Builder ($basearch) - Unsupported
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL9/codeready/builder/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol9
+gpgcheck=1
+enabled=1
+
+[ol9_distro_builder]
+name=Oracle Linux 9 Distro Builder ($basearch) - Unsupported
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL9/distro/builder/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol9
+gpgcheck=1
+enabled=0
+
+[ol9_UEKR7]
+name=Latest Unbreakable Enterprise Kernel Release 7 for Oracle Linux $releasever ($basearch)
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL9/UEKR7/$basearch/
+gpgkey=file:///usr/share/distribution-gpg-keys/oraclelinux/RPM-GPG-KEY-oracle-ol9
+gpgcheck=1
+enabled=0
