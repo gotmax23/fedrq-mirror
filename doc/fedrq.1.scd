@@ -279,6 +279,14 @@ The following generic repo class macros are available for Fedora releases:
 :  ol8 / ol9
 :  *@base*, *@epel*, *@no-crb*, *@extra*
 :  *@extra* contains the distro_builder and UEK repos
+|  Rocky Linux 8
+:  rl8
+:  *@base*, *@epel*, *@no-powertools*
+:  
+|  Rocky Linux 9+
+:  rl9
+:  *@base*, *@epel*, *@no-crb*
+:  
 |  Amazon Linux
 :  amazon2023
 :  *@base*

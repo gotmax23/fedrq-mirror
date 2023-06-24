@@ -237,6 +237,55 @@ defs.no-powertools = [
     "almalinux-baseos-source",
 ]
 
+
+[releases.rocky]
+matcher = '^rl(9|1\d)$'
+copr_chroot_fmt = "epel-{version}"
+defpaths = [
+    "rocky.repo",
+    "epel.repo",
+]
+defs.no-crb = [
+    "rocky-appstream",
+    "rocky-appstream-source",
+    "rocky-baseos",
+    "rocky-baseos-source",
+]
+defs.base = [
+    "@no-crb",
+    "rocky-crb",
+    "rocky-crb-source",
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
+
+[releases.rocky8]
+matcher = '^rl(8)$'
+copr_chroot_fmt = "epel-{version}"
+defpaths = [
+    "rocky.repo",
+    "epel.repo",
+]
+defs.no-powertools = [
+    "rocky-appstream",
+    "rocky-appstream-source",
+    "rocky-baseos",
+    "rocky-baseos-source",
+]
+defs.base = [
+    "@no-powertools",
+    "rocky8-powertools",
+    "rocky8-powertools-source",
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
+
 [releases.ubi]
 matcher = '^ubi(\d+)$'
 copr_chroot_fmt = "epel-{version}"
