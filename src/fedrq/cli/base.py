@@ -203,6 +203,35 @@ class Command(abc.ABC):
         return parser
 
     @classmethod
+    def arch_parser(cls) -> argparse.ArgumentParser:
+        parser = argparse.ArgumentParser(add_help=False)
+        arch_group = parser.add_mutually_exclusive_group()
+        arch_group.add_argument(
+            "-A",
+            "--arch",
+            help="Only include packages that match ARCH",
+        )
+        arch_group.add_argument(
+            "-S",
+            "--notsrc",
+            dest="arch",
+            action="store_const",
+            const="notsrc",
+            help="This includes all binary RPMs. Multilib is excluded on x86_64. "
+            "Equivalent to --arch=notsrc",
+        )
+        arch_group.add_argument(
+            "-s",
+            "--src",
+            dest="arch",
+            action="store_const",
+            const="src",
+            help="Query for BuildRequires of NAME. "
+            "This is equivalent to --arch=src.",
+        )
+        return parser
+
+    @classmethod
     def parent_parser(cls) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(
             add_help=False, parents=[cls.branch_repo_parser()]

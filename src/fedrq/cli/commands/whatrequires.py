@@ -70,7 +70,11 @@ class WhatCommand(Command):
         add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
-        pargs = dict(description=cls.__doc__, parents=[cls.parent_parser()], **kwargs)
+        pargs = dict(
+            description=cls.__doc__,
+            parents=[cls.parent_parser(), cls.arch_parser()],
+            **kwargs,
+        )
         if add_help:
             pargs["help"] = f"Find reverse {cls.operator.title()} of a list of packages"
         parser = parser_func(**pargs)
@@ -92,31 +96,6 @@ class WhatCommand(Command):
             "E.g., yt-dlp would not match python3dist(yt-dlp) like it does by default.",
         )
 
-        arch_group = parser.add_mutually_exclusive_group()
-        arch_group.add_argument(
-            "-A",
-            "--arch",
-            help=f"After finding the packages that {cls._operator} NAMES, "
-            "filter out the resulting packages that don't match ARCH",
-        )
-        arch_group.add_argument(
-            "-S",
-            "--notsrc",
-            dest="arch",
-            action="store_const",
-            const="notsrc",
-            help="This includes all binary RPMs. Multilib is excluded on x86_64. "
-            "Equivalent to --arch=notsrc",
-        )
-        arch_group.add_argument(
-            "-s",
-            "--src",
-            dest="arch",
-            action="store_const",
-            const="src",
-            help="Query for BuildRequires of NAME. "
-            "This is equivalent to --arch=src.",
-        )
         if cls._exclude_subpackages_opt:
             parser.add_argument("-X", "--exclude-subpackages", action="store_true")
         return parser
