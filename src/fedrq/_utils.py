@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import logging
 import typing as t
-from collections.abc import MutableMapping
+from collections.abc import Iterator, MutableMapping
 
 if t.TYPE_CHECKING:
     from fedrq.backends.base import PackageCompat, PackageQueryCompat
@@ -39,3 +39,8 @@ def merge_dict(
             merge_dict(value, dest[key])
             continue
         dest[key] = value
+
+
+def exhaust_it(it: Iterator[t.Any]) -> None:
+    for _ in it:
+        pass
