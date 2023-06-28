@@ -36,12 +36,9 @@ class Repolist(Command):
         add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
-        kwargs["description"] = cls.__doc__
-        kwargs["parents"] = [cls.branch_repo_parser()]
-        if add_help:
-            kwargs["help"] = cls.__doc__
-
-        parser: argparse.ArgumentParser = parser_func(**kwargs)
+        parser: argparse.ArgumentParser = super().make_parser(
+            parser_func, add_help=add_help, parents=[cls.branch_repo_parser()], **kwargs
+        )
         parser.add_argument("--debug", action="store_true")
         parser.add_argument("--all", action="store_true")
         return parser

@@ -70,14 +70,13 @@ class WhatCommand(Command):
         add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
-        pargs = dict(
-            description=cls.__doc__,
+        parser = super().make_parser(
+            parser_func,
+            add_help=add_help,
+            help=f"Find reverse {cls.operator.title()} of a list of packages",
             parents=[cls.parent_parser(), cls.arch_parser()],
             **kwargs,
         )
-        if add_help:
-            pargs["help"] = f"Find reverse {cls.operator.title()} of a list of packages"
-        parser = parser_func(**pargs)
 
         _rp_help = f"""
         Resolve the correct Package when given a virtual Provide. For instance,

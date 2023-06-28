@@ -309,12 +309,23 @@ class Command(abc.ABC):
     @abc.abstractmethod
     def make_parser(
         cls,
-        parser_func: cabc.Callable = argparse.ArgumentParser,
+        parser_func: cabc.Callable[
+            ..., argparse.ArgumentParser
+        ] = argparse.ArgumentParser,
         *,
         add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
-        ...
+        kwargs = {
+            "description": cls.__doc__,
+            "help": cls.__doc__,
+            "parents": [cls.parent_parser()],
+        } | kwargs
+        if not add_help:
+            kwargs.pop("help", None)
+
+        parser = parser_func(**kwargs)
+        return parser
 
     @classmethod
     def standalone(cls, argv: list[str] | None = None) -> None:

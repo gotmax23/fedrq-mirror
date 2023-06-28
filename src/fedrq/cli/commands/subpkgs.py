@@ -27,10 +27,12 @@ class Subpkgs(Command):
         add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
-        pargs = dict(description=cls.__doc__, parents=[cls.parent_parser()], **kwargs)
-        if add_help:
-            pargs["help"] = "Find the subpackages of a list of SRPMs"
-        parser = parser_func(**pargs)
+        parser = super().make_parser(
+            parser_func,
+            add_help=add_help,
+            help="Find the subpackages of a list of SRPM",
+            **kwargs,
+        )
         parser.add_argument(
             "-M",
             "--match",
