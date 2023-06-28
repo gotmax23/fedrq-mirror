@@ -31,20 +31,12 @@ class Pkgs(Command):
         kwargs.update(
             dict(
                 description=Pkgs.__doc__,
-                parents=[cls.parent_parser(), cls.arch_parser()],
+                parents=[cls.parent_parser(), cls.arch_parser(), cls.resolve_parser()],
             )
         )
         if add_help:
             kwargs["help"] = "Find the packages that match a list of package specs"
         parser = parser_func(**kwargs)
-
-        parser.add_argument(
-            "-P",
-            "--resolve-packages",
-            action="store_true",
-            help="Resolve the correct Package when given a virtual Provide."
-            " For instance, /usr/bin/yt-dlp would resolve to yt-dlp",
-        )
 
         return parser
 

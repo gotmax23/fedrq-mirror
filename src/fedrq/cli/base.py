@@ -232,6 +232,26 @@ class Command(abc.ABC):
         return parser
 
     @classmethod
+    def resolve_parser(cls) -> argparse.ArgumentParser:
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument(
+            "-P",
+            "--resolve-packages",
+            action="store_true",
+            help="Resolve the correct Package when given a virtual Provide."
+            " For instance, /usr/bin/yt-dlp would resolve to yt-dlp",
+        )
+        return parser
+
+    @classmethod
+    def assume_parser(cls) -> argparse.ArgumentParser:
+        parser = argparse.ArgumentParser(add_help=False)
+        run_parser = parser.add_mutually_exclusive_group()
+        run_parser.add_argument("-y", "--assumeyes", action="store_true")
+        run_parser.add_argument("-n", "--dry-run", action="store_true")
+        return parser
+
+    @classmethod
     def parent_parser(cls) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(
             add_help=False, parents=[cls.branch_repo_parser()]
