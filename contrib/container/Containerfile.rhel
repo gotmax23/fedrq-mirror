@@ -14,6 +14,10 @@ RUN set -euo pipefail ;\
         fedrq ;\
     dnf-3 clean all ;
 
+COPY rhel.toml /etc/fedrq/rhel.toml
+
+RUN fedrq check-config
+
 ENV XDG_CACHE_DIR=/fedrq-cache
 ENTRYPOINT ["/usr/bin/fedrq"]
 CMD ["--help"]
