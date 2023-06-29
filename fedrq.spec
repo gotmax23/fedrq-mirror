@@ -31,12 +31,11 @@ BuildRequires:  python3-argcomplete
 BuildRequires:  python3-dnf
 %if %{with libdnf5}
 BuildRequires:  python3-libdnf5
-BuildRequires:  python3-rpm
 %endif
 # Manpage
 BuildRequires:  scdoc
 
-Requires:       (python3-dnf or (python3-libdnf5 and python3-rpm))
+Requires:       (python3-dnf or python3-rpm)
 Suggests:       python3-dnf
 Requires:       distribution-gpg-keys
 Recommends:     fedora-repos-rawhide

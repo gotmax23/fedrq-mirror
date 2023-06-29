@@ -234,5 +234,5 @@ def dnf_test(session: nox.Session):
 
 @nox.session
 def libdnf5_test(session: nox.Session):
-    install(session, ".[test]", "libdnf5-shim", "rpm", editable=True)
+    install(session, ".[test]", "libdnf5-shim", editable=True)
     test(session, "libdnf5")

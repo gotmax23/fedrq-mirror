@@ -33,6 +33,7 @@ dependencies = [
     "pydantic ~= 1.0",
     "tomli; python_version<'3.11'",
     "requests",
+    "rpm",
     # Optional dependency for `fedrq check-config --dump`
     # "tomli-w",
 ]
