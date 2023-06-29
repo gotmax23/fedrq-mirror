@@ -98,11 +98,12 @@ include = [
 # To comply with the license, its must be included in the wheel.
 directory = ".data"
 
-# [tool.mypy]
+[tool.mypy]
+check_untyped_defs = true
 # plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["dnf.*", "hawkey.*", "libdnf5.*", "rpm.*"]
+module = ["argcomplete.*", "dnf.*", "hawkey.*", "libdnf5.*", "rpm.*"]
 ignore_missing_imports = true
 
 
