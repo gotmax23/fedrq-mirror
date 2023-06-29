@@ -1,6 +1,40 @@
 NEWS
 =====
 
+## 0.9.0 - 2023-06-29 <a id='0.9.0'></a>
+
+### Added
+
+- add remote_location formatter
+- document CentOS 7 release configuration
+- add UBI release configuration
+- add Oracle Linux release configuration
+- add Rocky Linux release configuration
+- add experimental download and download-spec subcommands
+- add fedrq [container builds][container builds]
+- add @source-repos repo class
+- BaseMaker: add enable_source_repos() method
+- PackageCompat: add remote_location() method
+
+### Changed
+
+- Remove enabled=1 from built-in fedora repo defs.
+  We want all repo to have enabled=0. We control which repos are enabled and
+  disabled with repo groups configured in releases.toml.
+  This previously led to divergent behavior with the --repo and --enablerepo
+  options when querying Fedora releases on Fedora systems and non-Fedora
+  systems (e.g. CentOS).
+
+### Deprecated
+
+- deprecate support for libdnf5 < 5.0.10 and raise warnings
+
+### Fixed
+
+- backends libdnf5: don't call rpm.ts.closeDB()
+
+[container builds]: https://git.sr.ht/~gotmax23/fedrq#container-images
+
 ## 0.8.0 - 2023-06-21 <a id='0.8.0'></a>
 
 ### Added
