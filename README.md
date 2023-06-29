@@ -68,6 +68,19 @@ as it needs to find the aforementioned system bindings.
 `fedrq check-config --dump` requires `tomli-w`.
 The RPM package weakly depends on `python3-tomli-w`.
 
+## Container images
+
+fedrq now provides container images.
+- `quay.io/gotmax23/fedrq:latest` is built with
+  `registry.fedoraproject.org/fedora:latest`.
+- `quay.io/gotmax23/fedrq:ubi9` is built with the ubi9 image.
+  It includes a builtin `rhel9` repository configuration that can be used to
+  query the actual RHEL repositories when run on a system registered with
+  subscription-manager.
+
+Both of these images use the latest fedrq RPM packages from the
+[gotmax23/fedrq][link-copr] Copr repository.
+
 ## Versioning
 
 This project is in beta and its versioning scheme follows semver.
