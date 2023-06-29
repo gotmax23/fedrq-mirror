@@ -14,6 +14,7 @@ import inspect
 import logging
 import sys
 import typing as t
+import warnings
 from collections.abc import Collection, Iterable
 from os.path import join as path_join
 from urllib.parse import urlparse
@@ -39,6 +40,7 @@ Priority_RUNTIME = libdnf5.conf.Option.Priority_RUNTIME
 StrIter = t.Union[list[str], tuple[str], str]
 IntIter = t.Union[list[int], tuple[int], int]
 CONVERT_TO_LIST = (str, int)
+MINIMUM_NOT_DEPRECATED_VERSION = "5.0.10"
 
 
 class _QueryFilterKwargs(t.TypedDict, total=False):
@@ -167,6 +169,19 @@ class _QueryFilterKwargs(t.TypedDict, total=False):
     pkg__neq: Iterable[libdnf5.rpm.Package]
 
 
+@functools.cache
+def _deprecation_warn() -> None:  # pragma: no cover
+    """
+    Warn that libdnf5 versions < MINIMUM_NOT_DEPRECATED_VERSION are deprecated.
+    This is memoized so we only warn users once.
+    """
+    warnings.warn(
+        f"Support for libdnf5 versions < {MINIMUM_NOT_DEPRECATED_VERSION}"
+        " is deprecated.",
+        stacklevel=2,
+    )
+
+
 def _get_option(config: libdnf5.conf.Config, key: str) -> libdnf5.conf.Option:
     """
     Get an Option object from a libdnf5 Config object.
@@ -174,13 +189,13 @@ def _get_option(config: libdnf5.conf.Config, key: str) -> libdnf5.conf.Option:
     https://github.com/rpm-software-management/dnf5/pull/327
     """
     LOG.debug("Getting option %s", key)
-    # dnf5 > 5.0.7
+    # dnf5 >= 5.0.8
     if option := getattr(config, f"get_{key}_option", None):
-        LOG.debug(f"option = get_{key}_options")
+        LOG.debug(f"option = get_{key}_option")
         return option()
     # dnf5 <= 5.0.7
-    # TODO: Add warning and deprecate
-    elif option := getattr(config, key, None):
+    elif option := getattr(config, key, None):  # pragma: no cover
+        _deprecation_warn()
         return option()
     else:
         raise ValueError(f"{key!r} is not a valid option.")
@@ -901,12 +916,14 @@ def get_releasever() -> str:
     """
     Return the system releasever
     """
-    # libdnf5 > 5.0.10
+    # libdnf5 >= 5.0.10
+    # https://github.com/rpm-software-management/dnf5/pull/448
     if hasattr(libdnf5.conf.Vars, "detect_release"):
         base = libdnf5.base.Base()
         return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/").get()
     # Fall back to our copy of dnf4's code
     else:  # pragma: no cover
+        _deprecation_warn()
         return _dnf_getreleasever()
 
 
