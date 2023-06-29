@@ -114,13 +114,18 @@ class SimpleRepoG(RepoG):
             self.err(f"No repo named {self.args}", None)
 
 
-class MultiNameG(RepoG):
+class _NoArgRepoG(RepoG):
+    def validate(self):
+        if self.args:
+            raise ConfigError("No arguments are accepted")
+
+
+class MultiNameG(_NoArgRepoG):
     repos: Sequence[str] = ()
     repogs: list[RepoG]
 
     def validate(self):
-        if self.args:
-            raise ConfigError("No arguments are accepted")
+        super().validate()
         self.repogs = [self.container.get_repo(repo) for repo in self.repos]
 
     def load(
@@ -226,6 +231,13 @@ class MirrorlistRepoG(BaseurlRepoG):
     _COERCE_TO_LIST = False
 
 
+class SourceRepoG(_NoArgRepoG):
+    def load(
+        self, base_maker: BaseMakerBase, config: RQConfig, release: Release
+    ) -> None:
+        base_maker.enable_source_repos()
+
+
 class Repos(Mapping[str, type[RepoG]]):
     """
     Immutable mapping like class of RepoG types.
@@ -300,11 +312,12 @@ class Repos(Mapping[str, type[RepoG]]):
 
 
 DefaultRepoGs = Repos(
-    dict(
-        file=FileRepoG,
-        copr=CoprRepoG,
-        repo=SimpleRepoG,
-        baseurl=BaseurlRepoG,
-        mirrorlist=MirrorlistRepoG,
-    )
+    {
+        "file": FileRepoG,
+        "copr": CoprRepoG,
+        "repo": SimpleRepoG,
+        "baseurl": BaseurlRepoG,
+        "mirrorlist": MirrorlistRepoG,
+        "source-repos": SourceRepoG,
+    }
 )

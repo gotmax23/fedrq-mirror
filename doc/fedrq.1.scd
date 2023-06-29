@@ -199,6 +199,9 @@ The following generic repo class macros are available for all releases:
 *@copr:[user/name@copr_baseurl]* or *@copr:[@group/name@copr_baseurl]*
 	The *@copr* repo class also accepts a custom Copr instance.
 	Append *@* and a url.
+*@source-repos*
+	Enable the corresponding -source repos of the currently enabled
+	repositories
 *@base* or *base* or other group
 	The default repoistories for a release specified in a ReleaseConfig's
 	*defs.base*. Any other repo group specified in a release's is accepted,
