@@ -35,7 +35,7 @@ BuildRequires:  python3-libdnf5
 # Manpage
 BuildRequires:  scdoc
 
-Requires:       (python3-dnf or python3-rpm)
+Requires:       (python3-dnf or python3-libdnf5)
 Suggests:       python3-dnf
 Requires:       distribution-gpg-keys
 Recommends:     fedora-repos-rawhide
