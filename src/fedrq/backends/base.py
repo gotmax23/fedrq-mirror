@@ -181,6 +181,7 @@ class PackageCompat(Protocol):  # pragma: no cover
     def location(self) -> str:
         ...
 
+    @abc.abstractmethod
     def remote_location(
         self, schemes: Collection[str] | None = ("http", "ftp", "file", "https")
     ) -> str | None:
