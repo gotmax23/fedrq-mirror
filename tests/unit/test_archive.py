@@ -22,9 +22,11 @@ def test_archive_extract_specfile(tmp_path: Path, data_path: Path):
     assert expected_spec.read_bytes() == gotten.read_bytes()
 
 
-def test_archive_extract_specfile_error(tmp_path: Path, data_path: Path):
+def test_archive_extract_specfile_error(
+    tmp_path: Path, data_path: Path, target_cpu: str
+):
     repo1 = data_path / "repos/repo1/"
-    invalid = repo1 / "repo/RPMS/specs/packageb-1-1.fc36.x86_64.rpm"
+    invalid = repo1 / f"repo/RPMS/specs/packageb-1-1.fc36.{target_cpu}.rpm"
     assert invalid.is_file()
     dest = tmp_path / "abc"
     dest.mkdir()
