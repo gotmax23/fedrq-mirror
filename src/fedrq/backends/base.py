@@ -378,6 +378,14 @@ class BaseMakerBase(abc.ABC):
     def repolist(self, enabled: bool | None = None) -> list[str]:
         ...
 
+    @abc.abstractmethod
+    def enable_source_repos(self) -> None:
+        """
+        Enable the corresponding -source repos of the currently enabled
+        repositories
+        """
+        ...
+
 
 class RepoqueryBase(abc.ABC):
     """

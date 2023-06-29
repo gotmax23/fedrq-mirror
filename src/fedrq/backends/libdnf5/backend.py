@@ -415,6 +415,9 @@ class BaseMaker(BaseMakerBase):
             repoq.filter_enabled(enabled)
         return [r.get_id() for r in repoq]
 
+    def enable_source_repos(self) -> None:
+        self.rs.enable_source_repos()
+
 
 @functools.total_ordering
 class Package(libdnf5.rpm.Package):

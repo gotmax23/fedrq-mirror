@@ -162,6 +162,9 @@ class BaseMaker(BaseMakerBase):
             return list(self.base.repos)
         return [r.id for r in self.base.repos.values() if r.enabled is bool(enabled)]
 
+    def enable_source_repos(self) -> None:
+        self.base.repos.enable_source_repos()
+
 
 class Repoquery(RepoqueryBase):
     def __init__(self, base: dnf.Base) -> None:
