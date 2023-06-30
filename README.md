@@ -71,15 +71,20 @@ The RPM package weakly depends on `python3-tomli-w`.
 ## Container images
 
 fedrq now provides container images.
-- `quay.io/gotmax23/fedrq:latest` is built with
+
+- [`quay.io/gotmax23/fedrq:latest`][Containerfile] is built with
   `registry.fedoraproject.org/fedora:latest`.
-- `quay.io/gotmax23/fedrq:ubi9` is built with the ubi9 image.
+- [`quay.io/gotmax23/fedrq:ubi9`][Containerfile.rhel] is built with the ubi9
+  image.
   It includes a builtin `rhel9` repository configuration that can be used to
   query the actual RHEL repositories when run on a system registered with
   subscription-manager.
 
 Both of these images use the latest fedrq RPM packages from the
 [gotmax23/fedrq][link-copr] Copr repository.
+
+[Containerfile]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/contrib/container/Containerfile
+[Containerfile.rhel]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/contrib/container/Containerfile.rhel
 
 ## Versioning
 
