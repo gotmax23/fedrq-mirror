@@ -20,7 +20,7 @@ RUN fedrq check-config
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-ENV XDG_CACHE_DIR=/fedrq-cache
+ENV XDG_CACHE_HOME=/fedrq-cache
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh" "/usr/bin/fedrq"]
 CMD ["--help"]
 VOLUME /fedrq-cache

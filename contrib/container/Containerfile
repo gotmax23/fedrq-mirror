@@ -13,7 +13,7 @@ RUN set -euo pipefail ;\
         fedrq ;\
     dnf-3 clean all ;
 
-ENV XDG_CACHE_DIR=/fedrq-cache
+ENV XDG_CACHE_HOME=/fedrq-cache
 ENTRYPOINT ["/usr/bin/fedrq"]
 CMD ["--help"]
 VOLUME /fedrq-cache
