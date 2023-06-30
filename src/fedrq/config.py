@@ -15,7 +15,6 @@ import os
 import re
 import sys
 import typing as t
-import warnings
 import zipfile
 from collections.abc import Callable
 from enum import auto as auto_enum
