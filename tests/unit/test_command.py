@@ -126,6 +126,9 @@ def test_smartcache_not_used(
         # --cachedir trumps smartcache
         (["--cachedir=blah"], True, lambda _: Path("blah")),
         (["--cachedir=blah"], False, lambda _: Path("blah")),
+        # --smartcache-always
+        (["--smartcache-always"], True, lambda d: d / "tester"),
+        (["--smartcache-always"], False, lambda d: d / "tester"),
     ),
 )
 def test_smartcache_config(
@@ -167,6 +170,50 @@ def test_smartcache_config(
         finally:
             shutil.rmtree("blah", ignore_errors=True)
             dest.unlink(True)
+
+
+@pytest.mark.parametrize("subcommand", SUBCOMMANDS)
+def test_smartcache_always(
+    subcommand, mocker, monkeypatch, patch_config_dirs, temp_smartcache: Path
+):
+    """
+    Ensure that the smartcache is used when the requested
+    branch's releasever is the same as the the system's releasever
+    and smartcache='always' is used.
+    """
+    assert not list(temp_smartcache.iterdir())
+
+    mocks = {}
+
+    def _set_config(self, key: str) -> None:
+        arg = getattr(self.args, key, None)
+        if arg is not None:
+            setattr(self.config, key, arg)
+        if key == "backend":
+            mocks["get_releasever"] = mocker.patch.object(
+                self.config.backend_mod, "get_releasever", return_value="tester"
+            )
+            mocks["bm_set"] = mocker.spy(self.config.backend_mod.BaseMaker, "set")
+
+    cls = fedrq.cli.COMMANDS[subcommand]
+    monkeypatch.setattr(cls, "_set_config", _set_config)
+
+    parser = cls.make_parser()
+    args = parser.parse_args(["--smartcache-always", "packageb"])
+    obj = cls(args)
+
+    mocks["get_releasever"].assert_called_once()
+
+    expected_cachedir = temp_smartcache / "fedrq" / "tester"
+
+    assert any(
+        call.args[1:] == ("cachedir", str(expected_cachedir))
+        for call in mocks["bm_set"].call_args_list
+    )
+
+    assert obj.args.smartcache
+
+    assert list(temp_smartcache.iterdir())
 
 
 @pytest.mark.parametrize("subcommand", SUBCOMMANDS)

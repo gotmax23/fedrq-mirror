@@ -284,6 +284,12 @@ class Command(abc.ABC):
             " smartcache is enabled by default,"
             " so this is noop unless you set `smartcache=false` in the config file.",
         )
+        cachedir_group.add_argument(
+            "--smartcache-always",
+            action="store_const",
+            dest="smartcache",
+            const="always",
+        )
         # This is mutually exclusive with --smartcache. It's still undocumented
         # and subject to change.
         cachedir_group.add_argument("--cachedir", help=argparse.SUPPRESS, type=Path)
@@ -421,7 +427,9 @@ class Command(abc.ABC):
             conf["cachedir"] = str(self.args.cachedir)
         # Disable release based smartcache if user explicitly disabled it or if
         # forcearch is in use.
-        elif self.args.system_cache or self.args.forcearch:
+        elif self.args.system_cache or (
+            self.args.forcearch and self.config.smartcache != "always"
+        ):
             self.config.smartcache = False
 
         if self.args.forcearch:

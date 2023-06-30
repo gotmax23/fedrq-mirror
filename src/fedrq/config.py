@@ -271,7 +271,7 @@ class Release:
         if (
             "cachedir" not in base_conf
             and config.smartcache
-            and self.version != releasever
+            and (config.smartcache == "always" or self.version != releasever)
         ):
             logger.debug("Using smartcache")
             base_conf["cachedir"] = str(get_smartcache_basedir() / str(self.version))
@@ -313,7 +313,7 @@ class RQConfig(BaseModel):
     backend: t.Optional[str] = os.environ.get("FEDRQ_BACKEND")
     releases: dict[str, ReleaseConfig]
     default_branch: str = os.environ.get("FEDRQ_BRANCH", "rawhide")
-    smartcache: bool = True
+    smartcache: t.Union[bool, t.Literal["always"]] = True
     load_filelists: LoadFilelists = LoadFilelists.auto
     _backend_mod = None
     copr_baseurl: str = DEFAULT_COPR_BASEURL

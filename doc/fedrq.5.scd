@@ -26,14 +26,14 @@ by creating a configuration file with higher precedence.
 
 *default_branch* <str> (default: _rawhide_)
 	What branch to query by default when *-b*/*--branch* is not specified.
-*smartcache* <bool> (default: _true_)
+*smartcache* <bool|Literal["always"]> (default: _true_)
 	Different releases have different _releasever_\s.
 	Switching the releasever (i.e. passing a different value to *--branch*)
 	clears the dnf cache.
 	When *smartcache* is _true_\, fedrq sets *base.conf.cachedir* to
 	_$XDG_CACHE_DIR/fedrq/BRANCH_ when changing the releasever.
-	The system cache is used if the requested branch's releasever is the
-	same as the system's releasever.
+	Unless *smartcache* is set to _always_, the system cache is used if the
+	requested branch's releasever is the same as the system's releasever.
 *releases* <dict[str, ReleaseConfig]>
 	Keys are a friendly name for the distribution.
 	RELEASE specifies the format for the values.
