@@ -440,27 +440,3 @@ def _get_releases(rdict: dict[str, dict[str, t.Any]]) -> dict[str, t.Any]:
     for name, data in rdict.items():
         releases[name] = dict(name=name, **data)
     return releases
-
-
-def get_rq(
-    branch: str | None = None,
-    repo: str = "base",
-    *,
-    smart_cache: bool | None = None,
-    load_filelists: bool | None = None,
-) -> RepoqueryBase:
-    """
-    **DEPRECATED since 0.4.0.** Use
-    [`RQConfig.get_rq()`][fedrq.config.RQConfig.get_rq] instead.
-
-    Higher level interface that creates an RQConfig object, finds the Release
-    object that mathces {branch} and {repo}, creates a dnf.Base, and finally
-    returns a Repoquery object.
-    """
-    warnings.warn("DEPRECATED since 0.4.0: use RQConfig.get_rq() instead.")
-    config = get_config()
-    if smart_cache is not None:
-        config.smartcache = smart_cache
-    if load_filelists is not None:
-        config.load_filelists = LoadFilelists.from_bool(load_filelists)
-    return config.get_rq(branch, repo)
