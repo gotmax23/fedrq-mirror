@@ -13,6 +13,8 @@ RUN set -euo pipefail ;\
         fedrq ;\
     dnf-3 clean all ;
 
+COPY 000-container.toml /etc/fedrq/000-container.toml
+
 RUN fedrq check-config
 
 ENV XDG_CACHE_HOME=/fedrq-cache
