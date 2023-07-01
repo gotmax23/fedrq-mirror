@@ -83,6 +83,13 @@ fedrq now provides container images.
 Both of these images use the latest fedrq RPM packages from the
 [gotmax23/fedrq][link-copr] Copr repository.
 
+``` console
+$ podman run --rm -v ~/.cache/fedrq:/fedrq-cache/fedrq:z quay.io/gotmax23/fedrq \
+    pkgs fedrq -Fnevrr
+fedrq-0.9.0-1.fc39.noarch rawhide
+fedrq-0.9.0-1.fc39.src rawhide-source
+```
+
 [Containerfile]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/contrib/container/Containerfile
 [Containerfile.rhel]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/contrib/container/Containerfile.rhel
 
