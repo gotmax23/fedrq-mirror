@@ -130,6 +130,12 @@ omit = [
     "src/fedrq/__main__.py",
 ]
 
+[tool.coverage.paths]
+source = [
+    "src",
+    "*/site-packages",
+]
+
 [tool.coverage.report]
 # https://coverage.readthedocs.io/en/latest/excluding.html#advanced-exclusion
 # These should use single quotes in TOML, as they're regular expressions.
