@@ -6,6 +6,7 @@ image: fedora/rawhide
 packages:
   - mock
   - mock-core-configs
+  - python3.11
   - rpmlint
   - rpm-build
 sources:
@@ -20,7 +21,7 @@ tasks:
       sudo usermod -aG mock $USER
   - setup-venv: |
       cd fedrq
-      python3 -m venv venv
+      python3.11 -m venv venv
       ./venv/bin/pip install nox
   - mockbuild-rawhide: |
       cd fedrq
