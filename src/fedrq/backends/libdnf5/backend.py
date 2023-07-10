@@ -40,7 +40,7 @@ Priority_RUNTIME = libdnf5.conf.Option.Priority_RUNTIME
 StrIter = t.Union[list[str], tuple[str], str]
 IntIter = t.Union[list[int], tuple[int], int]
 CONVERT_TO_LIST = (str, int)
-MINIMUM_NOT_DEPRECATED_VERSION = "5.0.10"
+MINIMUM_NOT_DEPRECATED_VERSION = "5.0.12"
 
 
 class _QueryFilterKwargs(t.TypedDict, total=False):
