@@ -197,6 +197,32 @@ def _get_option(config: libdnf5.conf.Config, key: str) -> libdnf5.conf.Option:
         raise ValueError(f"{key!r} is not a valid option.")
 
 
+def _dnf4_debug_name(self: Package) -> str:  # pragma: no cover
+    # Taken from dnf.package.Package
+    # Copyright (C) 2012-2016 Red Hat, Inc.
+    # SPDX-License-Identifier: GPL-2.0-or-later
+    """
+    Returns name of the debuginfo package for this package.
+    If this package is a debuginfo package, returns its name.
+    If this package is a debugsource package, returns the debuginfo package
+    for the base package.
+    e.g. kernel-PAE -> kernel-PAE-debuginfo
+    """
+    if self.name.endswith(self.DEBUGINFO_SUFFIX):
+        return self.name
+
+    name = self.name
+    if self.name.endswith(self.DEBUGSOURCE_SUFFIX):
+        name = name[: -len(self.DEBUGSOURCE_SUFFIX)]
+
+    return name + self.DEBUGINFO_SUFFIX
+
+
+def _dnf4_source_debug_name(self: Package) -> str:  # pragma: no cover
+    source_name = self.name if self.arch == "src" else self.source_name
+    return source_name + self.DEBUGSOURCE_SUFFIX  # type: ignore[operator]
+
+
 class BaseMaker(BaseMakerBase):
     """
     Create a Base object and load repos
@@ -500,24 +526,12 @@ class Package(libdnf5.rpm.Package):
 
     @property
     def debug_name(self) -> str:
-        # Taken from dnf.package.Package
-        # Copyright (C) 2012-2016 Red Hat, Inc.
-        # SPDX-License-Identifier: GPL-2.0-or-later
-        """
-        Returns name of the debuginfo package for this package.
-        If this package is a debuginfo package, returns its name.
-        If this package is a debugsource package, returns the debuginfo package
-        for the base package.
-        e.g. kernel-PAE -> kernel-PAE-debuginfo
-        """
-        if self.name.endswith(self.DEBUGINFO_SUFFIX):
-            return self.name
-
-        name = self.name
-        if self.name.endswith(self.DEBUGSOURCE_SUFFIX):
-            name = name[: -len(self.DEBUGSOURCE_SUFFIX)]
-
-        return name + self.DEBUGINFO_SUFFIX
+        # https://github.com/rpm-software-management/dnf5/commit/477d7e5c818c3e95b0e824f8b02d744da7b39a45
+        try:
+            return self.get_debuginfo_name()
+        except AttributeError:  # pragma: no cover
+            _deprecation_warn()
+            return _dnf4_debug_name(self)
 
     @property
     def source_name(self) -> t.Optional[str]:
@@ -527,8 +541,12 @@ class Package(libdnf5.rpm.Package):
 
     @property
     def source_debug_name(self) -> str:
-        source_name = self.name if self.arch == "src" else self.source_name
-        return source_name + self.DEBUGSOURCE_SUFFIX  # type: ignore[operator]
+        # https://github.com/rpm-software-management/dnf5/commit/477d7e5c818c3e95b0e824f8b02d744da7b39a45
+        try:
+            return self.get_debugsource_name()
+        except AttributeError:  # pragma: no cover
+            _deprecation_warn()
+            return _dnf4_source_debug_name(self)
 
     @property
     def installtime(self) -> int:
