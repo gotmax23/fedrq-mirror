@@ -31,7 +31,7 @@ if t.TYPE_CHECKING:
 
 try:
     import libdnf5
-    import rpm
+    import rpm  # noqa: F401
 except ImportError as exc:
     raise MissingBackendError(str(exc)) from None
 
@@ -192,10 +192,6 @@ def _get_option(config: libdnf5.conf.Config, key: str) -> libdnf5.conf.Option:
     # dnf5 >= 5.0.8
     if option := getattr(config, f"get_{key}_option", None):
         LOG.debug(f"option = get_{key}_option")
-        return option()
-    # dnf5 <= 5.0.7
-    elif option := getattr(config, key, None):  # pragma: no cover
-        _deprecation_warn()
         return option()
     else:
         raise ValueError(f"{key!r} is not a valid option.")
@@ -863,54 +859,6 @@ class Repoquery(RepoqueryBase):
         return sys.modules[__name__]
 
 
-def _dnf_getreleasever() -> str:  # pragma: no cover
-    # This is taken from dnf and slightly modified
-    #
-    # SPDX-License-Identifier: GPL-2.0-or-later
-    # Copyright (C) 2012-2015  Red Hat, Inc.
-    DISTROVERPKG = (
-        "system-release(releasever)",
-        "system-release",
-        "distribution-release(releasever)",
-        "distribution-release",
-        "redhat-release",
-        "suse-release",
-    )
-    ts = rpm.TransactionSet("/")
-    ts.setVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
-    for distroverpkg in map(lambda p: p.encode("utf-8"), DISTROVERPKG):
-        idx = ts.dbMatch("provides", distroverpkg)
-        if not len(idx):
-            continue
-        try:
-            hdr = next(idx)
-        except StopIteration:
-            raise RuntimeError(
-                "Error: rpmdb failed to list provides. Try: rpm --rebuilddb"
-            ) from None
-        releasever = hdr["version"]
-        try:
-            try:
-                # header returns bytes -> look for bytes
-                # it may fail because rpm returns a decoded string since 10 Apr 2019
-                off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg)
-            except ValueError:
-                # header returns a string -> look for a string
-                off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg.decode("utf8"))
-            flag = hdr[rpm.RPMTAG_PROVIDEFLAGS][off]
-            ver = hdr[rpm.RPMTAG_PROVIDEVERSION][off]
-            if flag == rpm.RPMSENSE_EQUAL and ver:
-                if hdr["name"] not in (distroverpkg, distroverpkg.decode("utf8")):
-                    # override the package version
-                    releasever = ver
-        except (ValueError, KeyError, IndexError):
-            pass
-        if isinstance(releasever, bytes):
-            releasever = releasever.decode("utf-8")
-        return releasever
-    return ""
-
-
 @functools.cache
 def get_releasever() -> str:
     """
@@ -918,13 +866,8 @@ def get_releasever() -> str:
     """
     # libdnf5 >= 5.0.10
     # https://github.com/rpm-software-management/dnf5/pull/448
-    if hasattr(libdnf5.conf.Vars, "detect_release"):
-        base = libdnf5.base.Base()
-        return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/").get()
-    # Fall back to our copy of dnf4's code
-    else:  # pragma: no cover
-        _deprecation_warn()
-        return _dnf_getreleasever()
+    base = libdnf5.base.Base()
+    return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/").get()
 
 
 RepoError = RuntimeError
