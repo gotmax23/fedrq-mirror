@@ -31,7 +31,6 @@ if t.TYPE_CHECKING:
 
 try:
     import libdnf5
-    import rpm  # noqa: F401
 except ImportError as exc:
     raise MissingBackendError(str(exc)) from None
 

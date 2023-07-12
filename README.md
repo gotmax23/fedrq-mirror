@@ -53,6 +53,9 @@ The following additional system package is required for the dnf backend:
 The following additional system packages are required for the libdnf5 backend:
 
 - python3-libdnf5
+
+The following additional system packages are always required:
+
 - python3-rpm
 
 fedrq defaults to the dnf backend, but fedrq falls back to the libdnf5 backend

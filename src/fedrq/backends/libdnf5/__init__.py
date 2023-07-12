@@ -10,12 +10,7 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 BACKEND = "libdnf5"
-NEEDS = (
-    "libdnf5",
-    # Remove when https://github.com/rpm-software-management/dnf5/issues/281 is
-    # resolved
-    "rpm",
-)
+NEEDS = ("libdnf5",)
 
 
 def ensure_backend() -> None:
