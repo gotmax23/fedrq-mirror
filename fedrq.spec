@@ -36,7 +36,7 @@ BuildRequires:  python3-libdnf5
 BuildRequires:  scdoc
 
 Requires:       (python3-dnf or python3-libdnf5)
-Suggests:       python3-dnf
+Suggests:       (python3-libdnf5 if dnf5)
 Requires:       distribution-gpg-keys
 Recommends:     fedora-repos-rawhide
 Recommends:     python3-argcomplete
