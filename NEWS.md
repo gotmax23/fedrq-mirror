@@ -1,6 +1,37 @@
 NEWS
 =====
 
+## 0.10.0 - 2023-07-12 <a id='0.10.0'></a>
+
+### Added
+
+- add unconditional dependency on python3-rpm
+- container - refresh redhat.repo on entrypoint
+- add `smartcache=always` config option
+- add `--smartcache-always` CLI flag
+- add more documentation for the container builds
+
+### Changed
+
+- container - install config file to set `smartcache=always`
+- `fedrq.backends.libdnf5.backend.Package` - use libdnf5's getters for
+  `debug_name` and `source_debug_name` instead of our copies from dnf4.
+  There is still a fallback to the dnf4 versions for libdnf5 < 5.0.12.
+- fedrq.spec - favor python3-libdnf5 if dnf5 is installed
+
+### Deprecated
+
+- deprecate support for libdnf5 < 5.0.12 in the libdnf5 backend
+
+### Fixed
+
+- container - make sure cache persistence volume is actually used
+
+### Removed
+
+- remove deprecated `config.get_rq()` function
+- drop support for libdnf5 < 5.0.10 in the libdnf5 backend
+
 ## 0.9.0 - 2023-06-29 <a id='0.9.0'></a>
 
 ### Added
