@@ -663,11 +663,8 @@ class Package(libdnf5.rpm.Package):
         location = self.location
         if not location:  # pragma: no cover
             return None
-        repo_obj: libdnf5.repo.RepoWeakPtr = self.get_repo()
-        mirrors = (
-            repo_obj.get_mirrors()
-            or _get_option(repo_obj.get_config(), "baseurl").get_value()
-        )
+        repo_obj = self.repo
+        mirrors = repo_obj.get_mirrors() or repo_obj.get_config().baseurl
         if not mirrors:  # pragma: no cover
             return None
 
