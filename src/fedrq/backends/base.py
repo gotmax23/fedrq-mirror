@@ -181,6 +181,13 @@ class PackageCompat(Protocol):  # pragma: no cover
     def location(self) -> str:
         ...
 
+    @property
+    def repo(self) -> Any:
+        """
+        Return the package's Repo object.
+        The exact object depends on which backend is used.
+        """
+
     @abc.abstractmethod
     def remote_location(
         self, schemes: Collection[str] | None = ("http", "ftp", "file", "https")

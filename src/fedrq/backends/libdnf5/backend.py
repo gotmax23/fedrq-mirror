@@ -653,6 +653,10 @@ class Package(libdnf5.rpm.Package):
     def location(self) -> str:
         return self.get_location()
 
+    @property
+    def repo(self) -> libdnf5.repo.RepoWeakPtr:
+        return self.get_repo()
+
     def remote_location(
         self, schemes: Collection[str] | None = ("http", "ftp", "file", "https")
     ) -> str | None:
