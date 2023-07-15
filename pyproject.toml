@@ -45,9 +45,10 @@ codeqa = [
     "reuse",
 ]
 doc = [
-    # TODO: this is disabled for now, as it breaks doc builds.
     # mkdocstrings-python uses black to format function signatures
-    # "black",
+    "black",
+    # 0.32.0 breaks black function signature formatting
+    "griffe < 0.32.0",
     "mkdocs",
     "mkdocs-material",
     "mkdocstrings[python]>=0.18",
