@@ -34,8 +34,10 @@ exceptiongroup==1.1.2
     # via pytest
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.32.1
-    # via mkdocstrings-python
+griffe==0.31.0
+    # via
+    #   fedrq (pyproject.toml)
+    #   mkdocstrings-python
 idna==3.4
     # via requests
 importlib-metadata==6.8.0

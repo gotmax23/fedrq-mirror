@@ -4,20 +4,26 @@
 #
 #    pip-compile --allow-unsafe --extra=doc --output-file=requirements/doc.txt --strip-extras
 #
+black==23.7.0
+    # via fedrq (pyproject.toml)
 certifi==2023.5.7
     # via requests
 charset-normalizer==3.2.0
     # via requests
 click==8.1.5
-    # via mkdocs
+    # via
+    #   black
+    #   mkdocs
 colorama==0.4.6
     # via
     #   griffe
     #   mkdocs-material
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.32.1
-    # via mkdocstrings-python
+griffe==0.31.0
+    # via
+    #   fedrq (pyproject.toml)
+    #   mkdocstrings-python
 idna==3.4
     # via requests
 importlib-metadata==6.8.0
@@ -64,8 +70,16 @@ mkdocstrings==0.22.0
     #   mkdocstrings-python
 mkdocstrings-python==1.2.0
     # via mkdocstrings
+mypy-extensions==1.0.0
+    # via black
 packaging==23.1
-    # via mkdocs
+    # via
+    #   black
+    #   mkdocs
+pathspec==0.11.1
+    # via black
+platformdirs==3.9.0
+    # via black
 pydantic==1.10.11
     # via fedrq (pyproject.toml)
 pygments==2.15.1
@@ -94,9 +108,12 @@ rpm==0.1.0
 six==1.16.0
     # via python-dateutil
 tomli==2.0.1 ; python_version < "3.11"
-    # via fedrq (pyproject.toml)
+    # via
+    #   black
+    #   fedrq (pyproject.toml)
 typing-extensions==4.7.1
     # via
+    #   black
     #   mkdocstrings
     #   pydantic
 urllib3==2.0.3
