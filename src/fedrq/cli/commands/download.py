@@ -12,8 +12,10 @@ import logging
 import shutil
 import sys
 from collections.abc import Callable, Iterator
+from contextlib import suppress
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Any
 
 import requests
 import rpm
@@ -33,13 +35,29 @@ def callback_ind(start: int, end: int) -> Callable[[Path], None]:
     return inner
 
 
+def _get_req_kwargs(package: PackageCompat) -> dict[str, Any]:  # pragma: no cover
+    req_kwargs: dict[str, Any] = {}
+    repo_obj = package.repo
+    # libdnf5 has a .get_config() attribute
+    with suppress(AttributeError):
+        repo_obj = repo_obj.get_config()
+    if repo_obj.sslverify is False:
+        repo_obj["verify"] = False
+    elif repo_obj.sslcacert:
+        req_kwargs["verify"] = repo_obj.sslcacert
+    if repo_obj.sslclientcert and repo_obj.sslclientkey:
+        req_kwargs["cert"] = (repo_obj.sslclientcert, repo_obj.sslclientkey)
+    return req_kwargs
+
+
 def download(
     package: PackageCompat,
     destdir: Path,
     callback: Callable[[Path], None] | None = None,
 ) -> Path:
     def _remote_dl(url: str, src: Path, dest: Path) -> None:  # noqa: ARG001
-        req = requests.get(url, allow_redirects=True)
+        req_kwargs = _get_req_kwargs(package)
+        req = requests.get(url, allow_redirects=True, **req_kwargs)
         req.raise_for_status()
         dest.write_bytes(req.content)
 
