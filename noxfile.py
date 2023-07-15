@@ -236,3 +236,47 @@ def dnf_test(session: nox.Session):
 def libdnf5_test(session: nox.Session):
     install(session, ".[test]", "libdnf5-shim", editable=True)
     test(session, "libdnf5")
+
+
+@nox.session(name="pip-compile", python=["3.9"], venv_params=["--download"])
+def pip_compile(session: nox.Session):
+    session.install("pip-tools")
+    Path("requirements").mkdir(exist_ok=True)
+    # fmt: off
+    shared = (
+        "--resolver", "backtracking",
+        "--upgrade",
+        "--allow-unsafe",
+        "--quiet",
+        "--strip-extras",
+        *session.posargs,
+    )
+
+    session.run(
+        "pip-compile",
+        "-o", "requirements/requirements.txt",
+        *shared,
+    )
+
+    extras = (
+        "codeqa",
+        "doc",
+        "formatters",
+        "typing",
+        "test",
+    )
+    for extra in extras:
+        session.run(
+            "pip-compile",
+            "-o", f"requirements/{extra}.txt",
+            "--extra", extra,
+            *shared,
+        )
+    # fmt: on
+
+    extras_a = [f"--extra={extra}" for extra in extras]
+    session.run("pip-compile", "-o", "requirements/all.txt", *extras_a, *shared)
+
+    session.run(
+        "pip-compile", "-o", "requirements/srpm.txt", *shared, "requirements/srpm.in"
+    )
