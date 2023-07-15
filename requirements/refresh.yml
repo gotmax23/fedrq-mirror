@@ -11,6 +11,10 @@ sources:
   - https://git.sr.ht/~gotmax23/fedrq
 secrets:
   - 6bf3114d-a1ce-4ca5-aa7f-e97975914b1a
+triggers:
+  - action: email
+    to: "maxwell@gtmx.me"
+    condition: failure
 tasks:
   - setup-send-email: |
       [ -f ".auto-smtp-pass" ]
