@@ -16,6 +16,10 @@ ALLOW_EDITABLE = os.environ.get("ALLOW_EDITABLE", str(not IN_CI)).lower() in (
     "1",
     "true",
 )
+PINNED = os.environ.get("PINNED", "true").lower() in (
+    "1",
+    "true",
+)
 
 PROJECT = "fedrq"
 SPECFILE = "fedrq.spec"
@@ -30,10 +34,15 @@ nox.options.sessions = (*LINT_SESSIONS, "dnf_test", "libdnf5_test")
 # Helpers
 
 
-def install(session: nox.Session, *args, editable=False, **kwargs):
+def install(
+    session: nox.Session, *args, editable=False, constraint: str | None = None, **kwargs
+):
+    largs = []
+    if constraint and PINNED:
+        largs.extend(("-c", f"requirements/{constraint}.txt"))
     if editable and ALLOW_EDITABLE:
-        args = ("-e", *args)
-    session.install(*args, **kwargs)
+        largs.append("-e")
+    session.install(*largs, *args, **kwargs)
 
 
 def git(session: nox.Session, *args, **kwargs):
@@ -48,7 +57,7 @@ def test(session: nox.Session, backend=None):
     if not backend:
         # Make sure pytest is updated, as using the version from system
         # site-packages causes problems with plugins.
-        install(session, ".[test]", "pytest", "-U", editable=True)
+        install(session, ".[test]", constraint="test", editable=True)
     tmp = Path(session.create_tmp())
     env = {"FEDRQ_BACKEND": backend} if backend else {}
     if any(i.startswith("--cov") for i in session.posargs):
@@ -76,14 +85,14 @@ def lint(session: nox.Session):
 
 @nox.session()
 def codeqa(session: nox.Session):
-    install(session, ".[codeqa]")
+    install(session, ".[codeqa]", constraint="codeqa")
     session.run("ruff", *session.posargs, *LINT_FILES)
     session.run("reuse", "lint")
 
 
 @nox.session
 def formatters(session: nox.Session):
-    install(session, ".[formatters]")
+    install(session, ".[formatters]", constraint="formatters")
     posargs = session.posargs
     if IN_CI:
         posargs.append("--check")
@@ -93,7 +102,7 @@ def formatters(session: nox.Session):
 
 @nox.session
 def typing(session: nox.Session):
-    install(session, ".[typing]", editable=True)
+    install(session, ".[typing]", editable=True, constraint="typing")
     session.run("mypy", "--enable-incomplete-feature=Unpack", "src/fedrq/")
 
 
@@ -160,7 +169,7 @@ def copr_release(session: nox.Session):
 
 @nox.session
 def srpm(session: nox.Session, posargs=None):
-    install(session, "fclogr")
+    install(session, "-r", "requirements/srpm.in", constraint="srpm")
     posargs = posargs or session.posargs
     session.run("fclogr", "--debug", "dev-srpm", *posargs)
 
@@ -215,7 +224,7 @@ def docgen(session: nox.Session):
 
 @nox.session
 def mkdocs(session: nox.Session):
-    install(session, "-e", ".[doc]")
+    install(session, "-e", ".[doc]", constraint="doc")
     docgen(session)
     session.run("mkdocs", *session.posargs)
 
@@ -228,13 +237,13 @@ def testa(session):
 
 @nox.session(venv_params=["--system-site-packages"])
 def dnf_test(session: nox.Session):
-    install(session, ".[test]", "pytest", "-U", editable=True)
+    install(session, ".[test]", constraint="test", editable=True)
     test(session, "dnf")
 
 
 @nox.session
 def libdnf5_test(session: nox.Session):
-    install(session, ".[test]", "libdnf5-shim", editable=True)
+    install(session, ".[test]", "libdnf5-shim", constraint="test", editable=True)
     test(session, "libdnf5")
 
 
