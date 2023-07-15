@@ -42,11 +42,11 @@ tasks:
   - commit_and_send: |
       cd fedrq
       git diff || :
-      if ! git diff-index --quiet HEAD requirements/*.txt; then
+      git add requirements/*.txt
+      if git diff-index --quiet HEAD requirements/*.txt; then
         echo "Nothing to do!"
         exit
       fi
 
-      git add requirements/*.txt
       git commit -m "ci: refresh locked dependencies" -m "JOB_ID=${JOB_ID}"
       git send-email HEAD^
