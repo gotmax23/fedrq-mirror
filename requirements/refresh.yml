@@ -1,0 +1,48 @@
+---
+# Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+image: fedora/latest
+packages:
+  - nox
+  - python3.9
+  - git-email
+sources:
+  - https://git.sr.ht/~gotmax23/fedrq
+secrets:
+  - 6bf3114d-a1ce-4ca5-aa7f-e97975914b1a
+tasks:
+  - setup-send-email: |
+      [ -f ".auto-smtp-pass" ]
+      git config --global sendemail.from "builds.sr.ht automation <auto@gtmx.me>"
+      git config --global sendemail.suppresscc all
+      git config --global sendemail.confirm never
+      git config --global sendemail.smtpserver "mail.gtmx.me"
+      git config --global sendemail.smtpport 587
+      git config --global sendemail.smtpencryption tls
+      git config --global sendemail.smtpuser auto@gtmx.me
+      set +x
+      git config --global sendemail.smtppass "$(cat .auto-smtp-pass)"
+      set -x
+
+      cd fedrq
+      git config sendemail.to "~gotmax23/fedrq@lists.sr.ht"
+      git config format.subjectprefix "PATCH fedrq"
+      git config user.name "builds.sr.ht automation"
+      git config user.email "auto@gtmx.me"
+
+  - refresh: |
+      cd fedrq
+      VIRTUALENV_DOWNLOAD=1 nox -e pip-compile
+
+  - commit_and_send: |
+      cd fedrq
+      git diff || :
+      if ! git diff-index --quiet HEAD requirements/*.txt; then
+        echo "Nothing to do!"
+        exit
+      fi
+
+      git add requirements/*.txt
+      git commit -m "ci: refresh locked dependencies" -m "JOB_ID=${JOB_ID}"
+      git send-email HEAD^
