@@ -404,15 +404,30 @@ class BaseMaker(BaseMakerBase):
         repoq.filter_id([name])
         return next(iter(repoq), None)
 
-    def load_filelists(self) -> None:
-        LOG.debug("Loading filelists")
+    def _add_metadata_type(self, metadata: t.Any, enable: bool) -> None:
+        if not enable:
+            return self._del_metadata_type(metadata)
+        LOG.debug("Loading %s metadata", metadata)
         option = self._get_option(self.config, "optional_metadata_types")
         func = option.add_item
         # https://github.com/rpm-software-management/dnf5/commit/ba011ff
         if "priority" in inspect.signature(func).parameters:
-            func(Priority_RUNTIME, libdnf5.conf.METADATA_TYPE_FILELISTS)
-        else:
-            func(libdnf5.conf.METADATA_TYPE_FILELISTS)
+            func(Priority_RUNTIME, metadata)
+        else:  # pragma: no cover
+            _deprecation_warn()
+            func(metadata)
+
+    def _del_metadata_type(self, metadata: t.Any) -> None:
+        LOG.debug("Disabling loading of %s metadata", metadata)
+        types: tuple[t.Any] = self.config.optional_metadata_types
+        if metadata in types:
+            self.config.optional_metadata_types = tuple({*types} - {metadata})
+
+    def load_filelists(self, enable: bool = True) -> None:
+        self._add_metadata_type(libdnf5.conf.METADATA_TYPE_FILELISTS, enable)
+
+    def load_changelogs(self, enable: bool = True) -> None:
+        self._add_metadata_type(libdnf5.conf.METADATA_TYPE_OTHER, enable)
 
     def create_repo(self, repoid: str, **kwargs) -> None:
         """

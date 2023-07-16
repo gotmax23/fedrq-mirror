@@ -344,12 +344,18 @@ class BaseMakerBase(abc.ABC):
         for opt in substitutions.items():
             self.set_var(*opt)
 
-    def load_filelists(self) -> None:
+    def load_filelists(self, enable: bool = True) -> None:  # noqa: ARG002
         # Can be overriden by subclasses. Purposely isn't an @abstractmethod.
         """
         Load the filelists if they're not already enabled default
         """
         return None
+
+    @abc.abstractmethod
+    def load_changelogs(self, enable: bool = True) -> None:
+        """
+        Load changelog metadata
+        """
 
     def load_release_repos(self, release: Release, set_releasever: bool = True) -> None:
         """

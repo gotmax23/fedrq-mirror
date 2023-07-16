@@ -276,9 +276,11 @@ class Release:
             base_conf["cachedir"] = str(get_smartcache_basedir() / str(self.version))
         bm = base_maker or config.backend_mod.BaseMaker()
         bm.sets(base_conf, base_vars)
+        bm.load_release_repos(self, "releasever" not in base_vars)
         if config.load_filelists:
             bm.load_filelists()
-        bm.load_release_repos(self, "releasever" not in base_vars)
+        if config.load_other_metadata is not None:
+            bm.load_changelogs(config.load_other_metadata)
         return bm.fill_sack() if fill_sack else bm.base
 
     def _copr_repo(
@@ -313,6 +315,7 @@ class RQConfig(BaseModel):
     releases: dict[str, ReleaseConfig]
     default_branch: str = os.environ.get("FEDRQ_BRANCH", "rawhide")
     smartcache: t.Union[bool, t.Literal["always"]] = True
+    load_other_metadata: t.Optional[bool] = None
     load_filelists: LoadFilelists = LoadFilelists.auto
     _backend_mod = None
     copr_baseurl: str = DEFAULT_COPR_BASEURL

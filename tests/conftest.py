@@ -96,7 +96,9 @@ def patch_config_dirs(tmp_path, monkeypatch):
 
 @pytest.fixture
 def repo_test_rq(patch_config_dirs):
-    return rqconfig.get_config(load_filelists="always").get_rq("tester", "base")
+    return rqconfig.get_config(
+        load_filelists="always", load_other_metadata=True
+    ).get_rq("tester", "base")
 
 
 @pytest.fixture(scope="session")

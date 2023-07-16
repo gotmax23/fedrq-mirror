@@ -63,6 +63,10 @@ class BaseMaker(BaseMakerBase):
             raise KeyError(f"{key} is not a valid substituion")
         self.set(key, value)
 
+    def load_changelogs(self, enable: bool = True) -> None:
+        for repo in self.base.repos.iter_enabled():
+            repo.load_metadata_other = enable
+
     def fill_sack(
         self,
         *,
