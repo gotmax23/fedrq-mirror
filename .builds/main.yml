@@ -9,6 +9,7 @@ packages:
   - pandoc
   - python3-devel
   - python3-libdnf5
+  - python3.11-devel
   - rpm-build
   - rsync
   - scd2html
@@ -45,7 +46,7 @@ tasks:
       ./venv/bin/pip install nox
   - submit-docs: |
       cd fedrq
-      $nox -e mkdocs -- build
+      VIRTUALENV_PYTHON=3.11 $nox -e mkdocs -- build
       if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
         echo "Submitting docs for main branch"
         ssh-keyscan fedrq.gtmx.me | tee -a ~/.ssh/known_hosts
