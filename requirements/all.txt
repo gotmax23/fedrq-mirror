@@ -34,7 +34,7 @@ exceptiongroup==1.1.2
     # via pytest
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.32.2
+griffe==0.32.3
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python

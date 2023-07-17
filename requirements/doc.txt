@@ -20,7 +20,7 @@ colorama==0.4.6
     #   mkdocs-material
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.32.2
+griffe==0.32.3
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
