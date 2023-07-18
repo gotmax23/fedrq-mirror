@@ -32,7 +32,7 @@ python-debian==0.1.49
     # via reuse
 requests==2.31.0
     # via fedrq (pyproject.toml)
-reuse==1.1.2
+reuse==2.1.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
@@ -44,7 +44,3 @@ typing-extensions==4.7.1
     # via pydantic
 urllib3==2.0.3
     # via requests
-
-# The following packages are considered to be unsafe in a requirements file:
-setuptools==68.0.0
-    # via reuse
