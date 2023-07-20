@@ -37,5 +37,5 @@ typing-extensions==4.7.1
     #   fedrq (pyproject.toml)
     #   mypy
     #   pydantic
-urllib3==2.0.3
+urllib3==2.0.4
     # via requests

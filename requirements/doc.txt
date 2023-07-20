@@ -116,7 +116,7 @@ typing-extensions==4.7.1
     #   black
     #   mkdocstrings
     #   pydantic
-urllib3==2.0.3
+urllib3==2.0.4
     # via requests
 watchdog==3.0.0
     # via mkdocs

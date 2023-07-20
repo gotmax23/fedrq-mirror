@@ -38,5 +38,5 @@ typing-extensions==4.7.1
     # via
     #   black
     #   pydantic
-urllib3==2.0.3
+urllib3==2.0.4
     # via requests
