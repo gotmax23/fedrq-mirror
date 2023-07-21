@@ -68,7 +68,7 @@ mkdocstrings==0.22.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.2.0
+mkdocstrings-python==1.2.1
     # via mkdocstrings
 mypy-extensions==1.0.0
     # via black

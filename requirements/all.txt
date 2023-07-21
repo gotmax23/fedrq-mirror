@@ -89,7 +89,7 @@ mkdocstrings==0.22.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.2.0
+mkdocstrings-python==1.2.1
     # via mkdocstrings
 mypy==1.4.1
     # via fedrq (pyproject.toml)
@@ -155,9 +155,9 @@ tomli==2.0.1 ; python_version < "3.11"
     #   pytest
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-types-requests==2.31.0.1
+types-requests==2.31.0.2
     # via fedrq (pyproject.toml)
-types-urllib3==1.26.25.13
+types-urllib3==1.26.25.14
     # via types-requests
 typing-extensions==4.7.1
     # via
