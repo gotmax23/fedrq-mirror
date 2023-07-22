@@ -143,7 +143,7 @@ reuse==2.1.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.0.278
+ruff==0.0.279
     # via fedrq (pyproject.toml)
 six==1.16.0
     # via python-dateutil
