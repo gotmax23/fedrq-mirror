@@ -169,7 +169,7 @@ class _QueryFilterKwargs(t.TypedDict, total=False):
 
 
 @functools.cache
-def _deprecation_warn() -> None:  # pragma: no cover
+def _deprecation_warn() -> None:
     """
     Warn that libdnf5 versions < MINIMUM_NOT_DEPRECATED_VERSION are deprecated.
     This is memoized so we only warn users once.
