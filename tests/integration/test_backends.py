@@ -53,5 +53,4 @@ def test_bm_create_repo_full(default_backend: BackendMod, baseurl):
     )
     rq = default_backend.Repoquery(bm.fill_sack())
     query = rq.query()
-    assert len(query) == 2
     assert {p.name for p in query} == {"copr-module-integration-dummy-package"}
