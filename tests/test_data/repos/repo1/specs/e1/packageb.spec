@@ -55,3 +55,5 @@ echo '%{name}-sub' | install -Dpm 0644 /dev/stdin %{buildroot}%{_datadir}/%{name
 
 %changelog
 
+* Sun Jul 16 2023 Maxwell G <maxwell@gtmx.me> - 11111:2-1
+- Dummy changelog entry

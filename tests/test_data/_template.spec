@@ -33,3 +33,5 @@ BuildArch:      noarch
 
 %changelog
 
+* Sun Jul 16 2023 Maxwell G <maxwell@gtmx.me> - 1-1
+- Dummy changelog entry
