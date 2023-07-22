@@ -21,7 +21,21 @@ def test_pkgs_basic_rawhide(capsys, target_cpu):
 @pytest.mark.no_rpm_mock
 def test_pkgs_forcearch(runs):
     stdout, stderr = runs(
-        ["pkgs", "--forcearch", "s390x", "-F", "arch", "-b", "f37", "*"], False
+        [
+            "pkgs",
+            "--forcearch",
+            "s390x",
+            "-F",
+            "arch",
+            "-b",
+            "ubi9",
+            "-r",
+            "ubi-baseos-rpms",
+            "-e",
+            "ubi-baseos-source",
+            "*",
+        ],
+        False,
     )
     assert not stderr
     assert set(stdout) == {"noarch", "s390x", "src"}
