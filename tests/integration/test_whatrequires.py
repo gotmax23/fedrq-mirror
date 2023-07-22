@@ -22,8 +22,10 @@ ARGS = (
 
 @pytest.mark.no_rpm_mock
 @pytest.mark.parametrize("args", ARGS)
-def test_whatrequires_exclude_subpackages_f37(capsys, args):
-    fedrq.cli.main(["whatrequires", "-b", "f37", "--sc", "-X", "-Fname", *args])
+def test_whatrequires_exclude_subpackages_f38(capsys, args):
+    fedrq.cli.main(
+        ["whatrequires", "-b", "f38", "-r", "@release", "--sc", "-X", "-Fname", *args]
+    )
     stdout, stderr = capsys.readouterr()
     stdout_lines = set(stdout.splitlines())
     assert not (stdout_lines & YT_DLP_SUPKGS)
@@ -33,8 +35,10 @@ def test_whatrequires_exclude_subpackages_f37(capsys, args):
 
 @pytest.mark.no_rpm_mock
 @pytest.mark.parametrize("args", ARGS)
-def test_whatrequires_not_exclude_subpackages_f37(capsys, args):
-    fedrq.cli.main(["whatrequires", "-b", "f37", "--sc", "-Fname", *args])
+def test_whatrequires_not_exclude_subpackages_f38(capsys, args):
+    fedrq.cli.main(
+        ["whatrequires", "-b", "f38", "-r", "@release", "--sc", "-Fname", *args]
+    )
     stdout, stderr = capsys.readouterr()
     stdout_lines = set(stdout.splitlines())
     assert stdout_lines & YT_DLP_SUPKGS
@@ -49,7 +53,18 @@ def test_whatrequires_resolve(capsys):
     E.g. python-setuptools should resolve to python3-setuptools.noarch
     (Provides python-setuptools) instead of python-setuptools.src.
     """
-    fedrq.cli.main(["whatrequires", "-b", "f37", "-P", "-Fna", "python-setuptools"])
+    fedrq.cli.main(
+        [
+            "whatrequires",
+            "-b",
+            "f38",
+            "-r",
+            "@release",
+            "-P",
+            "-Fna",
+            "python-setuptools",
+        ]
+    )
     stdout, stderr = map(lambda f: f.splitlines(), capsys.readouterr())
     # 3700 as of 2023-01-23. Le
     assert len(stdout) > 3000

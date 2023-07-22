@@ -13,6 +13,16 @@ import fedrq.cli
 @pytest.mark.no_rpm_mock
 def test_download_spec(tmp_path: Path):
     fedrq.cli.main(
-        ["download-spec", "ansible-core", "-b", "f37", "-y", "-o", str(tmp_path)]
+        [
+            "download-spec",
+            "ansible-core",
+            "-b",
+            "f38",
+            "-r",
+            "@release",
+            "-y",
+            "-o",
+            str(tmp_path),
+        ]
     )
     assert (tmp_path / "ansible-core.spec").exists()
