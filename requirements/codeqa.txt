@@ -10,7 +10,7 @@ boolean-py==4.0
     # via
     #   license-expression
     #   reuse
-certifi==2023.5.7
+certifi==2023.7.22
     # via requests
 chardet==5.1.0
     # via
@@ -36,7 +36,7 @@ reuse==2.1.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.0.279
+ruff==0.0.280
     # via fedrq (pyproject.toml)
 tomli==2.0.1 ; python_version < "3.11"
     # via fedrq (pyproject.toml)
