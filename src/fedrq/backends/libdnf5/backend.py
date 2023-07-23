@@ -264,6 +264,9 @@ class BaseMaker(BaseMakerBase):
     # Not part of the BaseMakerBase interface
     @property
     def config(self) -> libdnf5.config.ConfigMain:
+        """
+        **DEPRECATED: use `conf` property instead**
+        """
         return self.base.get_config()
 
     # Not part of the BaseMakerBase interface
