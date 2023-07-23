@@ -12,7 +12,7 @@ from __future__ import annotations
 import logging
 import sys
 import typing as t
-from collections.abc import Collection
+from collections.abc import Collection, Iterator
 from functools import cache
 
 from fedrq._utils import filter_latest
@@ -20,6 +20,7 @@ from fedrq.backends import MissingBackendError
 from fedrq.backends.base import (
     BackendMod,
     BaseMakerBase,
+    ChangelogEntry,
     PackageCompat,
     PackageQueryCompat,
     RepoqueryBase,
@@ -222,6 +223,14 @@ Package: PackageCompat = dnf.package.Package
 PackageQuery: PackageQueryCompat = dnf.query.Query
 RepoError = dnf.exceptions.RepoError
 
+
+def get_changelogs(package: t.Any) -> Iterator[ChangelogEntry]:
+    for entry in package.changelogs:
+        yield ChangelogEntry(
+            text=entry["text"], author=entry["author"], date=entry["timestamp"]
+        )
+
+
 __all__ = (
     "BACKEND",
     "BaseMaker",
@@ -230,6 +239,7 @@ __all__ = (
     "RepoError",
     "Repoquery",
     "get_releasever",
+    "get_changelogs",
     #
     "dnf",
     "hawkey",

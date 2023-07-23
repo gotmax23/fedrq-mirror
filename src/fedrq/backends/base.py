@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import abc
+import dataclasses
 import importlib.resources
 import logging
 from collections.abc import Callable, Collection, Iterable, Iterator
+from datetime import date
 from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar, runtime_checkable
 from warnings import warn
 
@@ -557,6 +559,26 @@ class RepoqueryBase(abc.ABC):
         ...
 
 
+@dataclasses.dataclass(frozen=True)
+class ChangelogEntry:
+    """
+    Data class for changelog entry data.
+    Do not instantiate directly!
+    """
+
+    text: str
+    author: str
+    date: date
+
+
+class _get_changelogs(Protocol):
+    def __call__(self, package: Any) -> Iterator[ChangelogEntry]:
+        """
+        :param package: A backend's Package object
+        """
+        ...
+
+
 class BackendMod(Protocol):
     """
     Protocol for a fedrq backend module.
@@ -572,3 +594,4 @@ class BackendMod(Protocol):
     Repoquery: type[RepoqueryBase]
     RepoError: type[BaseException]
     get_releasever: Callable[[], str]
+    get_changelogs: _get_changelogs

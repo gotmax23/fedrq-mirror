@@ -15,13 +15,15 @@ import logging
 import sys
 import typing as t
 import warnings
-from collections.abc import Collection, Iterable
+from collections.abc import Collection, Iterable, Iterator
+from datetime import datetime as DT
+from datetime import timezone as TZ
 from os.path import join as path_join
 from urllib.parse import urlparse
 
 from fedrq._utils import filter_latest
 from fedrq.backends import MissingBackendError
-from fedrq.backends.base import BackendMod, BaseMakerBase, RepoqueryBase
+from fedrq.backends.base import BackendMod, BaseMakerBase, ChangelogEntry, RepoqueryBase
 from fedrq.backends.libdnf5 import BACKEND  # noqa: F401
 
 if t.TYPE_CHECKING:
@@ -903,6 +905,13 @@ def get_releasever() -> str:
     return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/").get()
 
 
+def get_changelogs(package: Package) -> Iterator[ChangelogEntry]:
+    entries = package.get_changelogs()
+    for entry in entries:
+        date_obj = DT.fromtimestamp(entry.timestamp, tz=TZ.utc).date()
+        yield ChangelogEntry(text=entry.text, author=entry.author, date=date_obj)
+
+
 RepoError = RuntimeError
 
 __all__ = (
@@ -913,6 +922,7 @@ __all__ = (
     "Repoquery",
     "RepoError",
     "get_releasever",
+    "get_changelogs",
     #
     "libdnf5",
 )
