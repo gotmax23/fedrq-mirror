@@ -15,7 +15,7 @@ from fedrq.backends.base import BackendMod
 @pytest.fixture(autouse=True)
 def skip_mod(default_backend: BackendMod):
     if default_backend.BACKEND != "libdnf5":
-        pytest.skip(reason="This test checks libdnf5 functionality")
+        pytest.skip("This test checks libdnf5 functionality")
 
 
 @pytest.mark.filterwarnings("error")
