@@ -57,7 +57,7 @@ class Pkgs(Command):
 
         self.query = self.rq.arch_filter(self.query, self.args.arch)
         filter_latest(self.query, self.args.latest)
-        flog.debug("self.query = %s", tuple(self.query))
+        self._logq(self.query, "self.query")
 
         for p in self.format():
             print(p)
