@@ -261,6 +261,14 @@ class BaseMakerBase(abc.ABC):
     def __init__(self, base=None) -> None:
         self.base = base
 
+    @property
+    @abc.abstractmethod
+    def conf(self) -> Any:
+        """
+        Return the backend's Config object
+        """
+        ...
+
     @abc.abstractmethod
     def fill_sack(
         self,

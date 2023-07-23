@@ -257,6 +257,10 @@ class BaseMaker(BaseMakerBase):
             self.base.setup()
             self.initialized = True
 
+    @property
+    def conf(self) -> libdnf5.config.ConfigMain:
+        return self.base.get_config()
+
     # Not part of the BaseMakerBase interface
     @property
     def config(self) -> libdnf5.config.ConfigMain:
