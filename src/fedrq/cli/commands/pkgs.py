@@ -41,9 +41,7 @@ class Pkgs(Command):
         return parser
 
     def run(self) -> None:
-        flog = mklog(__name__, self.__class__.__name__, "run")
         self.query = self.rq.query(empty=True)
-        # flog.debug("self.query = %s", tuple(self.query))
 
         resolved_packages = self.rq.resolve_pkg_specs(
             self.args.names, self.args.resolve_packages
