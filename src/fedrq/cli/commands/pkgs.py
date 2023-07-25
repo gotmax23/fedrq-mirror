@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 from collections import abc as cabc
 
-from fedrq._utils import filter_latest, mklog
+from fedrq._utils import filter_latest
 from fedrq.cli import Command
 
 
