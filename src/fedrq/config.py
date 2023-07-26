@@ -18,12 +18,15 @@ import typing as t
 import zipfile
 from collections.abc import Callable
 from enum import auto as auto_enum
-from importlib.abc import Traversable
 from pathlib import Path
 
 if sys.version_info < (3, 11):
+    from importlib.abc import Traversable
+
     import tomli as tomllib
 else:
+    from importlib.resources.abc import Traversable
+
     import tomllib
 
 from pydantic import BaseModel, Field, validator
