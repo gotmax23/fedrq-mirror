@@ -70,8 +70,8 @@ def test(session: nox.Session, backend=None):
 def coverage(session: nox.Session):
     install(session, "coverage[toml]")
     session.run("coverage", "combine", "--keep", *iglob(".nox/*test/tmp/.coverage"))
-    session.run("coverage", "report")
     session.run("coverage", "html")
+    session.run("coverage", "report", "--fail-under=90")
 
 
 @nox.session(venv_backend="none")
