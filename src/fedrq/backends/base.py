@@ -578,6 +578,10 @@ class ChangelogEntry:
     author: str
     date: date
 
+    def __str__(self) -> str:
+        date_str = format(self.date, "%a %b %d %Y")
+        return f"* {date_str} {self.author}\n{self.text}"
+
 
 class _get_changelogs(Protocol):
     def __call__(self, package: Any) -> Iterator[ChangelogEntry]:

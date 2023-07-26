@@ -15,6 +15,7 @@ else:
     HAS_ARGCOMPLETE = True
 
 from fedrq.cli.base import CheckConfig, Command
+from fedrq.cli.commands.changelogs import ChangelogCommand
 from fedrq.cli.commands.download import DownloadCommand, DownloadSpecCommand
 from fedrq.cli.commands.pkgs import Pkgs
 from fedrq.cli.commands.repolist import Repolist
@@ -35,6 +36,7 @@ __all__ = (
     "Pkgs",
     "Repolist",
     "Subpkgs",
+    "ChangelogCommand",
     "DownloadCommand",
     "DownloadSpecCommand",
     "WhatCommand",
@@ -73,6 +75,7 @@ def main(argv: Sequence | None = None, **kwargs) -> None:
 
 COMMANDS: dict[str, type[Command]] = {
     "check-config": CheckConfig,
+    "changelog": ChangelogCommand,
     "download": DownloadCommand,
     "download-spec": DownloadSpecCommand,
     "pkgs": Pkgs,

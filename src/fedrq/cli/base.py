@@ -252,7 +252,9 @@ class Command(abc.ABC):
         return parser
 
     @classmethod
-    def parent_parser(cls) -> argparse.ArgumentParser:
+    def parent_parser(
+        cls, *, formatter: bool = True, latest: bool = True
+    ) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(
             add_help=False, parents=[cls.branch_repo_parser()]
         )
@@ -262,12 +264,14 @@ class Command(abc.ABC):
         parser.add_argument(
             "-i", "--stdin", help="Read package names from stdin.", action="store_true"
         )
-        parser.add_argument("-l", "--latest", default=1, help="'all' or an integer")
-        parser.add_argument(  # type: ignore[attr-defined]
-            "-F",
-            "--formatter",
-            default="plain",
-        ).completer = cls.formatters._argcompleter
+        if latest:
+            parser.add_argument("-l", "--latest", default=1, help="'all' or an integer")
+        if formatter:
+            parser.add_argument(  # type: ignore[attr-defined]
+                "-F",
+                "--formatter",
+                default="plain",
+            ).completer = cls.formatters._argcompleter
         cachedir_group = parser.add_mutually_exclusive_group()
         cachedir_group.add_argument(
             "--system-cache",
@@ -365,6 +369,8 @@ class Command(abc.ABC):
 
     @v_add_errors
     def v_latest(self) -> str | None:
+        if not hasattr(self.args, "latest"):
+            return None
         try:
             self.args.latest = int(self.args.latest)
         except ValueError:
@@ -379,6 +385,8 @@ class Command(abc.ABC):
 
     @v_add_errors
     def v_formatters(self) -> str | None:
+        if not hasattr(self.args, "formatter"):
+            return None
         try:
             self.formatter = self.formatters.get_formatter(self.args.formatter)
         except FormatterError as err:
@@ -463,6 +471,7 @@ class Command(abc.ABC):
         self.v_arch()
         # Fatal
         self.v_backend()
+        self._v_handle_errors()
         self.v_release()
         self.v_rq()
         self._v_handle_errors()
