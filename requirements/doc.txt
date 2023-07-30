@@ -77,11 +77,11 @@ packaging==23.1
     # via
     #   black
     #   mkdocs
-pathspec==0.11.1
+pathspec==0.11.2
     # via
     #   black
     #   mkdocs
-platformdirs==3.9.1
+platformdirs==3.10.0
     # via
     #   black
     #   mkdocs
