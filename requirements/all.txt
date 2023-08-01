@@ -16,7 +16,7 @@ boolean-py==4.0
     #   reuse
 certifi==2023.7.22
     # via requests
-chardet==5.1.0
+chardet==5.2.0
     # via
     #   binaryornot
     #   python-debian
@@ -148,7 +148,7 @@ reuse==2.1.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.0.280
+ruff==0.0.282
     # via fedrq (pyproject.toml)
 six==1.16.0
     # via python-dateutil
