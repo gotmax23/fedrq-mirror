@@ -90,7 +90,7 @@ mkdocstrings==0.22.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.2.1
+mkdocstrings-python==1.3.0
     # via mkdocstrings
 mypy==1.4.1
     # via fedrq (pyproject.toml)
@@ -115,7 +115,7 @@ pluggy==1.2.0
     # via pytest
 pydantic==1.10.12
     # via fedrq (pyproject.toml)
-pygments==2.15.1
+pygments==2.16.1
     # via mkdocs-material
 pymdown-extensions==10.1
     # via
