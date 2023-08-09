@@ -138,7 +138,7 @@ pyyaml==6.0.1
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2023.6.3
+regex==2023.8.8
     # via mkdocs-material
 requests==2.31.0
     # via
@@ -148,7 +148,7 @@ reuse==2.1.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.0.282
+ruff==0.0.283
     # via fedrq (pyproject.toml)
 six==1.16.0
     # via python-dateutil
