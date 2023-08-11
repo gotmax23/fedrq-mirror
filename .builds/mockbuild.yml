@@ -4,6 +4,7 @@
 ---
 image: fedora/rawhide
 packages:
+  - koji-tool
   - mock
   - mock-core-configs
   - python3.11

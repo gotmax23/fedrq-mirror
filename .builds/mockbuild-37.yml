@@ -6,6 +6,7 @@ image: fedora/37
 packages:
   - createrepo_c
   - fedora-repos-rawhide
+  - koji-tool
   - mock
   - mock-core-configs
   - rpm-build
