@@ -12,7 +12,7 @@ charset-normalizer==3.2.0
     # via requests
 idna==3.4
     # via requests
-mypy==1.5.0
+mypy==1.5.1
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
