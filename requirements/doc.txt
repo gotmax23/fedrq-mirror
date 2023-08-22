@@ -4,6 +4,10 @@
 #
 #    pip-compile --allow-unsafe --extra=doc --output-file=requirements/doc.txt --strip-extras
 #
+babel==2.12.1
+    # via mkdocs-material
+beautifulsoup4==4.12.2
+    # via readtime
 black==23.7.0
     # via fedrq (pyproject.toml)
 certifi==2023.7.22
@@ -18,9 +22,11 @@ colorama==0.4.6
     # via
     #   griffe
     #   mkdocs-material
+cssselect==1.2.0
+    # via pyquery
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.33.0
+griffe==0.34.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
@@ -36,6 +42,10 @@ jinja2==3.1.2
     #   mkdocs
     #   mkdocs-material
     #   mkdocstrings
+lxml==4.9.3
+    # via
+    #   mkdocs-material
+    #   pyquery
 markdown==3.4.4
     # via
     #   mkdocs
@@ -43,6 +53,8 @@ markdown==3.4.4
     #   mkdocs-material
     #   mkdocstrings
     #   pymdown-extensions
+markdown2==2.4.10
+    # via readtime
 markupsafe==2.1.3
     # via
     #   jinja2
@@ -61,7 +73,7 @@ mkdocs-autorefs==0.5.0
     # via mkdocstrings
 mkdocs-exclude==1.0.2
     # via fedrq (pyproject.toml)
-mkdocs-material==9.1.21
+mkdocs-material==9.2.1
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.1.1
     # via mkdocs-material
@@ -69,7 +81,7 @@ mkdocstrings==0.22.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.4.0
+mkdocstrings-python==1.5.0
     # via mkdocstrings
 mypy-extensions==1.0.0
     # via black
@@ -77,6 +89,8 @@ packaging==23.1
     # via
     #   black
     #   mkdocs
+paginate==0.5.6
+    # via mkdocs-material
 pathspec==0.11.2
     # via
     #   black
@@ -93,6 +107,8 @@ pymdown-extensions==10.1
     # via
     #   mkdocs-material
     #   mkdocstrings
+pyquery==2.0.0
+    # via readtime
 python-dateutil==2.8.2
     # via ghp-import
 pyyaml==6.0.1
@@ -102,6 +118,8 @@ pyyaml==6.0.1
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
+readtime==3.0.0
+    # via mkdocs-material
 regex==2023.8.8
     # via mkdocs-material
 requests==2.31.0
@@ -112,6 +130,8 @@ rpm==0.1.0
     # via fedrq (pyproject.toml)
 six==1.16.0
     # via python-dateutil
+soupsieve==2.4.1
+    # via beautifulsoup4
 tomli==2.0.1 ; python_version < "3.11"
     # via
     #   black
