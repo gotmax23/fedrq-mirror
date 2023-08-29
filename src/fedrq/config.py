@@ -88,13 +88,13 @@ class ReleaseConfig(BaseModel):
         arbitrary_types_allowed = True
 
     @validator("repogs", always=True)
-    def v_repogs(cls, value: Repos, values: dict[str, t.Any]) -> Repos:
+    def _v_repogs(cls, value: Repos, values: dict[str, t.Any]) -> Repos:
         return (
             value | values["defs"] | AliasRepoG.from_str_mapping(values["repo_aliases"])
         )
 
     @validator("defpaths")
-    def v_defpaths(cls, value, values) -> dict[str, t.Any]:
+    def _v_defpaths(cls, value, values) -> dict[str, t.Any]:
         flog = mklog(__name__, "ReleaseConfig", "_get_full_defpaths")
         flog.debug(f"Getting defpaths for {values['name']}: {value}")
         values["full_def_paths"] = cls._get_full_defpaths(
@@ -103,19 +103,19 @@ class ReleaseConfig(BaseModel):
         return value
 
     @validator("matcher")
-    def v_matcher(cls, value: t.Pattern, values: dict[str, t.Any]) -> t.Pattern:
+    def _v_matcher(cls, value: t.Pattern, values: dict[str, t.Any]) -> t.Pattern:
         if not values["version"] and value.groups != 1:
             raise ValueError("'matcher' must have exactly one capture group")
         return value
 
     @validator("repo_dirs", pre=True)
-    def v_repo_dirs(cls, value: str | list[Path]) -> list[Path]:
+    def _v_repo_dirs(cls, value: str | list[Path]) -> list[Path]:
         if not isinstance(value, str):
             return value
         return [Path(directory) for directory in value.split(":")]
 
     @validator("append_system_repos", always=True)
-    def v_append_system_repos(cls, value: bool, values: dict[str, t.Any]) -> bool:
+    def _v_append_system_repos(cls, value: bool, values: dict[str, t.Any]) -> bool:
         if value:
             values["system_repos"] = True
         return value
@@ -332,7 +332,7 @@ class RQConfig(BaseModel):
         validate_assignment = True
 
     @validator("backend")
-    def v_backend(cls, value) -> str:
+    def _v_backend(cls, value) -> str:
         assert (
             value is None or value in BACKENDS
         ), f"Valid backends are: {', '.join(BACKENDS)}"
