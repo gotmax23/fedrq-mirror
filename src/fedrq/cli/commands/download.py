@@ -107,7 +107,7 @@ class DownloadCommand(Command):
         parser = super().make_parser(
             parser_func,
             add_help=add_help,
-            help=cls.__doc__.strip().replace("\n", " "),
+            help=(cls.__doc__ or "").strip().replace("\n", " "),
             parents=[
                 cls.parent_parser(),
                 cls.arch_parser(),
@@ -180,7 +180,7 @@ class DownloadSpecCommand(DownloadCommand):
     ) -> argparse.ArgumentParser:
         parser = super(DownloadCommand, cls).make_parser(
             parser_func,
-            help=cls.__doc__.strip().replace("\n", " "),
+            help=(cls.__doc__ or "").strip().replace("\n", " "),
             add_help=add_help,
             parents=[
                 cls.parent_parser(),
