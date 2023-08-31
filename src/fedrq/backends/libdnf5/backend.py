@@ -267,6 +267,10 @@ class BaseMaker(BaseMakerBase):
         """
         **DEPRECATED: use `conf` property instead**
         """
+        warnings.warn(
+            "The `config` property is deprecated. Use `conf` instead.",
+            DeprecationWarning,
+        )
         return self.base.get_config()
 
     # Not part of the BaseMakerBase interface
