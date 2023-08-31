@@ -103,7 +103,7 @@ pydantic==1.10.12
     # via fedrq (pyproject.toml)
 pygments==2.16.1
     # via mkdocs-material
-pymdown-extensions==10.2
+pymdown-extensions==10.2.1
     # via
     #   mkdocs-material
     #   mkdocstrings
