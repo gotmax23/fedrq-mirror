@@ -4,7 +4,6 @@
 ---
 image: fedora/rawhide
 packages:
-  - koji-tool
   - mock
   - mock-core-configs
   - python3.11
@@ -18,8 +17,6 @@ environment:
 artifacts:
   - fedrq/results_fedrq.tar.gz
 tasks:
-  - setup-mock-hotfix: |
-      koji-tool install -y mock mock-core-configs
   - setup-add-mock-group: |
       sudo usermod -aG mock $USER
   - setup-venv: |

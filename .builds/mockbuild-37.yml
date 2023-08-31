@@ -6,7 +6,6 @@ image: fedora/37
 packages:
   - createrepo_c
   - fedora-repos-rawhide
-  - koji-tool
   - mock
   - mock-core-configs
   - rpm-build
@@ -18,8 +17,6 @@ environment:
 artifacts:
   - fedrq/results_fedrq.tar.gz
 tasks:
-  - setup-mock-hotfix: |
-      koji-tool install -y mock mock-core-configs
   - setup-add-mock-group: |
       sudo usermod -aG mock $USER
   - setup-venv: |
