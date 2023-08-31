@@ -107,7 +107,7 @@ class DownloadCommand(Command):
         parser = super().make_parser(
             parser_func,
             add_help=add_help,
-            help=cls.__doc__.splitlines()[0],  # type: ignore[union-attr]
+            help=cls.__doc__.strip().replace("\n", " "),
             parents=[
                 cls.parent_parser(),
                 cls.arch_parser(),
@@ -166,7 +166,8 @@ class DownloadCommand(Command):
 
 class DownloadSpecCommand(DownloadCommand):
     """
-    Download an SRPM and extract its specfile
+    EXPERIMENTAL: Download an SRPM and extract its specfile.
+    No gpg checking is preformed.
     """
 
     @classmethod
@@ -179,7 +180,7 @@ class DownloadSpecCommand(DownloadCommand):
     ) -> argparse.ArgumentParser:
         parser = super(DownloadCommand, cls).make_parser(
             parser_func,
-            # Never add_help, as this command is EXPERIMENTAL
+            help=cls.__doc__.strip().replace("\n", " "),
             add_help=add_help,
             parents=[
                 cls.parent_parser(),
