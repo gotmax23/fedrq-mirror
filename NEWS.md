@@ -1,6 +1,51 @@
 NEWS
 =====
 
+## 0.11.0 - 2023-08-31 <a id='0.11.0'></a>
+
+### Added
+
+API:
+
+- backends: add `repo` @property to PackageCompat
+- BaseMaker: add `load_changelogs()`; improve `load_filelists()`
+- BaseMaker: add `conf` property
+- backends: add API for accessing Package changelogs
+
+CLI:
+
+- handle repo ssl client certificates in `download` subcommand
+- add `changelog` subcommand
+
+Container images:
+
+- add `@epel` release group to the `rhel9` release configuration in the `ubi9`
+  container
+
+General:
+
+- Declare support for Python 3.12
+
+### Deprecated
+
+API:
+
+- libdnf5 BaseMaker: deprecate config property
+
+### Fixed
+
+- fix `importlib.abc` `DeprecationWarning`.
+- improve CLI error handling by erroring out before loading metadata if other
+  non-fatal errors have occurred.
+- fix help message in `download` subcommand
+
+### Removed
+
+API:
+
+- config: remove pydantic validators from public API. These never should have
+  been exposed in the first place.
+
 ## 0.10.0 - 2023-07-12 <a id='0.10.0'></a>
 
 ### Added
