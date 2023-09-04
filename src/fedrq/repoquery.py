@@ -18,6 +18,7 @@ from fedrq.backends.base import (
     PackageCompat,
     PackageQueryCompat,
     RepoqueryBase,
+    _get_changelogs,
 )
 
 backend: BackendMod = get_default_backend()
@@ -27,6 +28,7 @@ PackageQuery: type[PackageQueryCompat] = backend.PackageQuery
 RepoError: type[BaseException] = backend.RepoError
 Repoquery: type[RepoqueryBase] = backend.Repoquery
 get_releasever: Callable[[], str] = backend.get_releasever
+get_changelogs: _get_changelogs = backend.get_changelogs
 BACKEND: str = backend.BACKEND
 
 __all__ = (
@@ -35,4 +37,5 @@ __all__ = (
     "Repoquery",
     "backend",
     "get_releasever",
+    "get_changelogs",
 )

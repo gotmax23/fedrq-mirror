@@ -133,7 +133,6 @@ source = [
 ]
 omit = [
     "src/fedrq/_compat.py",
-    "src/fedrq/repoquery.py",
     "src/fedrq/__main__.py",
 ]
 
@@ -158,6 +157,5 @@ exclude_lines = [
 ]
 omit = [
     "src/fedrq/_compat.py",
-    "src/fedrq/repoquery.py",
     "src/fedrq/__main__.py",
 ]
