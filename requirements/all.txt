@@ -125,7 +125,7 @@ pymdown-extensions==10.3
     # via
     #   mkdocs-material
     #   mkdocstrings
-pytest==7.4.1
+pytest==7.4.2
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
