@@ -145,3 +145,10 @@ def test_whatrequires_exclude_subpackages(run_command):
     stdout, stderr = run_command(["-X", "-F", "na", "packageb"])
     assert not stderr
     assert stdout == expected
+
+
+def test_whatrequires_extra_exact(run_command):
+    expected = ["packagea-1-1.fc36.noarch"]
+    stdout, stderr = run_command(["--ee", "vpackage(b)"])
+    assert not stderr
+    assert stdout == expected

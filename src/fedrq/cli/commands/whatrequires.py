@@ -16,6 +16,8 @@ from fedrq.cli.formatters import DefaultFormatters, Formatter
 
 logger = logging.getLogger(__name__)
 
+_PackageCompatT = t.TypeVar("_PackageCompatT", bound=PackageCompat)
+
 
 class BreakdownFormatter(Formatter):
     MULTILINE = True
@@ -60,6 +62,8 @@ class WhatCommand(Command):
 
     def __init__(self, args: argparse.Namespace) -> None:
         super().__init__(args)
+        if getattr(self.args, "extra_exact", None):
+            self.args.exact = True
         self.v_default()
 
     @classmethod
@@ -93,6 +97,13 @@ class WhatCommand(Command):
             action="store_true",
             help="This is the opposite extreme to --resolve-packages. "
             "E.g., yt-dlp would not match python3dist(yt-dlp) like it does by default.",
+        )
+        resolve_group.add_argument(
+            "--ee",
+            "--extra-exact",
+            action="store_true",
+            dest="extra_exact",
+            help=argparse.SUPPRESS,
         )
 
         if cls._exclude_subpackages_opt:
@@ -142,8 +153,26 @@ class WhatCommand(Command):
                 resolved_packages if self.args.resolve_packages else None
             )
 
-        for p in self.format():
+        query: cabc.Iterable[PackageCompat] | None = None
+        if getattr(self.args, "extra_exact", None):
+            query = _extra_exact(self.operator, self.args.names, self.query)
+        for p in self.format(query):
             print(p)
+
+
+def _extra_exact(
+    attr: str,
+    matches: cabc.Collection[str],
+    packages: cabc.Iterable[_PackageCompatT],
+) -> cabc.Iterable[_PackageCompatT]:
+    """
+    Filter factory to ensure exact string matches for whatrequires and whatprovides
+    """
+
+    return filter(
+        lambda package: {str(obj) for obj in getattr(package, attr)} & set(matches),
+        packages,
+    )
 
 
 class Whatrequires(WhatCommand):

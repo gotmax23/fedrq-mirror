@@ -16,7 +16,7 @@ from functools import wraps
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from fedrq.backends.base import BaseMakerBase
+from fedrq.backends.base import BaseMakerBase, PackageCompat
 
 try:
     import tomli_w
@@ -350,11 +350,13 @@ class Command(abc.ABC):
         if not self.args.names:
             sys.exit("No package names were passed")
 
-    def format(self) -> cabc.Iterable[str]:
+    def format(
+        self, query: cabc.Iterable[PackageCompat] | None = None
+    ) -> cabc.Iterable[str]:
         """
         Helper to run `self.formatter.format(self.query)`
         """
-        return self.formatter.format(self.query)
+        return self.formatter.format(query if query is not None else self.query)
 
     def _v_handle_errors(self, should_exit: bool = True):
         if self._v_errors:
