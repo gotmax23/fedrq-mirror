@@ -6,7 +6,7 @@
 #
 babel==2.12.1
     # via mkdocs-material
-black==23.9.0
+black==23.9.1
     # via fedrq (pyproject.toml)
 certifi==2023.7.22
     # via requests
@@ -22,7 +22,7 @@ colorama==0.4.6
     #   mkdocs-material
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.36.1
+griffe==0.36.2
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
