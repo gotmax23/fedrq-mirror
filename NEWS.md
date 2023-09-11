@@ -1,6 +1,13 @@
 NEWS
 =====
 
+## 0.12.0 - 2023-09-11 <a id='0.12.0'></a>
+
+### Added
+
+- whatrequires: add experimental `--extra-exact` argument
+- add support for pydantic v2
+
 ## 0.11.0 - 2023-08-31 <a id='0.11.0'></a>
 
 ### Added
