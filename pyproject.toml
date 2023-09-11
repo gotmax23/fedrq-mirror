@@ -31,7 +31,7 @@ classifiers = [
 dependencies = [
     # This cannot be installed from PyPI
     # "dnf",
-    "pydantic ~= 1.0",
+    "pydantic >= 1, < 3",
     "tomli; python_version<'3.11'",
     "requests",
     "rpm",

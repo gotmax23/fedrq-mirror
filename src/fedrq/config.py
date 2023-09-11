@@ -29,7 +29,7 @@ else:
 
     import tomllib
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, PrivateAttr, validator
 
 from fedrq._compat import StrEnum
 from fedrq._config import ConfigError
@@ -74,13 +74,15 @@ class ReleaseConfig(BaseModel):
         ]
     )
     defpaths: set[str] = Field(default_factory=set)
+    # full_def_paths is undocumented.
+    # It'll be set based on defpaths during model validation.
+    full_def_paths: list[t.Union[Traversable, Path]] = []
     system_repos: bool = True
     append_system_repos: bool = False
 
     koschei_collection: t.Optional[str] = None
     copr_chroot_fmt: t.Optional[str] = None
 
-    full_def_paths: t.ClassVar[list[t.Union[Traversable, Path]]] = []
     repo_aliases: dict[str, str] = {}
     repogs: Repos = Field(DefaultRepoGs, exclude=True)
 
@@ -93,14 +95,16 @@ class ReleaseConfig(BaseModel):
             value | values["defs"] | AliasRepoG.from_str_mapping(values["repo_aliases"])
         )
 
-    @validator("defpaths")
-    def _v_defpaths(cls, value, values) -> dict[str, t.Any]:
+    @validator("full_def_paths", always=True, pre=True)
+    def _v_full_def_paths(cls, value, values) -> list[t.Union[Traversable, Path]]:
+        # We don't care about what `value` is set to.
+        # It should be computed based on defpaths.
+        del value
+
+        defpaths = values["defpaths"].copy()
         flog = mklog(__name__, "ReleaseConfig", "_get_full_defpaths")
-        flog.debug(f"Getting defpaths for {values['name']}: {value}")
-        values["full_def_paths"] = cls._get_full_defpaths(
-            values["name"], value.copy(), values["repo_dirs"]
-        )
-        return value
+        flog.debug(f"Getting defpaths for {values['name']}: {defpaths}")
+        return cls._get_full_defpaths(values["name"], defpaths, values["repo_dirs"])
 
     @validator("matcher")
     def _v_matcher(cls, value: t.Pattern, values: dict[str, t.Any]) -> t.Pattern:
@@ -320,7 +324,7 @@ class RQConfig(BaseModel):
     smartcache: t.Union[bool, t.Literal["always"]] = True
     load_other_metadata: t.Optional[bool] = None
     load_filelists: LoadFilelists = LoadFilelists.auto
-    _backend_mod = None
+    _backend_mod: BackendMod | None = PrivateAttr(None)
     copr_baseurl: str = DEFAULT_COPR_BASEURL
 
     class Config:
@@ -328,7 +332,6 @@ class RQConfig(BaseModel):
             re.Pattern: lambda pattern: pattern.pattern,
             zipfile.Path: lambda path: str(path),
         }
-        underscore_attrs_are_private = True
         validate_assignment = True
 
     @validator("backend")
