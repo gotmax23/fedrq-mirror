@@ -159,3 +159,9 @@ omit = [
     "src/fedrq/_compat.py",
     "src/fedrq/__main__.py",
 ]
+
+[tool.pip-tools]
+resolver = "backtracking"
+allow-unsafe = true
+quiet = true
+strip-extras = true

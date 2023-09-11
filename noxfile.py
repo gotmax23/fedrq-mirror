@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Sequence
 from glob import iglob
 from pathlib import Path
 from shutil import copy2
@@ -28,7 +29,7 @@ LINT_FILES = (f"src/{PROJECT}", "tests/", "noxfile.py")
 RELEASERR = "releaserr @ git+https://git.sr.ht/~gotmax23/releaserr"
 # RELEASERR = "-e../releaserr"
 
-nox.options.sessions = (*LINT_SESSIONS, "dnf_test", "libdnf5_test")
+nox.options.sessions = ("lint", "testa")
 
 
 # Helpers
@@ -53,7 +54,11 @@ def git(session: nox.Session, *args, **kwargs):
 
 
 @nox.session(venv_params=["--system-site-packages"])
-def test(session: nox.Session, backend=None):
+def test(
+    session: nox.Session,
+    backend: str | None = None,
+    posargs: Sequence[str] | None = None,
+):
     if not backend:
         # Make sure pytest is updated, as using the version from system
         # site-packages causes problems with plugins.
@@ -63,7 +68,9 @@ def test(session: nox.Session, backend=None):
     if any(i.startswith("--cov") for i in session.posargs):
         install(session, "coverage[toml]", "pytest-cov")
         env |= {"COVERAGE_FILE": str(tmp / ".coverage")}
-    session.run("pytest", *session.posargs, env=env)
+    session.run(
+        "pytest", *(posargs if posargs is not None else session.posargs), env=env
+    )
 
 
 @nox.session
@@ -230,9 +237,11 @@ def mkdocs(session: nox.Session):
 
 
 @nox.session(venv_backend="none")
-def testa(session):
-    session.notify("dnf_test")
-    session.notify("libdnf5_test")
+def testa(session: nox.Session):
+    session.notify("dnf_test", ["--cov"])
+    session.notify("libdnf5_test", ["--cov"])
+    session.notify("pydanticv1_test")
+    session.notify("coverage")
 
 
 @nox.session(venv_params=["--system-site-packages"])
@@ -247,24 +256,29 @@ def libdnf5_test(session: nox.Session):
     test(session, "libdnf5")
 
 
+@nox.session(venv_params=["--system-site-packages"])
+def pydanticv1_test(session: nox.Session):
+    install(session, ".[test]", constraint="pydanticv1_test")
+    test(session, "dnf", ["tests/unit"])
+
+
 @nox.session(name="pip-compile", python=["3.9"], venv_params=["--download"])
 def pip_compile(session: nox.Session):
     session.install("pip-tools")
     Path("requirements").mkdir(exist_ok=True)
-    # fmt: off
-    shared = (
-        "--resolver", "backtracking",
-        "--upgrade",
-        "--allow-unsafe",
-        "--quiet",
-        "--strip-extras",
-        *session.posargs,
-    )
 
+    # Use --upgrade by default unless a user passes -P.
+    args = list(session.posargs)
+    if not any(
+        arg.startswith("-P") or arg.startswith("--upgrade-package") for arg in args
+    ):
+        args.append("--upgrade")
+
+    # fmt: off
     session.run(
         "pip-compile",
         "-o", "requirements/requirements.txt",
-        *shared,
+        *args,
     )
 
     extras = (
@@ -278,14 +292,22 @@ def pip_compile(session: nox.Session):
         session.run(
             "pip-compile",
             "-o", f"requirements/{extra}.txt",
-            "--extra", extra,
-            *shared,
+            f"--extra={extra}",
+            *args,
         )
-    # fmt: on
 
     extras_a = [f"--extra={extra}" for extra in extras]
-    session.run("pip-compile", "-o", "requirements/all.txt", *extras_a, *shared)
+    session.run("pip-compile", "-o", "requirements/all.txt", *extras_a, *args)
 
     session.run(
-        "pip-compile", "-o", "requirements/srpm.txt", *shared, "requirements/srpm.in"
+        "pip-compile", "-o", "requirements/srpm.txt", *args, "requirements/srpm.in"
     )
+
+    session.run(
+        "pip-compile",
+        "-o", "requirements/pydanticv1_test.txt",
+        "-c", "requirements/pydanticv1.in",
+        "--extra=test",
+        *args,
+    )
+    # fmt: on
