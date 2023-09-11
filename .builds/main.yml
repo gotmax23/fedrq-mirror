@@ -4,25 +4,19 @@
 ---
 image: fedora/rawhide
 packages:
-  - createrepo_c
   - hut
   - pandoc
   - python3-devel
-  - python3-libdnf5
   - python3.11-devel
-  - rpm-build
+  - nox
   - rsync
   - scd2html
   - tar
 secrets:
-  # Production Copr
-  # - 759db354-8651-427c-b00a-0755164c8cae
   # Dev Copr
   - 9683b939-5f2b-4a0a-966e-acd99b5944a0
   # fedrq.gtmx.me
   - 1ec4d132-f9e9-4e00-9ba6-eb5528e6945e
-environment:
-  nox: ./venv/bin/nox
 oauth: pages.sr.ht/PAGES:RW
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
@@ -40,13 +34,12 @@ tasks:
         exit
       fi
       ~/.copr-dev-hook
-  - setup-venv: |
+  - lint: |
       cd fedrq
-      python3 -m venv venv
-      ./venv/bin/pip install nox
+      nox -e lint
   - submit-docs: |
       cd fedrq
-      VIRTUALENV_PYTHON=3.11 $nox -e mkdocs -- build
+      VIRTUALENV_PYTHON=3.11 nox -e mkdocs -- build
       if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
         echo "Submitting docs for main branch"
         ssh-keyscan fedrq.gtmx.me | tee -a ~/.ssh/known_hosts
@@ -79,12 +72,3 @@ tasks:
 
       tar czvf fedrq.tar.gz *.html
       hut pages publish fedrq.tar.gz -d gotmax23.srht.site -s "${site}"
-  - lint: |
-      cd fedrq
-      $nox -e lint
-  - pytest: |
-      cd fedrq
-      $nox -e testa -- -v --durations=7 --cov=fedrq
-  - cov: |
-      cd fedrq
-      $nox -e coverage

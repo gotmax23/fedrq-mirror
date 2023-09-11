@@ -3,23 +3,24 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 ---
-image: fedora/rawhide
-packages:
-  - podman
+image: rockylinux/9
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
+packages:
+  - createrepo_c
+  - rpm-build
+  - python3-devel
+environment:
+  nox: ./venv/bin/nox
 tasks:
-  - setup-container: |
+  - setup: |
       cd fedrq/
-      cat <<- 'EOF' > install.sh
       python3 -m venv venv
       ./venv/bin/pip install -U pip
       ./venv/bin/pip install nox
-      EOF
-      podman run -d -v $(pwd):/pwd:z -w /pwd --name c9ss --init centos:stream9 sleep infinity
-      podman exec c9ss dnf install -y createrepo_c rpm-build
-      podman exec c9ss bash -xeu -o pipefail ./install.sh
   - pytest-py39: |
-      podman exec c9ss ./venv/bin/nox -e test -- -v --durations=7
+      cd fedrq/
+      $nox -e test -- -v --durations=7
   - typing-py39: |
-      podman exec c9ss ./venv/bin/nox -e typing
+      cd fedrq/
+      $nox -e typing
