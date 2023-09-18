@@ -4,6 +4,8 @@
 #
 #    pip-compile --allow-unsafe --extra=doc --output-file=requirements/doc.txt --strip-extras
 #
+annotated-types==0.5.0
+    # via pydantic
 babel==2.12.1
     # via mkdocs-material
 black==23.9.1
@@ -63,7 +65,7 @@ mkdocs-autorefs==0.5.0
     # via mkdocstrings
 mkdocs-exclude==1.0.2
     # via fedrq (pyproject.toml)
-mkdocs-material==9.2.8
+mkdocs-material==9.3.1
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.1.1
     # via mkdocs-material
@@ -71,7 +73,7 @@ mkdocstrings==0.23.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.6.2
+mkdocstrings-python==1.7.0
     # via mkdocstrings
 mypy-extensions==1.0.0
     # via black
@@ -89,8 +91,10 @@ platformdirs==3.10.0
     # via
     #   black
     #   mkdocs
-pydantic==1.10.12
+pydantic==2.3.0
     # via fedrq (pyproject.toml)
+pydantic-core==2.6.3
+    # via pydantic
 pygments==2.16.1
     # via mkdocs-material
 pymdown-extensions==10.3
@@ -125,6 +129,7 @@ typing-extensions==4.7.1
     #   black
     #   mkdocstrings
     #   pydantic
+    #   pydantic-core
 urllib3==2.0.4
     # via requests
 watchdog==3.0.0

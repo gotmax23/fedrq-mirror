@@ -4,7 +4,9 @@
 #
 #    pip-compile --allow-unsafe --extra=typing --output-file=requirements/typing.txt --strip-extras
 #
-argcomplete==3.1.1
+annotated-types==0.5.0
+    # via pydantic
+argcomplete==3.1.2
     # via fedrq (pyproject.toml)
 certifi==2023.7.22
     # via requests
@@ -16,8 +18,10 @@ mypy==1.5.1
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-pydantic==1.10.12
+pydantic==2.3.0
     # via fedrq (pyproject.toml)
+pydantic-core==2.6.3
+    # via pydantic
 requests==2.31.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
@@ -37,5 +41,6 @@ typing-extensions==4.7.1
     #   fedrq (pyproject.toml)
     #   mypy
     #   pydantic
+    #   pydantic-core
 urllib3==2.0.4
     # via requests

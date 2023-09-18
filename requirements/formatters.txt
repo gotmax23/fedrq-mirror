@@ -4,6 +4,8 @@
 #
 #    pip-compile --allow-unsafe --extra=formatters --output-file=requirements/formatters.txt --strip-extras
 #
+annotated-types==0.5.0
+    # via pydantic
 black==23.9.1
     # via fedrq (pyproject.toml)
 certifi==2023.7.22
@@ -24,8 +26,10 @@ pathspec==0.11.2
     # via black
 platformdirs==3.10.0
     # via black
-pydantic==1.10.12
+pydantic==2.3.0
     # via fedrq (pyproject.toml)
+pydantic-core==2.6.3
+    # via pydantic
 requests==2.31.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
@@ -38,5 +42,6 @@ typing-extensions==4.7.1
     # via
     #   black
     #   pydantic
+    #   pydantic-core
 urllib3==2.0.4
     # via requests
