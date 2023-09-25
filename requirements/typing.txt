@@ -32,15 +32,15 @@ tomli==2.0.1 ; python_version < "3.11"
     #   mypy
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-types-requests==2.31.0.2
+types-requests==2.31.0.4
     # via fedrq (pyproject.toml)
 types-urllib3==1.26.25.14
     # via types-requests
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   fedrq (pyproject.toml)
     #   mypy
     #   pydantic
     #   pydantic-core
-urllib3==2.0.4
+urllib3==2.0.5
     # via requests
