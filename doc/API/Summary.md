@@ -50,10 +50,10 @@ preforming a large range of queries. Most of its methods return
 
 **Protocol:** [`fedrq.backends.base.PackageQueryCompat`][fedrq.backends.base.PackageQueryCompat]
 
-**dnf backend:** [`fedrq.backends.dnf.backend.PackageQuery`][fedrq.backends.dnf.backend.PackageQuery] -> `hawkey.Query`
+**dnf backend:** [`fedrq.backends.dnf.backend.PackageQuery`][fedrq.backends.dnf.backend.PackageQuery] -> [`hawkey.Query`][dnf.query.Query]
 
 **libdnf5 backend:** [`fedrq.backends.libdnf5.backend.Package`](fedrq.backends.libdnf5.backend.Package)
-(`libdnf5.package.Package` subclass)
+([`libdnf5.rpm.Package`][libdnf5.rpm.Package] subclass)
 
 PackageQueryCompat is a set like object of PackageCompat objects. It contains
 methods to filter its Packages based on certain criteria. Typically, you'd
@@ -68,21 +68,23 @@ access these through the Repoquery class.
 
 **Protocol:** [`fedrq.backends.base.PackageCompat`][fedrq.backends.base.PackageCompat]
 
-**dnf backend:** [`fedrq.backends.dnf.backend.Package`][fedrq.backends.dnf.backend.Package] -> `dnf.package.Package`
+**dnf backend:** [`fedrq.backends.dnf.backend.Package`][fedrq.backends.dnf.backend.Package] -> [`dnf.package.Package`][dnf.package.Package]
 
 **libdnf5 backend:** [`fedrq.backends.libdnf5.backend.Package`][fedrq.backends.libdnf5.backend.Package]
-(`libdnf5.package.Package` subclass)
+([`libdnf5.rpm.Package`][libdnf5.rpm.Package] subclass)
 
-- `fedrq.backends.libdnf5.backend.Package` - subclass of `libdnf5.rpm.Package`
+- [`fedrq.backends.libdnf5.backend.Package`][fedrq.backends.libdnf5.backend.Package] -
+  subclass of [`libdnf5.rpm.Package`][libdnf5.rpm.Package]
   that implements missing functionality and compatability with
-  `dnf.package.Package`. includes properties to access Package attributes.
+  [`dnf.package.Package`](dnf.package.Package). includes properties to access Package attributes.
   These properties were removed from libdnf5 in favor of `get_foo()` methods.
   It also includes rich comparison support (`__lt__`, `__gt__`, etc.) and
   implements roughly the same sort order as the dnf backend and adds a
   `__hash__()` method so it can e.g. be used in a set or as a dictionary key.
 
-    Importing `fedrq.backends.libdnf5.backend` registers the `Package` subclass
-    so PackageQuery contains our subclass.
+    Importing
+    [`fedrq.backends.libdnf5.backend`][fedrq.backends.libdnf5.backend]
+    registers the `Package` subclass so PackageQuery contains our subclass.
 
 ## [`fedrq.config`][fedrq.config]
 
