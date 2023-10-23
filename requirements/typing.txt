@@ -10,11 +10,11 @@ argcomplete==3.1.2
     # via fedrq (pyproject.toml)
 certifi==2023.7.22
     # via requests
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via requests
 idna==3.4
     # via requests
-mypy==1.6.0
+mypy==1.6.1
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
@@ -32,7 +32,7 @@ tomli==2.0.1 ; python_version < "3.11"
     #   mypy
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-types-requests==2.31.0.9
+types-requests==2.31.0.10
     # via fedrq (pyproject.toml)
 typing-extensions==4.8.0
     # via
@@ -40,7 +40,7 @@ typing-extensions==4.8.0
     #   mypy
     #   pydantic
     #   pydantic-core
-urllib3==2.0.6
+urllib3==2.0.7
     # via
     #   requests
     #   types-requests
