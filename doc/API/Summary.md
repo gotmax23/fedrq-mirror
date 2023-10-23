@@ -52,8 +52,8 @@ preforming a large range of queries. Most of its methods return
 
 **dnf backend:** [`fedrq.backends.dnf.backend.PackageQuery`][fedrq.backends.dnf.backend.PackageQuery] -> [`hawkey.Query`][dnf.query.Query]
 
-**libdnf5 backend:** [`fedrq.backends.libdnf5.backend.Package`](fedrq.backends.libdnf5.backend.Package)
-([`libdnf5.rpm.Package`][libdnf5.rpm.Package] subclass)
+**libdnf5 backend:** [`fedrq.backends.libdnf5.backend.PackageQuery`][fedrq.backends.libdnf5.backend.PackageQuery]
+([`libdnf5.rpm.PackageQuery`][libdnf5.rpm.PackageQuery] subclass)
 
 PackageQueryCompat is a set like object of PackageCompat objects. It contains
 methods to filter its Packages based on certain criteria. Typically, you'd
@@ -76,7 +76,7 @@ access these through the Repoquery class.
 - [`fedrq.backends.libdnf5.backend.Package`][fedrq.backends.libdnf5.backend.Package] -
   subclass of [`libdnf5.rpm.Package`][libdnf5.rpm.Package]
   that implements missing functionality and compatability with
-  [`dnf.package.Package`](dnf.package.Package). includes properties to access Package attributes.
+  [`dnf.package.Package`][dnf.package.Package]. includes properties to access Package attributes.
   These properties were removed from libdnf5 in favor of `get_foo()` methods.
   It also includes rich comparison support (`__lt__`, `__gt__`, etc.) and
   implements roughly the same sort order as the dnf backend and adds a

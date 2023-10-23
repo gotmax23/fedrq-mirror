@@ -540,7 +540,7 @@ class RepoqueryBase(abc.ABC):
         Return a PackageQuery containing the binary RPMS/subpackages produced
         by {packages}.
 
-        :param package: A :class:`PackageQueryCompat` containing source packages
+        :param packages: An interable of `PackageCompat` containing source packages
         """
         arch = kwargs.get("arch")
         if arch == "src":
