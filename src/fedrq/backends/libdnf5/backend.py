@@ -810,7 +810,7 @@ class PackageQuery(libdnf5.rpm.PackageQuery):
         if isinstance(pkgs, (libdnf5.rpm.PackageSet, libdnf5.rpm.PackageQuery)):
             newquery = pkgs
         else:
-            if hasattr(self, "__rq__"):
+            if hasattr(self, "__rq__"):  # noqa SIM108
                 base = self.__rq__.base
             else:
                 base = self.get_base()

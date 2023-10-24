@@ -123,7 +123,6 @@ class WhatCommand(Command):
         brpm_srpm_query = self.rq.resolve_pkg_specs(brpm_sourcerpms)
         subpackages = self.rq.get_subpackages(brpm_srpm_query.union(srpms))
         self.query.filterm(pkg__neq=subpackages)
-        return None
 
     def run(self) -> None:
         self.query = self.rq.query(empty=True)

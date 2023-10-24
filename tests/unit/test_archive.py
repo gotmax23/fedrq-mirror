@@ -30,7 +30,7 @@ def test_archive_extract_specfile_error(
     assert invalid.is_file()
     dest = tmp_path / "abc"
     dest.mkdir()
-    with RPMArchive(invalid) as archive:
+    with RPMArchive(invalid) as archive:  # noqa SIM177
         with pytest.raises(
             RPMArchiveError, match=re.escape(f"{archive} is not a source rpm")
         ):

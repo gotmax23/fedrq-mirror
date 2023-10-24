@@ -1,31 +1,46 @@
-# Copyright (C) 2023 Maxwell G <gotmax@e.email>
-#
+# Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 select = [
-    # flake8-builtins
-    "A",
-    # flake8-bugbear
-    "B",
-    # pycodestyle
-    "E",
-    "W",
-    # pyflakes
-    "F",
-    # unused-arguments
-    "ARG",
+    "A",    # flake8-builtins
+    "ARG",  # unused-arguments
+    "B",    # flake8-bugbear
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "PL",   # pylint
+    "SIM",  # flake8-simplify
+    "W",    # pycodestyle warnings
 ]
 ignore = [
-    # Class attribute is shadowing a python builtin
-    "A003",
+    # function-call-in-default-argument
+    # There's nothing wrong with calling a function that returns an immutable
+    # object
     "B008",
-    # no-explicit-stacklevel
+    # `zip()` without an explicit `strict=` parameter.
+    # `zip()` only has that parameter in py310+
+    "B905",
+    # Allow overwriting loop variable
+    "PLW2901",
+    # Magic value used in comparison
+    # This is a good rule, but the checker is a bit overzealous.
+    "PLR2004",
+    # Too many arguments to function call
+    "PLR0913",
+    # Class attribute is shadowing a Python builtin
+    "A003",
+    # No explicit `stacklevel` keyword argument found
     "B028",
 ]
+
+src = [
+    "src",
+    "tests",
+]
+
 exclude = [
     # Contains vendored code that we don't want to touch.
     "src/fedrq/_compat.py"
 ]
 
-[per-file-ignores]
+[extend-per-file-ignores]
 "tests/*" = ["ARG"]
