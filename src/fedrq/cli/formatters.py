@@ -77,7 +77,7 @@ def _stringify(value: Any, *, multiline_allowed: bool = True) -> str:
     return str(value)
 
 
-class Formatter(abc.ABC):
+class Formatter(metaclass=abc.ABCMeta):
     ATTRS = _ATTRS
     MULTILINE = False
 

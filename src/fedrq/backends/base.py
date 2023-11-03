@@ -251,7 +251,7 @@ class PackageQueryCompat(Protocol):  # pragma: no cover
         ...
 
 
-class BaseMakerBase(abc.ABC):
+class BaseMakerBase(metaclass=abc.ABCMeta):
     """
     Create a Base object, set configuration, and load repos
     """
@@ -410,7 +410,7 @@ class BaseMakerBase(abc.ABC):
         ...
 
 
-class RepoqueryBase(abc.ABC):
+class RepoqueryBase(metaclass=abc.ABCMeta):
     """
     Helpers to query a repository.
     Provides a unified repoquery interface for different backends.

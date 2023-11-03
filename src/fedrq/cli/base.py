@@ -107,7 +107,7 @@ def v_fatal_error(
     return wrapper
 
 
-class Command(abc.ABC):
+class Command(metaclass=abc.ABCMeta):
     config: RQConfig
     release: Release
     query: PackageQueryCompat
