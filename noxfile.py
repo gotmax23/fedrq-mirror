@@ -81,6 +81,12 @@ def coverage(session: nox.Session):
     session.run("coverage", "report", "--fail-under=90")
 
 
+@nox.session
+def covtest(session: nox.Session):
+    for name in ("dnf_test", "libdnf5_test", "pydanticv1_test", "coverage"):
+        session.notify(name, ["--cov"])
+
+
 @nox.session(venv_backend="none")
 def lint(session: nox.Session):
     """
