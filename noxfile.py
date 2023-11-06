@@ -30,6 +30,7 @@ RELEASERR = "releaserr @ git+https://git.sr.ht/~gotmax23/releaserr"
 # RELEASERR = "-e../releaserr"
 
 nox.options.sessions = ("lint", "covtest")
+nox.options.reuse_existing_virtualenvs = True
 
 
 # Helpers
