@@ -44,6 +44,8 @@ fedrq is a tool to simplify querying the Fedora and EPEL repositories.
 :  Find the packages that Suggest *[package...]*
 |  whatsupplements
 :  Find the packages that Supplement *[package...]*
+|  make-cache
+:  Load the repodata for the current branch/repo config
 
 # OPTIONS
 
