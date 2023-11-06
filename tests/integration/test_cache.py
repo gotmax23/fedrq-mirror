@@ -3,11 +3,12 @@
 
 from __future__ import annotations
 
-from pytest import CaptureFixture
+from pytest import CaptureFixture, mark
 
 import fedrq.cli
 
 
+@mark.no_rpm_mock
 def test_cli_make_cache(capsys: CaptureFixture):
     fedrq.cli.main(["make-cache", "-b", "f38"])
     out, err = capsys.readouterr()
