@@ -6,11 +6,11 @@
 #
 annotated-types==0.6.0
     # via pydantic
-argcomplete==3.1.2
+argcomplete==3.1.4
     # via fedrq (pyproject.toml)
 certifi==2023.7.22
     # via requests
-charset-normalizer==3.3.1
+charset-normalizer==3.3.2
     # via requests
 idna==3.4
     # via requests
