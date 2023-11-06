@@ -55,15 +55,15 @@ class ChangelogCommand(Command):
     def make_parser(
         cls, parser_func=argparse.ArgumentParser, *, add_help: bool = False, **kwargs
     ) -> argparse.ArgumentParser:
-        kwargs["description"] = cls.__doc__
-        kwargs["parents"] = [
-            cls.parent_parser(formatter=False, latest=False),
-            cls.arch_parser(),
-        ]
-        if add_help:
-            kwargs["help"] = cls.__doc__
-
-        parser = parser_func(**kwargs)
+        parser = super().make_parser(
+            parser_func,
+            add_help=add_help,
+            parents=[
+                cls.parent_parser(formatter=False, latest=False),
+                cls.arch_parser(),
+            ],
+            **kwargs,
+        )
         parser.add_argument("--entry-limit", type=_positive_int)
         return parser
 

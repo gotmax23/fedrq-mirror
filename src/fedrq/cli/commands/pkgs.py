@@ -28,15 +28,13 @@ class Pkgs(Command):
         add_help: bool = False,
         **kwargs,
     ) -> argparse.ArgumentParser:
-        kwargs.update(
-            dict(
-                description=Pkgs.__doc__,
-                parents=[cls.parent_parser(), cls.arch_parser(), cls.resolve_parser()],
-            )
+        parser = super().make_parser(
+            parser_func,
+            parents=[cls.parent_parser(), cls.arch_parser(), cls.resolve_parser()],
+            help="Find the packages that match a list of package specs",
+            add_help=add_help,
+            **kwargs,
         )
-        if add_help:
-            kwargs["help"] = "Find the packages that match a list of package specs"
-        parser = parser_func(**kwargs)
 
         return parser
 
