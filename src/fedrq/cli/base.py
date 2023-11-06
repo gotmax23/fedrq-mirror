@@ -121,7 +121,8 @@ class Command(metaclass=abc.ABCMeta):
         flog = mklog(__name__, self.__class__.__name__)
         flog.debug("args=%s", args)
 
-        self.get_names()
+        if hasattr(self.args, "names"):
+            self.get_names()
 
         try:
             self.config = self._get_config()
@@ -253,17 +254,24 @@ class Command(metaclass=abc.ABCMeta):
 
     @classmethod
     def parent_parser(
-        cls, *, formatter: bool = True, latest: bool = True
+        cls, *, formatter: bool = True, latest: bool = True, name=True
     ) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(
             add_help=False, parents=[cls.branch_repo_parser()]
         )
-        parser.add_argument(  # type: ignore[attr-defined]
-            "names", metavar="NAME", nargs="*", help="Mutually exclusive with --stdin"
-        ).completer = lambda **_: ()
-        parser.add_argument(
-            "-i", "--stdin", help="Read package names from stdin.", action="store_true"
-        )
+        if name:
+            parser.add_argument(  # type: ignore[attr-defined]
+                "names",
+                metavar="NAME",
+                nargs="*",
+                help="Mutually exclusive with --stdin",
+            ).completer = lambda **_: ()
+            parser.add_argument(
+                "-i",
+                "--stdin",
+                help="Read package names from stdin.",
+                action="store_true",
+            )
         if latest:
             parser.add_argument("-l", "--latest", default=1, help="'all' or an integer")
         if formatter:
