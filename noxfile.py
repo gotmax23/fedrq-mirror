@@ -29,7 +29,7 @@ LINT_FILES = (f"src/{PROJECT}", "tests/", "noxfile.py")
 RELEASERR = "releaserr @ git+https://git.sr.ht/~gotmax23/releaserr"
 # RELEASERR = "-e../releaserr"
 
-nox.options.sessions = ("lint", "testa")
+nox.options.sessions = ("lint", "covtest")
 
 
 # Helpers
