@@ -6,13 +6,13 @@
 #
 annotated-types==0.6.0
     # via pydantic
-argcomplete==3.1.4
+argcomplete==3.1.6
     # via fedrq (pyproject.toml)
 babel==2.13.1
     # via mkdocs-material
 binaryornot==0.4.4
     # via reuse
-black==23.10.1
+black==23.11.0
     # via fedrq (pyproject.toml)
 boolean-py==4.0
     # via
@@ -38,7 +38,7 @@ exceptiongroup==1.1.3
     # via pytest
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.36.9
+griffe==0.37.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
@@ -95,9 +95,9 @@ mkdocstrings==0.23.0
     #   fedrq (pyproject.toml)
     #   mkdocstrings
     #   mkdocstrings-python
-mkdocstrings-python==1.7.3
+mkdocstrings-python==1.7.4
     # via mkdocstrings
-mypy==1.6.1
+mypy==1.7.0
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via
@@ -114,7 +114,7 @@ pathspec==0.11.2
     # via
     #   black
     #   mkdocs
-platformdirs==3.11.0
+platformdirs==4.0.0
     # via
     #   black
     #   mkdocs
@@ -126,7 +126,7 @@ pydantic-core==2.10.1
     # via pydantic
 pygments==2.16.1
     # via mkdocs-material
-pymdown-extensions==10.3.1
+pymdown-extensions==10.4
     # via
     #   mkdocs-material
     #   mkdocstrings
@@ -157,7 +157,7 @@ reuse==2.1.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.1.4
+ruff==0.1.5
     # via fedrq (pyproject.toml)
 six==1.16.0
     # via python-dateutil

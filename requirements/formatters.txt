@@ -6,7 +6,7 @@
 #
 annotated-types==0.6.0
     # via pydantic
-black==23.10.1
+black==23.11.0
     # via fedrq (pyproject.toml)
 certifi==2023.7.22
     # via requests
@@ -24,7 +24,7 @@ packaging==23.2
     # via black
 pathspec==0.11.2
     # via black
-platformdirs==3.11.0
+platformdirs==4.0.0
     # via black
 pydantic==2.4.2
     # via fedrq (pyproject.toml)

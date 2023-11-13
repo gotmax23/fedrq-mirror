@@ -14,7 +14,7 @@ pygit2==1.13.2
     # via fclogr
 rpm==0.1.0
     # via specfile
-specfile==0.23.0
+specfile==0.24.0
     # via fclogr
 typing-extensions==4.8.0
     # via specfile

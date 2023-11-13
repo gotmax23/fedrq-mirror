@@ -6,7 +6,7 @@
 #
 annotated-types==0.6.0
     # via pydantic
-argcomplete==3.1.4
+argcomplete==3.1.6
     # via fedrq (pyproject.toml)
 certifi==2023.7.22
     # via requests
@@ -14,7 +14,7 @@ charset-normalizer==3.3.2
     # via requests
 idna==3.4
     # via requests
-mypy==1.6.1
+mypy==1.7.0
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
