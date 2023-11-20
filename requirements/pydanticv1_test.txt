@@ -4,7 +4,7 @@
 #
 #    pip-compile --allow-unsafe --constraint=requirements/pydanticv1.in --extra=test --output-file=requirements/pydanticv1_test.txt --strip-extras
 #
-certifi==2023.7.22
+certifi==2023.11.17
     # via requests
 charset-normalizer==3.3.2
     # via requests
@@ -40,5 +40,5 @@ tomli-w==1.0.0
     # via fedrq (pyproject.toml)
 typing-extensions==4.8.0
     # via pydantic
-urllib3==2.0.7
+urllib3==2.1.0
     # via requests

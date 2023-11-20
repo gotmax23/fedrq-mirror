@@ -6,15 +6,15 @@
 #
 annotated-types==0.6.0
     # via pydantic
-certifi==2023.7.22
+certifi==2023.11.17
     # via requests
 charset-normalizer==3.3.2
     # via requests
 idna==3.4
     # via requests
-pydantic==2.4.2
+pydantic==2.5.1
     # via fedrq (pyproject.toml)
-pydantic-core==2.10.1
+pydantic-core==2.14.3
     # via pydantic
 requests==2.31.0
     # via fedrq (pyproject.toml)
@@ -26,5 +26,5 @@ typing-extensions==4.8.0
     # via
     #   pydantic
     #   pydantic-core
-urllib3==2.0.7
+urllib3==2.1.0
     # via requests
