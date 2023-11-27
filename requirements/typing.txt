@@ -12,15 +12,15 @@ certifi==2023.11.17
     # via requests
 charset-normalizer==3.3.2
     # via requests
-idna==3.4
+idna==3.6
     # via requests
-mypy==1.7.0
+mypy==1.7.1
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-pydantic==2.5.1
+pydantic==2.5.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.14.3
+pydantic-core==2.14.5
     # via pydantic
 requests==2.31.0
     # via fedrq (pyproject.toml)
