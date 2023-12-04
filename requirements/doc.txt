@@ -31,7 +31,7 @@ griffe==0.38.0
     #   mkdocstrings-python
 idna==3.6
     # via requests
-importlib-metadata==6.8.0
+importlib-metadata==7.0.0
     # via
     #   markdown
     #   mkdocs
