@@ -344,10 +344,15 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
 
     def sets(self, conf: dict[str, Any], substitutions: dict[str, Any]) -> None:
         """
-        :param conf: A dict of configuration options. Call self.set() for each
-        k-v pair.
-        :param substitutions: A dict of substitutions/vars options. Call self.set_var()
-        for each k-v pair.
+        Set options on the base object
+
+        Args:
+            conf:
+                A dict of configuration options. Call self.set() for each k-v
+                pair.
+            substitutions:
+                A dict of substitutions/vars options. Call self.set_var() for
+                each k-v pair.
         """
         for opt in conf.items():
             self.set(*opt)
@@ -357,7 +362,11 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
     def load_filelists(self, enable: bool = True) -> None:  # noqa: ARG002
         # Can be overriden by subclasses. Purposely isn't an @abstractmethod.
         """
-        Load the filelists if they're not already enabled default
+        Load the filelists if they're not already enabled by default
+
+        Args:
+            enable:
+                Whether to enable or disable filelists
         """
         return None
 
@@ -365,11 +374,22 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
     def load_changelogs(self, enable: bool = True) -> None:
         """
         Load changelog metadata
+
+        Args:
+            enable:
+                Whether to enable or disable filelists
         """
 
     def load_release_repos(self, release: Release, set_releasever: bool = True) -> None:
         """
         Load the repositories from a fedrq.config.Release object
+
+        Args:
+            release:
+                [`Release`][fedrq.config.Release] object
+            set_releasever:
+                Whether to set the `$releasever` based on the release or just
+                leave it alone
         """
         if set_releasever:
             self.set_var("releasever", release.version)
@@ -384,11 +404,16 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         release.repog.load(self, release.config, release)
 
     @abc.abstractmethod
-    def create_repo(self, repoid: str, **kwargs) -> None:
+    def create_repo(self, repoid: str, **kwargs: Any) -> None:
         """
         Add a Repo object to the repo sack and configure it.
-        :param kwargs: key-values options that should be set on the Repo object
-                       values (like $basearch) will be substituted automatically.
+
+        Args:
+            repoid:
+                Repository ID
+            kwargs:
+                key-values options that should be set on the Repo object values
+                (like $basearch) will be substituted automatically.
         """
         ...
 
@@ -443,10 +468,16 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
         https://dnf5.readthedocs.io/en/latest/misc/specs.7.html
         for valid forms.
 
-        :param specs: Package specs to resolve.
-        :param resolve: Whether to resolve file paths or virtual Provides in
-                        addition to package specs
-        :param latest: Limit packages with the same name and arch.
+        Args:
+            specs:
+                Package specs to resolve.
+            resolve:
+                Whether to resolve file paths or virtual Provides in addition
+                to package specs
+            latest:
+                Limit packages with the same name and arch.
+            with_src:
+                Whether to consider `.src` packages when resolving `specs`
         """
         ...
 
@@ -540,7 +571,9 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
         Return a PackageQuery containing the binary RPMS/subpackages produced
         by {packages}.
 
-        :param packages: An interable of `PackageCompat` containing source packages
+        Args:
+            packages:
+                An interable of `PackageCompat` containing source packages
         """
         arch = kwargs.get("arch")
         if arch == "src":
@@ -586,7 +619,9 @@ class ChangelogEntry:
 class _get_changelogs(Protocol):
     def __call__(self, package: Any) -> Iterator[ChangelogEntry]:
         """
-        :param package: A backend's Package object
+        Args:
+            package:
+                A backend's Package object
         """
         ...
 

@@ -150,11 +150,14 @@ class BaseMaker(BaseMakerBase):
                 LOG.debug("Ensuring that %s is enabled.", repo.id)
                 self.base.repos[repo.id].enable()
 
-    def create_repo(self, repoid: str, **kwargs) -> None:
+    def create_repo(self, repoid: str, **kwargs: t.Any) -> None:
         """
         Add a Repo object to the repo sack and configure it.
-        :param kwargs: key-values options that should be set on the Repo object
-                       values (like $basearch) will be substituted automatically.
+
+        Args:
+            kwargs:
+                key-values options that should be set on the Repo object values
+                (like `$basearch`) will be substituted automatically.
         """
         self.base.repos.add_new_repo(repoid, self.conf, **kwargs)
 

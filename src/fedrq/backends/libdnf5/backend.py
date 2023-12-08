@@ -240,12 +240,17 @@ class BaseMaker(BaseMakerBase):
     ) -> None:
         """
         Initialize and configure the base object.
-        :param base: Pass in a :class:`libdnf.base.Base object` to configure
-        instead of creating a new one.
-        :param initialized: Set to True if base.setup() has already been
-        called. Only applies when `base` is passed.
-        :param config_loaded: Set to True if base.load_config_from_file()
-        has already been called. Only applies when `base` is passed.
+
+        Args:
+            base:
+                Pass in a [`libdnf.base.Base`][libdnf5.base.Base] object to
+                configure instead of creating a new one.
+            initialized:
+                Set to True if `base.setup()` has already been called. Only
+                applies when `base` is passed.
+            config_loaded:
+                Set to True if base.load_config_from_file() has already been
+                called. Only applies when `base` is passed.
         """
         self.base = base or libdnf5.base.Base()
         self.initialized = initialized if base else False
@@ -442,11 +447,14 @@ class BaseMaker(BaseMakerBase):
     def load_changelogs(self, enable: bool = True) -> None:
         self._add_metadata_type(libdnf5.conf.METADATA_TYPE_OTHER, enable)
 
-    def create_repo(self, repoid: str, **kwargs) -> None:
+    def create_repo(self, repoid: str, **kwargs: t.Any) -> None:
         """
         Add a Repo object to the repo sack and configure it.
-        :param kwargs: key-values options that should be set on the Repo object
-                       values (like $basearch) will be substituted automatically.
+
+        Args:
+            kwargs:
+                key-values options that should be set on the Repo object values
+                (like $basearch) will be substituted automatically.
         """
         repo = self.rs.create_repo(repoid)
         config = repo.get_config()

@@ -260,14 +260,20 @@ class Release:
         fill_sack: bool = True,
     ) -> dnf.Base | libdnf5.base.Base:
         """
-        :param config: An RQConfig object. If this is not passed, `self.config` is used.
-        :param base_conf: Base session configuration
-        :param base_vars: Base session vars/substitutions (arch, basearch,
+        Args:
+            config:
+                An RQConfig object. If this is not passed, `self.config` is used.
+            base_conf:
+                Base session configuration
+            base_vars:
+                Base session vars/substitutions (arch, basearch,
                                                            releasever, etc.)
-        :param base_maker: Existing BaseMaker object to configure.
-                           If base_maker is None, a new one will be created.
-        :param fill_sack: Whether to fill the Base object's package sack or
-                          just return the Base object after applying configuration.
+            base_maker:
+                Existing BaseMaker object to configure. If base_maker is None,
+                a new one will be created.
+            fill_sack:
+                Whether to fill the Base object's package sack or just return
+                the Base object after applying configuration.
         """
         if config is None:
             config = self.config
@@ -392,11 +398,16 @@ class RQConfig(BaseModel):
         {branch} and {repo}, creates a (lib)dnf(5).base.Base session, and
         returns a Repoquery object.
 
-        :param branch: branch name
-        :param repo: repo class. defaults to 'base'.
-        :param base_conf: Base session configuration
-        :param base_vars: Base session vars/substitutions (arch, basearch,
-                                                           releasever, etc.)
+        Args:
+            branch:
+                branch name
+            repo:
+                repo class. defaults to 'base'.
+            base_conf:
+                Base session configuration
+            base_vars:
+                Base session vars/substitutions (arch, basearch, releasever,
+                                                 etc.)
         """
         release = self.get_release(branch, repo)
         return self.backend_mod.Repoquery(release.make_base(self, base_conf, base_vars))
