@@ -88,7 +88,7 @@ def download(
 
 class DownloadCommand(Command):
     """
-    EXPERIMENTAL: Download an (S)RPM from the repos.
+    Download an (S)RPM from the repos.
     No gpg checking is preformed.
     """
 
@@ -166,7 +166,7 @@ class DownloadCommand(Command):
 
 class DownloadSpecCommand(DownloadCommand):
     """
-    EXPERIMENTAL: Download an SRPM and extract its specfile.
+    Download an SRPM and extract its specfile.
     No gpg checking is preformed.
     """
 

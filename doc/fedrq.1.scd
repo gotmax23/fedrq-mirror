@@ -46,6 +46,10 @@ fedrq is a tool to simplify querying the Fedora and EPEL repositories.
 :  Find the packages that Supplement *[package...]*
 |  make-cache
 :  Load the repodata for the current branch/repo config
+|  download
+:  Download an RPM from the repos. No GPG checking is performed.
+|  download-spec
+:  Download an (S)RPM and extract its specfile. No GPG checking is performed.
 
 # OPTIONS
 
@@ -143,6 +147,11 @@ These options have the same meaning across multiple subcommands.
 	Only show subpackages whose name matches this string. Glob
 	patterns are permitted. When specified multiple times, _any_
 	match is included.
+
+## download and download-spec
+
+*-o*, *--destdir* <path>
+	Directory in which to download/extract files
 
 # FORMATTERS
 
