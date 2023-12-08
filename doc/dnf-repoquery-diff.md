@@ -20,7 +20,7 @@ Queries default to `rawhide` and enable the `rawhide` and `rawhide-source`
 repositories.
 This can be changed using the `-b` / `--branch` flags on the CLI or permanently
 with the `default_branch` option in the configuration.
-See the [BUILTIN RELEASES](../fedrq1/#builtin-releases) section of `man fedrq`
+See the [BUILTIN RELEASES](fedrq1.md/#builtin-releases) section of `man fedrq`
 for valid `--branch` options.
 Users can of course configure their own custom release profiles.
 You can use the pseudo `-b local` release which uses the default repositories
@@ -50,7 +50,7 @@ Release configurations contain three main parts:
 fedrq can read configuration from .repo files located outside of
 `/etc/yum.repos.d/` if they're specified in the release's `defpaths`.
 
-The configuration syntax is described more in [`man 5 fedrq`](../fedrq5).
+The configuration syntax is described more in [`man 5 fedrq`](fedrq5.md).
 
 ## --latest
 
@@ -71,7 +71,7 @@ For example, you can pass `-b f37 -r @copr:gotmax23/fedrq` to query *only* the
 @copr:gotmax23/fedrq` if you want to enable that copr's repository on top of
 the base repositories.
 
-See the [REPO CLASSES](../fedrq1/#repo-classes) section of `man fedrq` for more
+See the [REPO CLASSES](fedrq1.md/#repo-classes) section of `man fedrq` for more
 information.
 
 ## Subcommands
@@ -79,5 +79,5 @@ information.
 fedrq's CLI interface is split into subcommands unlike `dnf repoquery` which
 relies on flags.
 
-See [`man fedrq`](../fedrq1) for an in depth orientation of fedrq's CLI
+See [`man fedrq`](fedrq1.md) for an in depth orientation of fedrq's CLI
 interface.
