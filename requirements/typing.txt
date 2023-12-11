@@ -6,7 +6,7 @@
 #
 annotated-types==0.6.0
     # via pydantic
-argcomplete==3.1.6
+argcomplete==3.2.1
     # via fedrq (pyproject.toml)
 certifi==2023.11.17
     # via requests
@@ -34,7 +34,7 @@ tomli-w==1.0.0
     # via fedrq (pyproject.toml)
 types-requests==2.31.0.10
     # via fedrq (pyproject.toml)
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   fedrq (pyproject.toml)
     #   mypy

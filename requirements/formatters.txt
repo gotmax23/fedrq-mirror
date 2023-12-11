@@ -22,9 +22,9 @@ mypy-extensions==1.0.0
     # via black
 packaging==23.2
     # via black
-pathspec==0.11.2
+pathspec==0.12.1
     # via black
-platformdirs==4.0.0
+platformdirs==4.1.0
     # via black
 pydantic==2.5.2
     # via fedrq (pyproject.toml)
@@ -38,7 +38,7 @@ tomli==2.0.1 ; python_version < "3.11"
     # via
     #   black
     #   fedrq (pyproject.toml)
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   black
     #   pydantic

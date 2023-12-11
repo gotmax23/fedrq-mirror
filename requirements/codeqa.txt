@@ -40,11 +40,11 @@ reuse==2.1.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.1.6
+ruff==0.1.7
     # via fedrq (pyproject.toml)
 tomli==2.0.1 ; python_version < "3.11"
     # via fedrq (pyproject.toml)
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   pydantic
     #   pydantic-core
