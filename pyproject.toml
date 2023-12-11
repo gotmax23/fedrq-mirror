@@ -58,7 +58,8 @@ doc = [
 ]
 formatters = [
     "black",
-    "isort",
+    # 5.13.0 introduced https://github.com/PyCQA/isort/issues/2206
+    "isort !=5.13.0",
 ]
 typing = [
     "mypy",
