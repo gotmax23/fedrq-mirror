@@ -56,20 +56,27 @@ class _DefaultBackend:
         self.backend: BackendMod | None = None
 
     def __call__(
-        self, default: str | None = None, fallback: bool = False
+        self,
+        default: str | None = None,
+        fallback: bool = False,
+        allow_multiple_backends_per_process: bool = True,
     ) -> BackendMod:
-        if not self.backend:
-            self.backend = self._get_backend(default, fallback)
-            LOG.info("Using %s backend", self.backend.BACKEND)
-        elif default and default != self.backend.BACKEND:
+        if (
+            not allow_multiple_backends_per_process
+            and default
+            and self.backend
+            and default != self.backend.BACKEND
+        ):
             warnings.warn(
                 f"Falling back to {self.backend.BACKEND}. {default} cannot be used."
             )
+        elif not self.backend:
+            self.backend = self._get_backend(default, fallback)
+            LOG.info("Using %s backend", self.backend.BACKEND)
         return self.backend
 
-    def _get_backend(
-        self, default: str | None = None, fallback: bool = False
-    ) -> BackendMod:
+    @staticmethod
+    def _get_backend(default: str | None = None, fallback: bool = False) -> BackendMod:
         default = default or DEFAULT_BACKEND
         if default not in BACKENDS:
             raise MissingBackendError(f"Invalid backend {default!r}.")
