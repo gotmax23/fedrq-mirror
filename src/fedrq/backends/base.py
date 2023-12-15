@@ -9,16 +9,7 @@ import importlib.resources
 import logging
 from collections.abc import Callable, Collection, Iterable, Iterator
 from datetime import date
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Optional,
-    Protocol,
-    TypedDict,
-    TypeVar,
-    cast,
-    runtime_checkable,
-)
+from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar, runtime_checkable
 from warnings import warn
 
 if TYPE_CHECKING:
@@ -444,6 +435,14 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         ...
 
 
+class NEVRAFormsCompat(Protocol):
+    NEVRA: int
+    NEVR: int
+    NEV: int
+    NA: int
+    NAME: int
+
+
 class RepoqueryBase(metaclass=abc.ABCMeta):
     """
     Helpers to query a repository.
@@ -665,6 +664,7 @@ class BackendMod(Protocol):
     BACKEND: str
     BaseMaker: type[BaseMakerBase]
     Package: type[PackageCompat]
+    NEVRAForms: type[NEVRAFormsCompat]
     PackageQuery: type[PackageQueryCompat]
     Repoquery: type[RepoqueryBase]
     RepoError: type[BaseException]

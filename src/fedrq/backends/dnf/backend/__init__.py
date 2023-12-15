@@ -13,6 +13,7 @@ import logging
 import sys
 import typing as t
 from collections.abc import Collection, Iterator
+from enum import Enum
 from functools import cache
 
 from fedrq._utils import filter_latest
@@ -174,6 +175,14 @@ class BaseMaker(BaseMakerBase):
         self.base.repos.enable_source_repos()
 
 
+class NEVRAForms(int, Enum):
+    NEVRA = hawkey.FORM_NEVRA
+    NEVR = hawkey.FORM_NEVR
+    NEV = hawkey.FORM_NEV
+    NA = hawkey.FORM_NA
+    NAME = hawkey.FORM_NAME
+
+
 class Repoquery(RepoqueryBase):
     def __init__(self, base: dnf.Base) -> None:
         self.base: dnf.Base = base
@@ -195,21 +204,21 @@ class Repoquery(RepoqueryBase):
         with_filenames: bool | None = None,
         with_provides: bool | None = None,
         resolve_provides: bool | None = None,
+        nevra_forms: list[NEVRAForms] | None = None,
     ) -> dnf.query.Query:
-        ...
         opts = self._get_resolve_options(
             resolve, with_filenames, with_provides, resolve_provides
         )
+        resolve_provides = opts.pop("resolve_provides")
+        opts["with_src"] = with_src
+        if nevra_forms:
+            opts["forms"] = nevra_forms
+
         query = self.query(empty=True)
         for p in specs:
-            subject = dnf.subject.Subject(p).get_best_query(
-                self.base.sack,
-                with_provides=opts["with_provides"],
-                with_filenames=opts["with_filenames"],
-                with_src=with_src,
-            )
+            subject = dnf.subject.Subject(p).get_best_query(self.base.sack, **opts)
             query = query.union(subject)
-        if opts["resolve_provides"]:
+        if resolve_provides:
             query = query.union(self.query(provides=specs))
         filter_latest(query, latest)
         return query
@@ -243,6 +252,7 @@ __all__ = (
     "BACKEND",
     "BaseMaker",
     "Package",
+    "NEVRAForms",
     "PackageQuery",
     "RepoError",
     "Repoquery",

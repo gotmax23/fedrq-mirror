@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from fedrq.backends.dnf.backend import (
         BACKEND,
         BaseMaker,
+        NEVRAForms,
         Repoquery,
         get_changelogs,
         get_releasever,
@@ -27,6 +28,7 @@ else:
     from fedrq.backends.base import (
         BackendMod,
         BaseMakerBase,
+        NEVRAFormsCompat,
         PackageCompat,
         PackageQueryCompat,
         RepoqueryBase,
@@ -36,6 +38,7 @@ else:
     backend: BackendMod = get_default_backend()
     BaseMaker: type[BaseMakerBase] = backend.BaseMaker
     Package: type[PackageCompat] = backend.Package
+    NEVRAForms: type[NEVRAFormsCompat] = backend.NEVRAForms
     PackageQuery: type[PackageQueryCompat] = backend.PackageQuery
     RepoError: type[BaseException] = backend.RepoError
     Repoquery: type[RepoqueryBase] = backend.Repoquery
@@ -46,6 +49,7 @@ else:
 __all__ = (
     "BACKEND",
     "BaseMaker",
+    "NEVRAForms",
     "Repoquery",
     "backend",
     "get_releasever",

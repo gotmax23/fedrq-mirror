@@ -18,6 +18,7 @@ import warnings
 from collections.abc import Collection, Iterable, Iterator
 from datetime import datetime as DT
 from datetime import timezone as TZ
+from enum import Enum
 from os.path import join as path_join
 from urllib.parse import urlparse
 
@@ -868,6 +869,14 @@ def _convert_value(key: str, value: _ValT) -> t.Union[list[_ValT], _ValT]:
     return value
 
 
+class NEVRAForms(int, Enum):
+    NEVRA = libdnf5.rpm.Nevra.Form_NEVRA
+    NEVR = libdnf5.rpm.Nevra.Form_NEVR
+    NEV = libdnf5.rpm.Nevra.Form_NEV
+    NA = libdnf5.rpm.Nevra.Form_NA
+    NAME = libdnf5.rpm.Nevra.Form_NAME
+
+
 class Repoquery(RepoqueryBase):
     def __init__(self, base: libdnf5.base.Base) -> None:
         self.base: libdnf5.base.Base = base
@@ -897,6 +906,7 @@ class Repoquery(RepoqueryBase):
         with_filenames: bool | None = None,
         with_provides: bool | None = None,
         resolve_provides: bool | None = None,
+        nevra_forms: list[NEVRAForms] | None = None,
     ) -> PackageQuery:
         opts = self._get_resolve_options(
             resolve, with_filenames, with_provides, resolve_provides
@@ -904,6 +914,9 @@ class Repoquery(RepoqueryBase):
         settings = libdnf5.base.ResolveSpecSettings()
         settings.with_filenames = opts["with_filenames"]
         settings.with_provides = opts["with_provides"]
+        if nevra_forms:
+            for form in nevra_forms:
+                settings.nevra_forms.append(form)
 
         r_query = self.query(empty=True)
         for spec in specs:
@@ -944,6 +957,7 @@ __all__ = (
     "BACKEND",
     "BaseMaker",
     "Package",
+    "NEVRAForms",
     "PackageQuery",
     "Repoquery",
     "RepoError",
