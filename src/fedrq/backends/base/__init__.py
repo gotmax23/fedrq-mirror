@@ -466,14 +466,13 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
         with_filenames: bool | None,
         with_provides: bool | None,
         resolve_provides: bool | None,
-    ) -> dict[str, bool]:
+    ) -> dict[str, Any]:
         opts: dict[str, bool | None] = {
             "with_filenames": with_filenames,
             "with_provides": with_provides,
             "resolve_provides": resolve_provides,
         }
-        opts = {key: resolve if opt is None else opt for key, opt in opts.items()}
-        return opts
+        return {key: resolve if opt is None else opt for key, opt in opts.items()}
 
     @abc.abstractmethod
     def resolve_pkg_specs(
