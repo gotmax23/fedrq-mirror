@@ -62,7 +62,7 @@ class BaseMaker(BaseMakerBase):
 
     def set_var(self, key: str, value: t.Any) -> None:
         if key not in self.base.conf.substitutions:
-            raise KeyError(f"{key} is not a valid substituion")
+            raise KeyError(f"{key} is not a valid substitution")
         self.set(key, value)
 
     def load_changelogs(self, enable: bool = True) -> None:
