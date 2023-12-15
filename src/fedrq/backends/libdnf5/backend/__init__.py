@@ -893,17 +893,24 @@ class Repoquery(RepoqueryBase):
         resolve: bool = False,
         latest: int | None = None,
         with_src: bool = True,
+        *,
+        with_filenames: bool | None = None,
+        with_provides: bool | None = None,
+        resolve_provides: bool | None = None,
     ) -> PackageQuery:
+        opts = self._get_resolve_options(
+            resolve, with_filenames, with_provides, resolve_provides
+        )
         settings = libdnf5.base.ResolveSpecSettings()
-        settings.with_filenames = resolve
-        settings.with_provides = resolve
+        settings.with_filenames = opts["with_filenames"]
+        settings.with_provides = opts["with_provides"]
 
         r_query = self.query(empty=True)
         for spec in specs:
             query = self._query()
             query.resolve_pkg_spec(spec, settings, with_src)
             r_query.union(query)
-        if resolve:
+        if opts["resolve_provides"]:
             r_query = r_query.union(self.query(provides=specs))
         filter_latest(r_query, latest)
         return r_query

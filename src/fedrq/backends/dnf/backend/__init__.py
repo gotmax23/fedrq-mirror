@@ -191,20 +191,25 @@ class Repoquery(RepoqueryBase):
         resolve: bool = False,
         latest: int | None = None,
         with_src: bool = True,
+        *,
+        with_filenames: bool | None = None,
+        with_provides: bool | None = None,
+        resolve_provides: bool | None = None,
     ) -> dnf.query.Query:
         ...
-        LOG.debug(f"specs={specs}, resolve={resolve}, latest={latest}")
+        opts = self._get_resolve_options(
+            resolve, with_filenames, with_provides, resolve_provides
+        )
         query = self.query(empty=True)
         for p in specs:
             subject = dnf.subject.Subject(p).get_best_query(
                 self.base.sack,
-                with_provides=resolve,
-                with_filenames=resolve,
+                with_provides=opts["with_provides"],
+                with_filenames=opts["with_filenames"],
                 with_src=with_src,
             )
             query = query.union(subject)
-            # LOG.debug(f"subject query: {tuple(subject)}")
-        if resolve:
+        if opts["resolve_provides"]:
             query = query.union(self.query(provides=specs))
         filter_latest(query, latest)
         return query

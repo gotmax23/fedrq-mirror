@@ -9,7 +9,16 @@ import importlib.resources
 import logging
 from collections.abc import Callable, Collection, Iterable, Iterator
 from datetime import date
-from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar, runtime_checkable
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Optional,
+    Protocol,
+    TypedDict,
+    TypeVar,
+    cast,
+    runtime_checkable,
+)
 from warnings import warn
 
 if TYPE_CHECKING:
@@ -452,6 +461,21 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
         """
         ...
 
+    def _get_resolve_options(
+        self,
+        resolve: bool,
+        with_filenames: bool | None,
+        with_provides: bool | None,
+        resolve_provides: bool | None,
+    ) -> dict[str, bool]:
+        opts: dict[str, bool | None] = {
+            "with_filenames": with_filenames,
+            "with_provides": with_provides,
+            "resolve_provides": resolve_provides,
+        }
+        opts = {key: resolve if opt is None else opt for key, opt in opts.items()}
+        return opts
+
     @abc.abstractmethod
     def resolve_pkg_specs(
         self,
@@ -459,6 +483,10 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
         resolve: bool = False,
         latest: int | None = None,
         with_src: bool = True,
+        *,
+        with_filenames: bool | None = None,
+        with_provides: bool | None = None,
+        resolve_provides: bool | None = None,
     ) -> PackageQueryCompat:
         """
         Resolve pkg specs.
