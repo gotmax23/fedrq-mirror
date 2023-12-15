@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+import pytest
+
 import fedrq.config
-from fedrq.backends.base import BackendMod
+from fedrq.backends.base import BackendMod, RepoqueryBase
 
 
 def test_load_changelogs(default_backend: BackendMod):
@@ -37,3 +39,22 @@ def test_load_changelogs(default_backend: BackendMod):
         assert expected == sorted(bm.base.get_config().optional_metadata_types)
         bm.load_changelogs(False)
         assert sorted(bm.base.get_config().optional_metadata_types) == old
+
+
+def test_bm_enable_disable(
+    repo_test_rq: RepoqueryBase, default_backend: BackendMod
+) -> None:
+    bm = default_backend.BaseMaker(repo_test_rq.base)
+    assert bm.repolist(True) == ["testrepo1"]
+    bm.disable_repo("testrepo1")
+    assert not bm.repolist(True)
+    bm.enable_repos(["testrepo1"])
+
+    with pytest.raises(
+        ValueError, match="does-not-exist repo definition was not found."
+    ):
+        bm.disable_repo("does-not-exist", ignore_missing=False)
+
+
+def test_bm_backend_property(default_backend: BackendMod) -> None:
+    assert default_backend.BaseMaker().backend == default_backend
