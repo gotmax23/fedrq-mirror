@@ -86,7 +86,7 @@ def coverage(session: nox.Session):
 def covtest(session: nox.Session):
     session.run("rm", *iglob(".nox/*/tmp/.coverage"), external=True)
     for name in ("dnf_test", "libdnf5_test", "pydanticv1_test", "coverage"):
-        session.notify(name, ["--cov"])
+        session.notify(name, [*session.posargs, "--cov"])
 
 
 @nox.session(venv_backend="none")
