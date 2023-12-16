@@ -196,7 +196,7 @@ class Whatrecommends(WhatCommand):
     """
 
     _operator = "Recommend"
-    operator = "recommend"
+    operator = "recommends"
     _exclude_subpackages_opt = True
 
 
