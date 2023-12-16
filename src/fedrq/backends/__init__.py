@@ -61,18 +61,14 @@ class _DefaultBackend:
         fallback: bool = False,
         allow_multiple_backends_per_process: bool = True,
     ) -> BackendMod:
-        if (
-            not allow_multiple_backends_per_process
-            and default
-            and self.backend
-            and default != self.backend.BACKEND
+        if not self.backend or (allow_multiple_backends_per_process and default):
+            self.backend = self._get_backend(default, fallback)
+        elif (
+            default != self.backend.BACKEND and not allow_multiple_backends_per_process
         ):
             warnings.warn(
                 f"Falling back to {self.backend.BACKEND}. {default} cannot be used."
             )
-        elif not self.backend:
-            self.backend = self._get_backend(default, fallback)
-            LOG.info("Using %s backend", self.backend.BACKEND)
         return self.backend
 
     @staticmethod
