@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import logging
 import typing as t
+from collections import deque
 from collections.abc import Iterator, MutableMapping
 
 if t.TYPE_CHECKING:
@@ -42,5 +43,7 @@ def merge_dict(
 
 
 def exhaust_it(it: Iterator[t.Any]) -> None:
-    for _ in it:
-        pass
+    """
+    Exhaust an iterator in the most efficient manner possible
+    """
+    deque(it, maxlen=0)
