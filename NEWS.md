@@ -1,6 +1,56 @@
 NEWS
 =====
 
+## 0.13.0 - 2023-12-18 <a id='0.13.0'></a>
+
+!!! warning
+    The next release will drop support for `libdnf5<5.0.12`
+
+### Added
+
+CLI:
+
+- cli `download` / `download-spec`: mark commands as stable and document
+- cli: add new `make-cache` subcommand
+
+---
+
+API:
+
+- backends `Repoquery.resolve_pkg_specs`: add `nevra_forms` argument
+- backends `Repoquery.resolve_pkg_specs`: allow more granular `resolve` control
+- backends: add `allow_multiple_backends_per_process` argument to `get_backend()`
+- backends: make `base` a package instead of a single module
+
+---
+
+contrib:
+
+- Caddyfile: update for 404.html template
+
+---
+
+doc:
+
+- API Summary: add dnf and libdnf5 intersphinx links
+- dnf-repoquery-diff: fix inter-doc links
+- release_repo: add unstable API warning admonition
+- add _archive.md API doc
+
+### Changed
+
+- all: use `metaclass=abc.ABCMeta` instead of inheriting `abc.ABC`
+- backends: make `libdnf5.backends.${NAME}.backend` packages instead of single modules
+- cli: correct license of changelogs and download.
+  They are now `GPL-2.0-or-later` as opposed to `MIT`.
+- doc: switch to google docstring style
+
+### Fixed
+
+- fedrq.repoquery: fix type checking
+- backends dnf: fix `BaseMaker.set_var()` error typo
+- cli whatrequires: fix typo (`Exception: Unrecognized key name: recommend`).
+
 ## 0.12.0 - 2023-09-11 <a id='0.12.0'></a>
 
 ### Added
