@@ -4,15 +4,23 @@
 #
 #    pip-compile --allow-unsafe --extra=codeqa --extra=doc --extra=formatters --extra=test --extra=typing --output-file=requirements/all.txt --strip-extras
 #
+aiohttp==3.9.1
+    # via black
+aiosignal==1.3.1
+    # via aiohttp
 annotated-types==0.6.0
     # via pydantic
 argcomplete==3.2.1
     # via fedrq (pyproject.toml)
-babel==2.13.1
+async-timeout==4.0.3
+    # via aiohttp
+attrs==23.1.0
+    # via aiohttp
+babel==2.14.0
     # via mkdocs-material
 binaryornot==0.4.4
     # via reuse
-black==23.11.0
+black==23.12.0
     # via fedrq (pyproject.toml)
 boolean-py==4.0
     # via
@@ -37,6 +45,10 @@ colorama==0.4.6
     #   mkdocs-material
 exceptiongroup==1.2.0
     # via pytest
+frozenlist==1.4.1
+    # via
+    #   aiohttp
+    #   aiosignal
 ghp-import==2.1.0
     # via mkdocs
 griffe==0.38.1
@@ -44,7 +56,9 @@ griffe==0.38.1
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
 idna==3.6
-    # via requests
+    # via
+    #   requests
+    #   yarl
 importlib-metadata==7.0.0
     # via
     #   markdown
@@ -52,7 +66,7 @@ importlib-metadata==7.0.0
     #   mkdocstrings
 iniconfig==2.0.0
     # via pytest
-isort==5.12.0
+isort==5.13.2
     # via fedrq (pyproject.toml)
 jinja2==3.1.2
     # via
@@ -87,7 +101,7 @@ mkdocs-autorefs==0.5.0
     # via mkdocstrings
 mkdocs-exclude==1.0.2
     # via fedrq (pyproject.toml)
-mkdocs-material==9.5.1
+mkdocs-material==9.5.2
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
@@ -98,6 +112,10 @@ mkdocstrings==0.24.0
     #   mkdocstrings-python
 mkdocstrings-python==1.7.5
     # via mkdocstrings
+multidict==6.0.4
+    # via
+    #   aiohttp
+    #   yarl
 mypy==1.7.1
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
@@ -159,7 +177,7 @@ reuse==2.1.0
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.1.7
+ruff==0.1.8
     # via fedrq (pyproject.toml)
 six==1.16.0
     # via python-dateutil
@@ -187,5 +205,7 @@ urllib3==2.1.0
     #   types-requests
 watchdog==3.0.0
     # via mkdocs
+yarl==1.9.4
+    # via aiohttp
 zipp==3.17.0
     # via importlib-metadata
