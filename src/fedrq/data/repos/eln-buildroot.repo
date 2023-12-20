@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: Unlicense
+# SPDX-FileCopyrightText: None
+
+[koji-eln]
+name = ELN Buildroot Repository
+baseurl = https://kojipkgs.fedoraproject.org/repos/eln-build/latest/$basearch/
+gpgcheck = False
+enabled = False
+
+[koji-eln-source]
+name = ELN Buildroot Repository Sources
+baseurl = https://kojipkgs.fedoraproject.org/repos/eln-build/latest/src/
+gpgcheck = False
+enabled = False

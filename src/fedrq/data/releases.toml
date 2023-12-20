@@ -367,6 +367,7 @@ defs.epel = [
 matcher = "^(eln)$"
 defpaths = [
     "fedora-eln.repo",
+    "eln-buildroot.repo",
 ]
 defs.no-crb = [
     "eln-baseos",
@@ -379,6 +380,12 @@ defs.base = [
     "eln-crb",
     "eln-crb-source",
 ]
+defs.buildroot = [
+    "koji-eln",
+    "koji-eln-source",
+]
+repo_aliases.koji = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/$basearch"
+repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/src"
 
 [releases.local]
 matcher = "local"
