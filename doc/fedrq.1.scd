@@ -307,7 +307,7 @@ The following generic repo class macros are available for Fedora releases:
 : 
 |  Fedora ELN
 :  eln
-:  *@base*, *no-crb*
+:  *@base*, *@no-crb*, *@buildroot*
 : 
 |  Default local system repositories
 :  local
