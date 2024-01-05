@@ -81,3 +81,27 @@ relies on flags.
 
 See [`man fedrq`](fedrq1.md) for an in depth orientation of fedrq's CLI
 interface.
+
+## `--requires`, `--provides`, and other package attributes
+
+`dnf repoquery` has flags such as `--requires` and `--provides` to determine
+certain package attributes.
+`fedrq`'s supports these operations via the `pkgs` subcommand and
+the `-F` / `--formatter` flag.
+
+<table>
+    <tb>
+        <tr>
+            <td>dnf repoquery --requires PACKAGE</td>
+            <td>fedrq pkgs -F requires PACKAGE</td>
+        </tr>
+        <tr>
+            <td>dnf repoquery --provides PACKAGE</td>
+            <td>fedrq pkgs -F provides PACKAGE</td>
+        </tr>
+        <tr>
+            <td>dnf repoquery --qf "%{name}\n" PACKAGE</td>
+            <td>fedrq pkgs -F name PACKAGE</td>
+        </tr>
+    </tb>
+</table>
