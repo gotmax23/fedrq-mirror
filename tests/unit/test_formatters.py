@@ -19,24 +19,25 @@ def get_rq():
     return rqconfig.get_config(load_filelists="always").get_rq("tester", "base")
 
 
-def formatter(query, formatter_name="plain", *args, attr=False, **kwargs):
-    result = sorted(
-        (
-            str(i)
-            for i in formatters.DefaultFormatters.get_formatter(formatter_name).format(
-                query, *args, **kwargs
-            )
+def formatter(query, formatter_name="plain", *args, attr=False, sort=True, **kwargs):
+    result = [
+        str(i)
+        for i in formatters.DefaultFormatters.get_formatter(formatter_name).format(
+            query, *args, **kwargs
         )
-    )
+    ]
+    if sort:
+        result.sort()
     if attr:
-        assert result == sorted(
-            (
-                str(i)
-                for i in formatters.DefaultFormatters.get_formatter(
-                    f"attr:{formatter_name}"
-                ).format(query, *args, **kwargs)
-            )
-        )
+        result2 = [
+            str(i)
+            for i in formatters.DefaultFormatters.get_formatter(
+                f"attr:{formatter_name}"
+            ).format(query, *args, **kwargs)
+        ]
+        if sort:
+            result2.sort()
+        assert result == result2
     return result
 
 
@@ -308,3 +309,83 @@ def test_json_formatter(patch_config_dirs):
     )
     assert len(output) == 1
     assert json.loads(output[0]) == expected
+
+
+def test_multiline_formatter(patch_config_dirs):
+    repo_test_rq = get_rq()
+    query = repo_test_rq.resolve_pkg_specs(
+        ["packagea-1", "packageb"], with_src=False, latest=1
+    )
+    output = formatter(query, "multiline:na,description", sort=False)
+    assert output == [
+        "packagea.noarch : packagea is a test package.",
+        "packagea.noarch : This is another line of text.",
+        "packagea.noarch : Another another.",
+        "packagea.noarch : And another.",
+        "packageb.x86_64 : ...",
+    ]
+
+
+@pytest.mark.parametrize(
+    "formatter_,expected_output",
+    [
+        pytest.param(
+            "line:na,repoid",
+            [
+                "packagea.noarch : testrepo1",
+                "packageb.x86_64 : testrepo1",
+            ],
+            id="line-simple",
+        ),
+        pytest.param(
+            "line:na,repoid:",
+            [
+                "packagea.noarch : testrepo1",
+                "packageb.x86_64 : testrepo1",
+            ],
+            id="line-trailing",
+        ),
+        pytest.param(
+            "line:na,repoid: | ",
+            [
+                "packagea.noarch | testrepo1",
+                "packageb.x86_64 | testrepo1",
+            ],
+            id="line-custom-separator",
+        ),
+        pytest.param(
+            "line:na,repoid,source: | ",
+            [
+                "packagea.noarch | testrepo1 | packagea",
+                "packageb.x86_64 | testrepo1 | packageb",
+            ],
+            id="line-special-formatter",
+        ),
+        pytest.param(
+            "line:line:na,repoid: | ",
+            [
+                "packagea.noarch | testrepo1",
+                "packageb.x86_64 | testrepo1",
+            ],
+            id="line-stacked",
+        ),
+        pytest.param(
+            "description",
+            [
+                "packagea is a test package.\n"
+                "This is another line of text.\nAnother another.\nAnd another.\n---\n",
+                "...",
+            ],
+            id="description",
+        ),
+    ],
+)
+def test_formatter_p(
+    patch_config_dirs, formatter_: str, expected_output: Collection[str]
+) -> None:
+    repo_test_rq = get_rq()
+    query = repo_test_rq.resolve_pkg_specs(
+        ["packagea-1", "packageb"], with_src=False, latest=1
+    )
+    output = formatter(query, formatter_, sort=False)
+    assert output == expected_output

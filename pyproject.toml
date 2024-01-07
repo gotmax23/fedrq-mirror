@@ -155,6 +155,7 @@ exclude_lines = [
     '@(abc\.)?abstractmethod',
     '@overload',
     'except ImportError',
+    'raise AssertionError\("unreachable"\)',
 ]
 omit = [
     "src/fedrq/_compat.py",

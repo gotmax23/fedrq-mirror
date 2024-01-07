@@ -19,6 +19,9 @@ Requires:       vpackage(b)
 
 %description
 %{summary}.
+This is another line of text.
+Another another.
+And another.
 
 %package        sub
 Summary:        %{name}-sub is a subpackage of %{name}

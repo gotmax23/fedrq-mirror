@@ -8,14 +8,17 @@ import abc
 import argparse
 import logging
 import warnings
-from collections.abc import Callable, ItemsView, Iterable, Iterator, Mapping
+from collections.abc import Callable, Container, ItemsView, Iterable, Iterator, Mapping
 from contextlib import suppress
+from functools import partial
 from typing import TYPE_CHECKING, Any, NoReturn
 
 from fedrq._utils import get_source_name
 
 if TYPE_CHECKING:
     from fedrq.backends.base import PackageCompat
+else:
+    ellipsis = type(...)
 
 LOG = logging.getLogger(__name__)
 
@@ -65,15 +68,36 @@ _ATTRS: tuple[str, ...] = (
     "packager",
     "location",
 )
+_MULTILINE_ATTRS = frozenset(
+    {
+        "description",
+        "provides",
+        "requires",
+        "recommends",
+        "suggests",
+        "supplements",
+        "enhances",
+        "obsoletes",
+        "conflicts",
+        "files",
+    }
+)
+_ATTRS_SINGLE: tuple[str, ...] = tuple(set(_ATTRS) - _MULTILINE_ATTRS)
+_DEFAULT_MULTILINE_SEPERATOR = "\n---\n"
 
 
-def _stringify(value: Any, *, multiline_allowed: bool = True) -> str:
+def _stringify(
+    value: Any,
+    *,
+    multiline_allowed: bool = True,
+    multiline_seperator: str = _DEFAULT_MULTILINE_SEPERATOR,
+) -> str:
     if value is None or value == "":
         return "(none)"
     if isinstance(value, str) and "\n" in value:
         if not multiline_allowed:
             raise FormatterError("Multiline values are not allowed")
-        return value + "\n---\n"
+        return value + multiline_seperator
     return str(value)
 
 
@@ -175,13 +199,17 @@ class Formatters(Mapping[str, type[Formatter]]):
         self.__data = self._formattersv(dict(formatters))
         self.fallback: type[Formatter] | None = fallback
 
-    def get_formatter(self, key: str) -> Formatter:
+    def get_formatter(
+        self, key: str, fallback: type[Formatter] | None | ellipsis = ...
+    ) -> Formatter:
+        if fallback is ...:
+            fallback = self.fallback
         name, seperator, args = key.partition(":")
         with suppress(KeyError):
             return self[name](name, seperator, args, self)
-        if self.fallback:
+        if fallback:
             with suppress(FormatterError):
-                return self.fallback(name, seperator, args, self)
+                return fallback(name, seperator, args, self)
         raise FormatterError(f"{key!r} is not a valid formatter")
 
     def __getitem__(self, key: str) -> type[Formatter]:
@@ -278,11 +306,16 @@ class SpecialFormatter(Formatter):
 
     ATTRS: tuple[str, ...] = Formatter.ATTRS
 
-    def _get_attrs(self, args: str) -> Iterator[str | Formatter]:
+    def _get_attrs(
+        self, args: str, allow_multiline: bool = False
+    ) -> Iterator[str | Formatter]:
+        attrs: Container[str] = (
+            self.container if allow_multiline else self.container.singleline()
+        )
         for attr in args.split(","):
             if attr in self.ATTRS:
                 yield attr
-            elif attr in self.container.singleline():
+            elif attr in attrs:
                 yield self.container.get_formatter(attr)
             else:
                 self.err(f"invalid argument {attr!r}")
@@ -294,6 +327,7 @@ class SpecialFormatter(Formatter):
 
 class AttrFormatter(SpecialFormatter):
     MULTILINE = True
+    _MULTILINE_SEPERATOR = _DEFAULT_MULTILINE_SEPERATOR
 
     def validate(self) -> None:
         super().validate()
@@ -312,9 +346,12 @@ class AttrFormatter(SpecialFormatter):
         for p in sorted(packages):
             result = getattr(p, self.attr)
             if isinstance(result, Iterable) and not isinstance(result, str):
-                yield from map(_stringify, result)
+                yield from map(
+                    partial(_stringify, multiline_seperator=self._MULTILINE_SEPERATOR),
+                    result,
+                )
             else:
-                yield _stringify(result)
+                yield _stringify(result, multiline_seperator=self._MULTILINE_SEPERATOR)
 
 
 class AttrFallbackFormatter(AttrFormatter):
@@ -323,6 +360,10 @@ class AttrFallbackFormatter(AttrFormatter):
             self.err("no arguments are accepted")
         self.args = self.name
         self._validate()
+
+
+class _AttrFallbackFormatterUnseperated(AttrFallbackFormatter):
+    _MULTILINE_SEPERATOR = ""
 
 
 class JsonFormatter(SpecialFormatter):
@@ -354,21 +395,8 @@ class JsonFormatter(SpecialFormatter):
 
 class SingleLineFormatter(SpecialFormatter):
     DEFAULT_DIVIDER = " : "
-    ATTRS: tuple[str, ...] = tuple(
-        set(SpecialFormatter.ATTRS)
-        - {
-            "description",
-            "provides",
-            "requires",
-            "recommends",
-            "suggests",
-            "supplements",
-            "enhances",
-            "obsoletes",
-            "conflicts",
-            "files",
-        }
-    )
+    ATTRS: tuple[str, ...] = _ATTRS_SINGLE
+    _ALLOW_MULTILINE_ATTRS: bool = False
 
     def validate(self) -> None:
         args, seperator, args2 = self.args.rpartition(":")
@@ -400,19 +428,61 @@ class SingleLineFormatter(SpecialFormatter):
             self.params = args
             self.divider = self.DEFAULT_DIVIDER
         else:
-            raise RuntimeError
-        self.attrs = list(self._get_attrs(self.params))
+            raise AssertionError("unreachable")
+        self.attrs = list(self._get_attrs(self.params, self._ALLOW_MULTILINE_ATTRS))
+
+    def _fl(
+        self,
+        package: PackageCompat,
+        index: int,
+        attr: str | Formatter,
+        divider: str,
+        multiline_allowed=False,
+    ) -> str:
+        out = ""
+        if isinstance(attr, str):
+            out += _stringify(
+                getattr(package, attr), multiline_allowed=multiline_allowed
+            )
+        else:
+            out += attr.format_line(package)
+        if index != len(self.attrs) - 1:
+            out += divider
+        return out
 
     def format_line(self, package: PackageCompat) -> str:
         out = ""
         for index, attr in enumerate(self.attrs):
-            if isinstance(attr, str):
-                out += _stringify(getattr(package, attr), multiline_allowed=False)
-            else:
-                out += attr.format_line(package)
-            if index != len(self.attrs) - 1:
-                out += self.divider
+            out += self._fl(package, index, attr, self.divider)
         return out
+
+
+class MultilineFormatter(SingleLineFormatter):
+    ATTRS = SpecialFormatter.ATTRS
+    _ALLOW_MULTILINE_ATTRS = True
+
+    def format_line(self, package: PackageCompat) -> NoReturn:
+        raise NotImplementedError
+
+    def validate(self) -> None:
+        super().validate()
+        if len(self.attrs) != 2:
+            raise FormatterError("MultilineFormatter requires two arguments")
+
+    def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
+        for package in packages:
+            initial = self._fl(package, 0, self.attrs[0], self.divider, False)
+            attr = self.attrs[1]
+            call: Formatter = (
+                self.container.get_formatter(
+                    attr, fallback=_AttrFallbackFormatterUnseperated
+                )
+                if isinstance(attr, str)
+                else attr
+            )
+            for line in call.format([package]):
+                sublines: list[str] = line.splitlines() if "\n" in line else [line]
+                yield from (initial + subline for subline in sublines)
 
 
 def remote_location(_, package: PackageCompat) -> str:
@@ -446,6 +516,7 @@ DefaultFormatters = _DefaultFormatters(
         json=JsonFormatter,
         line=SingleLineFormatter,
         remote_location=remote_location,
+        multiline=MultilineFormatter,
     ),
     AttrFallbackFormatter,
 )
