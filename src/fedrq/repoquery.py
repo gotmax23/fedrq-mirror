@@ -9,6 +9,7 @@ It is recommended to use the backend directly instead of this module.
 
 from __future__ import annotations
 
+import warnings
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
@@ -54,4 +55,12 @@ __all__ = (
     "backend",
     "get_releasever",
     "get_changelogs",
+)
+
+warnings.warn(
+    "The 'fedrq.repoquery' module is deprecated."
+    " Import from the backend module directly"
+    " or use `fedrq.backends.get_default_backend()`.",
+    category=DeprecationWarning,
+    stacklevel=2,
 )
