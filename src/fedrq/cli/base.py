@@ -400,6 +400,7 @@ class Command(metaclass=abc.ABCMeta):
         try:
             self.formatter = self.formatters.get_formatter(self.args.formatter)
         except FormatterError as err:
+            logger.debug("FormatterError", exc_info=err)
             return str(err) + "\n" + FORMATTER_ERROR_SUFFIX
         return None
 
