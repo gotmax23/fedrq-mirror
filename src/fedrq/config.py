@@ -446,7 +446,7 @@ def get_config(**overrides: t.Any) -> RQConfig:
     for path in itertools.chain.from_iterable(all_files):
         flog.debug("Loading config file: %s", path)
         with path.open("rb") as fp:
-            data = tomllib.load(fp)
+            data = tomllib.load(t.cast("t.BinaryIO", fp))
         merge_dict(data, config)
     merge_dict(overrides, config)
     config["releases"] = _get_releases(config["releases"])
