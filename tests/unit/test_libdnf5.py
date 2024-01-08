@@ -18,16 +18,6 @@ def skip_mod(default_backend: BackendMod):
         pytest.skip("This test checks libdnf5 functionality")
 
 
-@pytest.mark.filterwarnings("error")
-def test_libdnf5_deprecation():
-    import fedrq.backends.libdnf5.backend as b
-
-    with pytest.warns(match="Support for libdnf5 versions < 5.0.12 is deprecated."):
-        b._deprecation_warn()
-    # Should only warn once
-    b._deprecation_warn()
-
-
 def test_libdnf5_bm_load_filelists():
     import fedrq.backends.libdnf5.backend as b
 

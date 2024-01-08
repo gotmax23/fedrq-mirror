@@ -10,7 +10,6 @@ that uses the libdnf5 Python bindings.
 from __future__ import annotations
 
 import functools
-import inspect
 import logging
 import sys
 import typing as t
@@ -42,7 +41,6 @@ Priority_RUNTIME = libdnf5.conf.Option.Priority_RUNTIME
 StrIter = t.Union[list[str], tuple[str], str]
 IntIter = t.Union[list[int], tuple[int], int]
 CONVERT_TO_LIST = (str, int)
-MINIMUM_NOT_DEPRECATED_VERSION = "5.0.12"
 
 
 class _QueryFilterKwargs(t.TypedDict, total=False):
@@ -171,58 +169,11 @@ class _QueryFilterKwargs(t.TypedDict, total=False):
     pkg__neq: Iterable[libdnf5.rpm.Package]
 
 
-@functools.cache
-def _deprecation_warn() -> None:
-    """
-    Warn that libdnf5 versions < MINIMUM_NOT_DEPRECATED_VERSION are deprecated.
-    This is memoized so we only warn users once.
-    """
-    warnings.warn(
-        f"Support for libdnf5 versions < {MINIMUM_NOT_DEPRECATED_VERSION}"
-        " is deprecated.",
-        stacklevel=2,
-    )
-
-
 def _get_option(config: libdnf5.conf.Config, key: str) -> libdnf5.conf.Option:
     """
     Get an Option object from a libdnf5 Config object.
-    Maintains compatability with dnf5 versions before
-    https://github.com/rpm-software-management/dnf5/pull/327
     """
-    LOG.debug("Getting option %s", key)
-    # dnf5 >= 5.0.8
-    if option := getattr(config, f"get_{key}_option", None):
-        LOG.debug(f"option = get_{key}_option")
-        return option()
-    else:
-        raise ValueError(f"{key!r} is not a valid option.")
-
-
-def _dnf4_debug_name(self: Package) -> str:  # pragma: no cover
-    # Taken from dnf.package.Package
-    # Copyright (C) 2012-2016 Red Hat, Inc.
-    # SPDX-License-Identifier: GPL-2.0-or-later
-    """
-    Returns name of the debuginfo package for this package.
-    If this package is a debuginfo package, returns its name.
-    If this package is a debugsource package, returns the debuginfo package
-    for the base package.
-    e.g. kernel-PAE -> kernel-PAE-debuginfo
-    """
-    if self.name.endswith(self.DEBUGINFO_SUFFIX):
-        return self.name
-
-    name = self.name
-    if self.name.endswith(self.DEBUGSOURCE_SUFFIX):
-        name = name[: -len(self.DEBUGSOURCE_SUFFIX)]
-
-    return name + self.DEBUGINFO_SUFFIX
-
-
-def _dnf4_source_debug_name(self: Package) -> str:  # pragma: no cover
-    source_name = self.name if self.arch == "src" else self.source_name
-    return source_name + self.DEBUGSOURCE_SUFFIX  # type: ignore[operator]
+    return getattr(config, f"get_{key}_option")()
 
 
 class BaseMaker(BaseMakerBase):
@@ -409,7 +360,7 @@ class BaseMaker(BaseMakerBase):
                     self.base.get_logger().get(),
                     Priority_RUNTIME,
                 )
-                nameop = self._get_option(repo_config, "name")
+                nameop = repo_config.get_name_option()
                 if nameop.get_priority() == libdnf5.conf.Option.Priority_DEFAULT:
                     nameop.set(Priority_RUNTIME, expanded_id)
             if ensure_enabled:
@@ -427,14 +378,8 @@ class BaseMaker(BaseMakerBase):
         if not enable:
             return self._del_metadata_type(metadata)
         LOG.debug("Loading %s metadata", metadata)
-        option = self._get_option(self.conf, "optional_metadata_types")
-        func = option.add_item
-        # https://github.com/rpm-software-management/dnf5/commit/ba011ff
-        if "priority" in inspect.signature(func).parameters:
-            func(Priority_RUNTIME, metadata)
-        else:  # pragma: no cover
-            _deprecation_warn()
-            func(metadata)
+        option = self.conf.get_optional_metadata_types_option()
+        option.add_item(Priority_RUNTIME, metadata)
 
     def _del_metadata_type(self, metadata: t.Any) -> None:
         LOG.debug("Disabling loading of %s metadata", metadata)
@@ -562,12 +507,7 @@ class Package(libdnf5.rpm.Package):
 
     @property
     def debug_name(self) -> str:
-        # https://github.com/rpm-software-management/dnf5/commit/477d7e5c818c3e95b0e824f8b02d744da7b39a45
-        try:
-            return self.get_debuginfo_name()
-        except AttributeError:  # pragma: no cover
-            _deprecation_warn()
-            return _dnf4_debug_name(self)
+        return self.get_debuginfo_name()
 
     @property
     def source_name(self) -> t.Optional[str]:
@@ -578,11 +518,7 @@ class Package(libdnf5.rpm.Package):
     @property
     def source_debug_name(self) -> str:
         # https://github.com/rpm-software-management/dnf5/commit/477d7e5c818c3e95b0e824f8b02d744da7b39a45
-        try:
-            return self.get_debugsource_name()
-        except AttributeError:  # pragma: no cover
-            _deprecation_warn()
-            return _dnf4_source_debug_name(self)
+        return self.get_debugsource_name()
 
     @property
     def installtime(self) -> int:
@@ -598,11 +534,7 @@ class Package(libdnf5.rpm.Package):
 
     @property
     def downloadsize(self) -> int:
-        # https://github.com/rpm-software-management/dnf5/pull/558
-        try:
-            return self.get_download_size()
-        except AttributeError:
-            return self.get_package_size()
+        return self.get_download_size()
 
     @property
     def installsize(self) -> int:
