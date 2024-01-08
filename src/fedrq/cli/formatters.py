@@ -14,6 +14,7 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, NoReturn
 
 from fedrq._utils import get_source_name
+from fedrq.backends.base import RepoqueryBase
 
 if TYPE_CHECKING:
     from fedrq.backends.base import PackageCompat
@@ -116,11 +117,13 @@ class Formatter(metaclass=abc.ABCMeta):
         seperator: str,
         args: str,
         container: Formatters | None = None,
+        repoquery: RepoqueryBase | None = None,
     ) -> None:
         self.name = name
         self.seperator = seperator
         self.args = args
         self.container: Formatters = container or Formatters({})
+        self.rq = repoquery
         self.validate()
 
     @abc.abstractmethod
@@ -182,6 +185,12 @@ class Formatter(metaclass=abc.ABCMeta):
         return f"{self.name}{self.seperator}{self.args}"
 
 
+def format_line_notimplemented(
+    self: Formatter, package: PackageCompat  # noqa: ARG001
+) -> NoReturn:
+    raise NotImplementedError
+
+
 class Formatters(Mapping[str, type[Formatter]]):
     __slots__ = ("__data", "fallback")
 
@@ -200,16 +209,20 @@ class Formatters(Mapping[str, type[Formatter]]):
         self.fallback: type[Formatter] | None = fallback
 
     def get_formatter(
-        self, key: str, fallback: type[Formatter] | None | ellipsis = ...
+        self,
+        key: str,
+        fallback: type[Formatter] | None | ellipsis = ...,
+        *,
+        repoquery: RepoqueryBase | None = None,
     ) -> Formatter:
         if fallback is ...:
             fallback = self.fallback
         name, seperator, args = key.partition(":")
         with suppress(KeyError):
-            return self[name](name, seperator, args, self)
+            return self[name](name, seperator, args, self, repoquery=repoquery)
         if fallback:
             with suppress(FormatterError):
-                return fallback(name, seperator, args, self)
+                return fallback(name, seperator, args, self, repoquery=repoquery)
         raise FormatterError(f"{key!r} is not a valid formatter")
 
     def __getitem__(self, key: str) -> type[Formatter]:
@@ -316,7 +329,7 @@ class SpecialFormatter(Formatter):
             if attr in self.ATTRS:
                 yield attr
             elif attr in attrs:
-                yield self.container.get_formatter(attr)
+                yield self.container.get_formatter(attr, repoquery=self.rq)
             else:
                 self.err(f"invalid argument {attr!r}")
 
@@ -389,8 +402,7 @@ class JsonFormatter(SpecialFormatter):
         data = [dict(self._format(package)) for package in packages]
         yield json.dumps(data, indent=2)
 
-    def format_line(self, package: PackageCompat):
-        raise NotImplementedError
+    format_line = format_line_notimplemented
 
 
 class SingleLineFormatter(SpecialFormatter):
@@ -445,6 +457,7 @@ class SingleLineFormatter(SpecialFormatter):
                 getattr(package, attr), multiline_allowed=multiline_allowed
             )
         else:
+            attr.rq = self.rq
             out += attr.format_line(package)
         if index != len(self.attrs) - 1:
             out += divider
@@ -459,15 +472,15 @@ class SingleLineFormatter(SpecialFormatter):
 
 class MultilineFormatter(SingleLineFormatter):
     ATTRS = SpecialFormatter.ATTRS
+    MULTILINE = True
     _ALLOW_MULTILINE_ATTRS = True
 
-    def format_line(self, package: PackageCompat) -> NoReturn:
-        raise NotImplementedError
+    format_line = format_line_notimplemented
 
     def validate(self) -> None:
         super().validate()
         if len(self.attrs) != 2:
-            raise FormatterError("MultilineFormatter requires two arguments")
+            self.err("requires two arguments")
 
     def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
         for package in packages:
@@ -480,6 +493,7 @@ class MultilineFormatter(SingleLineFormatter):
                 if isinstance(attr, str)
                 else attr
             )
+            call.rq = self.rq
             for line in call.format([package]):
                 sublines: list[str] = line.splitlines() if "\n" in line else [line]
                 yield from (initial + subline for subline in sublines)
@@ -487,6 +501,52 @@ class MultilineFormatter(SingleLineFormatter):
 
 def remote_location(_, package: PackageCompat) -> str:
     return _stringify(package.remote_location())
+
+
+class WhatrequiresFormatter(SpecialFormatter):
+    format_line = format_line_notimplemented
+    _WRSRC: bool = False
+    MULTILINE = True
+
+    def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
+        if not self.rq:
+            raise TypeError("self.rq is not set")
+        requires = {
+            str(require) for package in packages for require in package.requires
+        }
+        whatrequires_names = self.args.split(",")
+        if self._WRSRC:
+            src_packages = self.rq.resolve_pkg_specs(whatrequires_names).filterm(
+                arch="src"
+            )
+            whatrequires_packages = set(self.rq.get_subpackages(src_packages))
+        else:
+            whatrequires_packages = set(
+                self.rq.resolve_pkg_specs(
+                    whatrequires_names, resolve=False, with_src=False
+                )
+            )
+        for reldep in requires:
+            if (
+                set(self.rq.resolve_pkg_specs([reldep], resolve=True))
+                & whatrequires_packages
+            ):
+                yield str(reldep)
+
+
+class WhatrequiresSrcFormatter(WhatrequiresFormatter):
+    _WRSRC = True
+
+
+class NAWhatrequiresFormatter(WhatrequiresFormatter):
+    def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
+        for package in packages:
+            prefix = f"{package.name}.{package.arch} : "
+            yield from (prefix + o for o in super().format([package]))
+
+
+class NAWhatrequiresSrcFormatter(WhatrequiresSrcFormatter, NAWhatrequiresFormatter):
+    ...
 
 
 class _DefaultFormatters(Formatters):
@@ -500,23 +560,31 @@ class _DefaultFormatters(Formatters):
 
 
 DefaultFormatters = _DefaultFormatters(
-    dict(
-        plain="{0}",
-        plainwithrepo="{0} {0.reponame}",
-        nevrr="{0} {0.reponame}",
-        na="{0.name}.{0.arch}",
-        nev="{0.name}-{0.epoch}:{0.version}",
-        nevr="{0.name}-{0.evr}",
-        nevra="{0}",
-        full_nevra="{0.name}-{0.evr}.{0.arch}",
-        nv="{0.name}-{0.version}",
-        source=SourceFromatter,
-        src=SourceFromatter,
-        attr=AttrFormatter,
-        json=JsonFormatter,
-        line=SingleLineFormatter,
-        remote_location=remote_location,
-        multiline=MultilineFormatter,
-    ),
+    {
+        "plain": "{0}",
+        "plainwithrepo": "{0} {0.reponame}",
+        "nevrr": "{0} {0.reponame}",
+        "na": "{0.name}.{0.arch}",
+        "nev": "{0.name}-{0.epoch}:{0.version}",
+        "nevr": "{0.name}-{0.evr}",
+        "nevra": "{0}",
+        "full_nevra": "{0.name}-{0.evr}.{0.arch}",
+        "nv": "{0.name}-{0.version}",
+        "source": SourceFromatter,
+        "src": SourceFromatter,
+        "attr": AttrFormatter,
+        "json": JsonFormatter,
+        "line": SingleLineFormatter,
+        "remote_location": remote_location,
+        "multiline": MultilineFormatter,
+        "whatrequires": WhatrequiresFormatter,
+        "wr": WhatrequiresFormatter,
+        "na_whatrequires": NAWhatrequiresFormatter,
+        "nawr": NAWhatrequiresFormatter,
+        "whatrequires-src": WhatrequiresSrcFormatter,
+        "wrsrc": WhatrequiresSrcFormatter,
+        "na_wrsrc": NAWhatrequiresSrcFormatter,
+        "na_whatrequires-src": NAWhatrequiresSrcFormatter,
+    },
     AttrFallbackFormatter,
 )

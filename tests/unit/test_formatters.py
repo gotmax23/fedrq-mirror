@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 from fedrq import config as rqconfig
+from fedrq.backends.base import PackageQueryCompat, RepoqueryBase
 from fedrq.cli import formatters
 
 
@@ -19,12 +20,20 @@ def get_rq():
     return rqconfig.get_config(load_filelists="always").get_rq("tester", "base")
 
 
-def formatter(query, formatter_name="plain", *args, attr=False, sort=True, **kwargs):
+def formatter(
+    query,
+    formatter_name="plain",
+    *args,
+    attr=False,
+    sort=True,
+    repoquery: RepoqueryBase | None = None,
+    **kwargs,
+):
     result = [
         str(i)
-        for i in formatters.DefaultFormatters.get_formatter(formatter_name).format(
-            query, *args, **kwargs
-        )
+        for i in formatters.DefaultFormatters.get_formatter(
+            formatter_name, repoquery=repoquery
+        ).format(query, *args, **kwargs)
     ]
     if sort:
         result.sort()
@@ -326,9 +335,28 @@ def test_multiline_formatter(patch_config_dirs):
     ]
 
 
+@cache
+def formatter_test_query() -> PackageQueryCompat:
+    repo_test_rq = get_rq()
+    return repo_test_rq.resolve_pkg_specs(
+        ["packagea-1", "packageb"], with_src=False, latest=1
+    )
+
+
 @pytest.mark.parametrize(
     "formatter_,expected_output",
     [
+        pytest.param(
+            "multiline:na,description",
+            [
+                "packagea.noarch : packagea is a test package.",
+                "packagea.noarch : This is another line of text.",
+                "packagea.noarch : Another another.",
+                "packagea.noarch : And another.",
+                "packageb.x86_64 : ...",
+            ],
+            id="multiline",
+        ),
         pytest.param(
             "line:na,repoid",
             [
@@ -378,14 +406,25 @@ def test_multiline_formatter(patch_config_dirs):
             ],
             id="description",
         ),
+        pytest.param(
+            ["whatrequires:packageb", "wr:packageb", "wr:packagea,packageb"],
+            ["vpackage(b)"],
+            id="wr",
+        ),
+        pytest.param(
+            ["nawr:packageb", "na_whatrequires:packageb,packagea,jfjfjfj"],
+            ["packagea.noarch : vpackage(b)"],
+            id="nawr",
+        ),
     ],
 )
 def test_formatter_p(
-    patch_config_dirs, formatter_: str, expected_output: Collection[str]
+    patch_config_dirs,
+    formatter_: str | Collection[str],
+    expected_output: Collection[str],
 ) -> None:
-    repo_test_rq = get_rq()
-    query = repo_test_rq.resolve_pkg_specs(
-        ["packagea-1", "packageb"], with_src=False, latest=1
-    )
-    output = formatter(query, formatter_, sort=False)
-    assert output == expected_output
+    formatters = [formatter_] if isinstance(formatter_, str) else formatter_
+    query = formatter_test_query()
+    for fmt in formatters:
+        output = formatter(query, fmt, sort=False, repoquery=get_rq())
+        assert output == expected_output

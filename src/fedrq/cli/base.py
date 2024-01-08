@@ -364,6 +364,7 @@ class Command(metaclass=abc.ABCMeta):
         """
         Helper to run `self.formatter.format(self.query)`
         """
+        self.formatter.rq = self.rq
         return self.formatter.format(query if query is not None else self.query)
 
     def _v_handle_errors(self, should_exit: bool = True):
