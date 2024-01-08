@@ -14,13 +14,13 @@ charset-normalizer==3.3.2
     # via requests
 idna==3.6
     # via requests
-mypy==1.7.1
+mypy==1.8.0
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-pydantic==2.5.2
+pydantic==2.5.3
     # via fedrq (pyproject.toml)
-pydantic-core==2.14.5
+pydantic-core==2.14.6
     # via pydantic
 requests==2.31.0
     # via fedrq (pyproject.toml)
@@ -32,7 +32,7 @@ tomli==2.0.1 ; python_version < "3.11"
     #   mypy
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-types-requests==2.31.0.10
+types-requests==2.31.0.20240106
     # via fedrq (pyproject.toml)
 typing-extensions==4.9.0
     # via
