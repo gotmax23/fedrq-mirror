@@ -118,7 +118,7 @@ the mailing list (see [Contributing](#contributing)).
 [API Summary]: https://fedrq.gtmx.me/API/Summary/
 
 
-## Documentaion
+## Documentation
 
 See our new [docsite][link-docsite] for rendered manpages, changelogs, and
 Python API documentation.
