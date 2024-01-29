@@ -6,7 +6,7 @@
 #
 annotated-types==0.6.0
     # via pydantic
-black==23.12.1
+black==24.1.1
     # via fedrq (pyproject.toml)
 certifi==2023.11.17
     # via requests
