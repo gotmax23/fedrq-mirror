@@ -149,8 +149,7 @@ class Command(metaclass=abc.ABCMeta):
         return self.config.backend_mod
 
     @abc.abstractmethod
-    def run(self) -> None:
-        ...
+    def run(self) -> None: ...
 
     def _set_config(self, key: str) -> None:
         arg = getattr(self.args, key, None)

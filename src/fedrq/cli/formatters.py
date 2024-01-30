@@ -545,8 +545,7 @@ class NAWhatrequiresFormatter(WhatrequiresFormatter):
             yield from (prefix + o for o in super().format([package]))
 
 
-class NAWhatrequiresSrcFormatter(WhatrequiresSrcFormatter, NAWhatrequiresFormatter):
-    ...
+class NAWhatrequiresSrcFormatter(WhatrequiresSrcFormatter, NAWhatrequiresFormatter): ...
 
 
 class _DefaultFormatters(Formatters):

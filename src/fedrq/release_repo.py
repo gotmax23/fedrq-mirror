@@ -84,8 +84,7 @@ class RepoG(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def load(
         self, base_maker: BaseMakerBase, config: RQConfig, release: Release
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def err_fmt(self, msg: str) -> ConfigError:
         return ConfigError(msg)
@@ -254,18 +253,20 @@ class Repos(Mapping[str, type[RepoG]]):
     # start with '@'.
     _DEFAULT: type[RepoG] = SimpleRepoG
     # Factory function to generate a RepoG from a plain string or list.
-    _FALLBACK_FACTORY: Callable[
-        [str, Sequence[str] | str], type[RepoG]
-    ] = MultiNameG.from_names
+    _FALLBACK_FACTORY: Callable[[str, Sequence[str] | str], type[RepoG]] = (
+        MultiNameG.from_names
+    )
 
     def __init__(
         self,
         repo_classes: Mapping[str, Sequence[str] | str | type[RepoG]],
     ) -> None:
         self.__data: dict[str, type[RepoG]] = {
-            name: repos
-            if isinstance(repos, type) and issubclass(repos, RepoG)
-            else self._FALLBACK_FACTORY(name, repos)
+            name: (
+                repos
+                if isinstance(repos, type) and issubclass(repos, RepoG)
+                else self._FALLBACK_FACTORY(name, repos)
+            )
             for name, repos in ItemsView(repo_classes)
         }
 
