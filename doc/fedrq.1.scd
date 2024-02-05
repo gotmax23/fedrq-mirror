@@ -64,7 +64,7 @@ fedrq is a tool to simplify querying the Fedora and EPEL repositories.
 These options have the same meaning across multiple subcommands.
 
 *-i*, *--stdin*
-	Read package names from stdin. Cannot be used when passing postional
+	Read package names from stdin. Cannot be used when passing positional
 	*[packages...]*.
 *-b*, *--branch* <branch name> (default: _rawhide_)
 	Distribution release. This matches distgit branch names by convention.
@@ -214,7 +214,7 @@ The following generic repo class macros are available for all releases:
 	Enable the corresponding -source repos of the currently enabled
 	repositories
 *@base* or *base* or other group
-	The default repoistories for a release specified in a ReleaseConfig's
+	The default repositories for a release specified in a ReleaseConfig's
 	*defs.base*. Any other repo group specified in a release's is accepted,
 	with or without the *@*. See SPECIAL REPOS for which repo groups are
 	available for each release.
