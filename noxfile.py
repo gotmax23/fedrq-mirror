@@ -270,7 +270,9 @@ def pydanticv1_test(session: nox.Session):
     test(session, "dnf", ["tests/unit"])
 
 
-@nox.session(name="pip-compile", python=["3.9"], venv_params=["--download"])
+@nox.session(
+    name="pip-compile", python=["3.9"], venv_params=["--download"], reuse_venv=False
+)
 def pip_compile(session: nox.Session):
     session.install("pip-tools")
     Path("requirements").mkdir(exist_ok=True)
