@@ -483,7 +483,7 @@ class MultilineFormatter(SingleLineFormatter):
             self.err("requires two arguments")
 
     def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
-        for package in packages:
+        for package in sorted(packages):
             initial = self._fl(package, 0, self.attrs[0], self.divider, False)
             attr = self.attrs[1]
             call: Formatter = (
@@ -540,7 +540,7 @@ class WhatrequiresSrcFormatter(WhatrequiresFormatter):
 
 class NAWhatrequiresFormatter(WhatrequiresFormatter):
     def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
-        for package in packages:
+        for package in sorted(packages):
             prefix = f"{package.name}.{package.arch} : "
             yield from (prefix + o for o in super().format([package]))
 
