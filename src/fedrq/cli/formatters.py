@@ -527,7 +527,7 @@ class RequiresMatchFormatter(SpecialFormatter):
                 set(self.rq.resolve_pkg_specs([reldep], resolve=True, with_src=False))
                 & match_packages
             ):
-                yield str(reldep)
+                yield reldep
 
 
 class RequiresMatchSrcFormatter(RequiresMatchFormatter):
