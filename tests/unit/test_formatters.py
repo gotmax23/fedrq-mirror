@@ -407,14 +407,19 @@ def formatter_test_query() -> PackageQueryCompat:
             id="description",
         ),
         pytest.param(
-            ["whatrequires:packageb", "wr:packageb", "wr:packagea,packageb"],
+            [
+                "requiresmatch:packageb",
+                "rm:packageb",
+                "rmsrc:packageb",
+                "requiresmatch-src:packageb",
+            ],
             ["vpackage(b)"],
-            id="wr",
+            id="rm",
         ),
         pytest.param(
-            ["nawr:packageb", "na_whatrequires:packageb,packagea,jfjfjfj"],
+            ["narm:packageb", "na-requiresmatch:packageb,packagea,jfjfjfj"],
             ["packagea.noarch : vpackage(b)"],
-            id="nawr",
+            id="narm",
         ),
     ],
 )
@@ -427,4 +432,4 @@ def test_formatter_p(
     query = formatter_test_query()
     for fmt in formatters:
         output = formatter(query, fmt, sort=False, repoquery=get_rq())
-        assert output == expected_output
+        assert output == expected_output, fmt

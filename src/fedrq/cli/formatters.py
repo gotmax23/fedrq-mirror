@@ -503,7 +503,7 @@ def remote_location(_, package: PackageCompat) -> str:
     return _stringify(package.remote_location())
 
 
-class WhatrequiresFormatter(SpecialFormatter):
+class RequiresMatchFormatter(SpecialFormatter):
     format_line = format_line_notimplemented
     _WRSRC: bool = False
     MULTILINE = True
@@ -514,38 +514,33 @@ class WhatrequiresFormatter(SpecialFormatter):
         requires = {
             str(require) for package in packages for require in package.requires
         }
-        whatrequires_names = self.args.split(",")
+        match_names = self.args.split(",")
         if self._WRSRC:
-            src_packages = self.rq.resolve_pkg_specs(whatrequires_names).filterm(
-                arch="src"
-            )
-            whatrequires_packages = set(self.rq.get_subpackages(src_packages))
+            src_packages = self.rq.resolve_pkg_specs(match_names).filterm(arch="src")
+            match_packages = set(self.rq.get_subpackages(src_packages))
         else:
-            whatrequires_packages = set(
-                self.rq.resolve_pkg_specs(
-                    whatrequires_names, resolve=False, with_src=False
-                )
+            match_packages = set(
+                self.rq.resolve_pkg_specs(match_names, resolve=False, with_src=False)
             )
         for reldep in requires:
-            if (
-                set(self.rq.resolve_pkg_specs([reldep], resolve=True))
-                & whatrequires_packages
-            ):
+            if set(self.rq.resolve_pkg_specs([reldep], resolve=True)) & match_packages:
                 yield str(reldep)
 
 
-class WhatrequiresSrcFormatter(WhatrequiresFormatter):
+class RequiresMatchSrcFormatter(RequiresMatchFormatter):
     _WRSRC = True
 
 
-class NAWhatrequiresFormatter(WhatrequiresFormatter):
+class NARequiresMatchFormatter(RequiresMatchFormatter):
     def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
         for package in sorted(packages):
             prefix = f"{package.name}.{package.arch} : "
             yield from (prefix + o for o in super().format([package]))
 
 
-class NAWhatrequiresSrcFormatter(WhatrequiresSrcFormatter, NAWhatrequiresFormatter): ...
+class NARequiresMatchSrcFormatter(
+    RequiresMatchSrcFormatter, NARequiresMatchFormatter
+): ...
 
 
 class _DefaultFormatters(Formatters):
@@ -576,14 +571,14 @@ DefaultFormatters = _DefaultFormatters(
         "line": SingleLineFormatter,
         "remote_location": remote_location,
         "multiline": MultilineFormatter,
-        "whatrequires": WhatrequiresFormatter,
-        "wr": WhatrequiresFormatter,
-        "na_whatrequires": NAWhatrequiresFormatter,
-        "nawr": NAWhatrequiresFormatter,
-        "whatrequires-src": WhatrequiresSrcFormatter,
-        "wrsrc": WhatrequiresSrcFormatter,
-        "na_wrsrc": NAWhatrequiresSrcFormatter,
-        "na_whatrequires-src": NAWhatrequiresSrcFormatter,
+        "requiresmatch": RequiresMatchFormatter,
+        "rm": RequiresMatchFormatter,
+        "na-requiresmatch": NARequiresMatchFormatter,
+        "narm": NARequiresMatchFormatter,
+        "requiresmatch-src": RequiresMatchSrcFormatter,
+        "rmsrc": RequiresMatchSrcFormatter,
+        "narmsrc": NARequiresMatchSrcFormatter,
+        "na-requiresmatch-src": NARequiresMatchSrcFormatter,
     },
     AttrFallbackFormatter,
 )

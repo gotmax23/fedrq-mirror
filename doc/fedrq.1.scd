@@ -534,7 +534,7 @@ video-downloader-0.12.10-3.fc40.noarch
 Find the packages that require another package, at buildtime or runtime and show
 which package spec it depends on.
 ```
-$ fedrq whatrequires -F multiline:plain,wr:ansible-core: ansible-core
+$ fedrq whatrequires -F multiline:plain,rm:ansible-core: ansible-core
 ansible-9.2.0-1.fc40.noarch : (python3.12dist(ansible-core) >= 2.16.3 with python3.12dist(ansible-core) < 2.17)
 ansible-9.2.0-1.fc40.src : (python3dist(ansible-core) >= 2.16.3 with python3dist(ansible-core) < 2.17)
 ansible-bender-0.10.1-5.fc40.noarch : (ansible-core or ansible)
@@ -544,7 +544,7 @@ ansible-collection-ansible-netcommon-6.0.0-3.fc40.noarch : (ansible-core or (ans
 
 Shortcut for the above:
 ```
-$ fedrq whatrequires -F nawr:ansible-core ansible-core
+$ fedrq whatrequires -F narm:ansible-core ansible-core
 ansible.noarch : (python3.12dist(ansible-core) >= 2.16.3 with python3.12dist(ansible-core) < 2.17)
 ansible.src : (python3dist(ansible-core) >= 2.16.3 with python3dist(ansible-core) < 2.17)
 ansible-bender.noarch : (ansible-core or ansible)
