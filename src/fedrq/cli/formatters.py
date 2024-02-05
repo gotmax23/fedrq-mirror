@@ -523,7 +523,10 @@ class RequiresMatchFormatter(SpecialFormatter):
                 self.rq.resolve_pkg_specs(match_names, resolve=False, with_src=False)
             )
         for reldep in requires:
-            if set(self.rq.resolve_pkg_specs([reldep], resolve=True)) & match_packages:
+            if (
+                set(self.rq.resolve_pkg_specs([reldep], resolve=True, with_src=False))
+                & match_packages
+            ):
                 yield str(reldep)
 
 
