@@ -75,11 +75,9 @@ class ChangelogCommand(Command):
             key=lambda entry: entry.date,
             reverse=True,
         )
-        i: int = 0
         if not changelogs:  # pragma: no cover
             sys.exit("(empty)")
-        for entry in changelogs:
-            i += 1
+        for i, entry in enumerate(changelogs):
             print(entry)
             print()
             if self.args.entry_limit is not None and i >= self.args.entry_limit:
