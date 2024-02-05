@@ -156,38 +156,54 @@ These options have the same meaning across multiple subcommands.
 # FORMATTERS
 
 Package attributes (nonexhaustive; see *dnf repoquery --querytags*):
-- *-F name*: Show package names ++
-(example line: *yt-dlp*)
-- *-F arch*: Show package arches only ++
-(example line : *noarch*)
-- *-F repoid*: Show package's repo. ++
-(example line: *updates-testing*)
+
+*-F* name
+	Show package names ++
+	(example line: *yt-dlp*)
+*-F* arch
+	Show package arches only ++
+	(example line : *noarch*)
+*-F* repoid
+	Show package's repo. ++
+	(example line: *updates-testing*)
 
 Custom formatters:
-- *-F na*: Show package _name_._arch_ ++
-(example line: *yt-dlp.noarch*)
-- *-F nv*: Show package _name_-_version_ ++
-(example line: *yt-dlp-2022.11.11*)
-- *-F nev*: Show package _name_-_epoch_:_version_ ++
-(example line: *bind-32:9.18.8*)
-- *-F source*: Package queries can include source and binary
-  RPMs. The *source* formatter combines and deduplicates all of
-  the source names.
-  For example, if *python3-setuptools.noarch* is in the result,
-  it'll become *python-setuptools*.
-  If *python-setuptools.src* is also in the result, it'll become
-  *python-setuptools*, but *python-setuptools* won't be
-  duplicated in the output.
-- *-F breakdown*: Only supported by *fedrq --whatrequires*.
-  Shows a breakdown of runtime and buildtime dependencies.
-- *-F json:[comma seperated list of Package attrs]*:
-  Return an array of objects containing the specified Package attributes. The
-  JSON output is formatted with _indent=2_. The output can be piped to jq.
-- *-F line:[comma seperated list of Package attrs]*:
-  Return the specified package attributes on a single line.
-- *-F plainwithrepo*: Show default format and repoid separated by space: ++
-  (example line: *yt-dlp-2023.01.06-2.fc38.noarch rawhide*)
-- *-F nevrr*: alias to plainwithrepo formatter.
+
+*-F* na
+	Show package _name_._arch_ ++
+	(example line: *yt-dlp.noarch*)
+*-F* nv
+	Show package _name_-_version_ ++
+	(example line: *yt-dlp-2022.11.11*)
+*-F* nev
+	Show package _name_-_epoch_:_version_ ++
+	(example line: *bind-32:9.18.8*)
+*-F* source
+	Package queries can include source and binary
+	RPMs. The *source* formatter combines and deduplicates all of
+	the source names.
+	For example, if *python3-setuptools.noarch* is in the result,
+	it'll become *python-setuptools*.
+	If *python-setuptools.src* is also in the result, it'll become
+	*python-setuptools*, but *python-setuptools* won't be
+	duplicated in the output.
+*-F* breakdown
+	Only supported by *fedrq --whatrequires*.
+	Shows a breakdown of runtime and buildtime dependencies.
+*-F* json:_[comma separated list of Package attrs]_
+	Return an array of objects containing the specified Package attributes.
+	The JSON output is formatted with _indent=2_.
+	The output can be piped to jq.
+*-F* line:_[comma separated list of Package attrs]_
+	Return the specified package attributes on a single line.
+*-F* multiline:_[single line attribute]_,_[multiline attribute]_
+	Display two package attributes together.
+	See EXAMPLES for usage.
+*-F* plainwithrepo
+	Show default format and repoid separated by space: ++
+	(example line: *yt-dlp-2023.01.06-2.fc38.noarch rawhide*)
+*-F* nevrr
+	Alias to plainwithrepo formatter.
 
 # REPO CLASSES
 
@@ -456,33 +472,84 @@ fedrq-0.4.1^25.20230318.76d7910-1.fc36.src copr:copr.fedorainfracloud.org:gotmax
 ```
 
 
+In a single query, print the Requires of more than one package:
+```
+$ fedrq pkgs -F requires ansible-core.src yt-dlp.noarch
+make
+python3-devel
+python3dist(packaging)
+[...]
+/usr/bin/python3
+python3.12dist(requests)
+python3.12dist(urllib3)
+[...]
+```
+
+In a single query, print the Requires of more than one package, qualified by
+package name:
+```
+$ fedrq pkgs -F multiline:name,requires ansible-core.src yt-dlp.noarch
+ansible-core : make
+ansible-core : python3-devel
+ansible-core : python3dist(packaging)
+[...]
+yt-dlp : /usr/bin/python3
+yt-dlp : python3.12dist(requests)
+yt-dlp : python3.12dist(urllib3)
+[...]
+```
+
+
 ## whatrequires
 
 Find the packages that require another package, at buildtime or runtime:
 ```
 $ fedrq whatrequires yt-dlp
-audiotube-22.11-1.fc38.src
-audiotube-22.11-1.fc38.x86_64
-celluloid-0.24-4.fc38.x86_64
-gpodder-3.11.0-1.fc37.noarch
-media-downloader-2.7.0-2.fc38.x86_64
-persepolis-3.2.0-11.fc37.noarch
-video-downloader-0.10.12-1.fc38.noarch
-yt-dlp-bash-completion-2022.11.11-1.fc38.noarch
-yt-dlp-fish-completion-2022.11.11-1.fc38.noarch
-yt-dlp-zsh-completion-2022.11.11-1.fc38.noarch
+audiotube-24.01.95-1.fc40.src
+audiotube-24.01.95-1.fc40.x86_64
+celluloid-0.26-1.fc40.x86_64
+gpodder-3.11.4-4.fc40.noarch
+lollypop-1.4.37-7.fc40.noarch
+media-downloader-4.2.0-4.fc40.x86_64
+persepolis-3.2.0-16.fc40.noarch
+video-downloader-0.12.10-3.fc40.noarch
+yt-dlp-bash-completion-2023.12.30-2.fc40.noarch
+yt-dlp-fish-completion-2023.12.30-2.fc40.noarch
+yt-dlp-zsh-completion-2023.12.30-2.fc40.noarch
 ```
 
 Find a package's reverse dependencies, excluding subpackages:
 ```
 $ fedrq whatrequires -X yt-dlp
-audiotube-22.11-1.fc38.src
-audiotube-22.11-1.fc38.x86_64
-celluloid-0.24-4.fc38.x86_64
-gpodder-3.11.0-1.fc37.noarch
-media-downloader-2.7.0-2.fc38.x86_64
-persepolis-3.2.0-11.fc37.noarch
-video-downloader-0.10.12-1.fc38.noarch
+audiotube-24.01.95-1.fc40.src
+audiotube-24.01.95-1.fc40.x86_64
+celluloid-0.26-1.fc40.x86_64
+gpodder-3.11.4-4.fc40.noarch
+lollypop-1.4.37-7.fc40.noarch
+media-downloader-4.2.0-4.fc40.x86_64
+persepolis-3.2.0-16.fc40.noarch
+video-downloader-0.12.10-3.fc40.noarch
+```
+
+Find the packages that require another package, at buildtime or runtime and show
+which package spec it depends on.
+```
+$ fedrq whatrequires -F multiline:plain,wr:ansible-core: ansible-core
+ansible-9.2.0-1.fc40.noarch : (python3.12dist(ansible-core) >= 2.16.3 with python3.12dist(ansible-core) < 2.17)
+ansible-9.2.0-1.fc40.src : (python3dist(ansible-core) >= 2.16.3 with python3dist(ansible-core) < 2.17)
+ansible-bender-0.10.1-5.fc40.noarch : (ansible-core or ansible)
+ansible-collection-ansible-netcommon-6.0.0-3.fc40.noarch : (ansible-core or (ansible < 2.10.0 with ansible >= 2.9.10))
+[...]
+```
+
+Shortcut for the above:
+```
+$ fedrq whatrequires -F nawr:ansible-core ansible-core
+ansible.noarch : (python3.12dist(ansible-core) >= 2.16.3 with python3.12dist(ansible-core) < 2.17)
+ansible.src : (python3dist(ansible-core) >= 2.16.3 with python3dist(ansible-core) < 2.17)
+ansible-bender.noarch : (ansible-core or ansible)
+ansible-collection-ansible-netcommon.noarch : (ansible-core or (ansible < 2.10.0 with ansible >= 2.9.10))
+[...]
 ```
 
 ## subpkgs
@@ -518,7 +585,6 @@ indi-3rdparty-drivers
 indi-3rdparty-libraries
 kstars
 phd2
-stellarium
 ```
 
 
