@@ -320,7 +320,7 @@ def test_json_formatter(patch_config_dirs):
     assert json.loads(output[0]) == expected
 
 
-def test_multiline_formatter(patch_config_dirs):
+def test_multiline_formatter(patch_config_dirs, target_cpu: str):
     repo_test_rq = get_rq()
     query = repo_test_rq.resolve_pkg_specs(
         ["packagea-1", "packageb"], with_src=False, latest=1
@@ -331,7 +331,7 @@ def test_multiline_formatter(patch_config_dirs):
         "packagea.noarch : This is another line of text.",
         "packagea.noarch : Another another.",
         "packagea.noarch : And another.",
-        "packageb.x86_64 : ...",
+        f"packageb.{target_cpu} : ...",
     ]
 
 
@@ -353,7 +353,7 @@ def formatter_test_query() -> PackageQueryCompat:
                 "packagea.noarch : This is another line of text.",
                 "packagea.noarch : Another another.",
                 "packagea.noarch : And another.",
-                "packageb.x86_64 : ...",
+                "packageb.{target_cpu} : ...",
             ],
             id="multiline",
         ),
@@ -361,7 +361,7 @@ def formatter_test_query() -> PackageQueryCompat:
             "line:na,repoid",
             [
                 "packagea.noarch : testrepo1",
-                "packageb.x86_64 : testrepo1",
+                "packageb.{target_cpu} : testrepo1",
             ],
             id="line-simple",
         ),
@@ -369,7 +369,7 @@ def formatter_test_query() -> PackageQueryCompat:
             "line:na,repoid:",
             [
                 "packagea.noarch : testrepo1",
-                "packageb.x86_64 : testrepo1",
+                "packageb.{target_cpu} : testrepo1",
             ],
             id="line-trailing",
         ),
@@ -377,7 +377,7 @@ def formatter_test_query() -> PackageQueryCompat:
             "line:na,repoid: | ",
             [
                 "packagea.noarch | testrepo1",
-                "packageb.x86_64 | testrepo1",
+                "packageb.{target_cpu} | testrepo1",
             ],
             id="line-custom-separator",
         ),
@@ -385,7 +385,7 @@ def formatter_test_query() -> PackageQueryCompat:
             "line:na,repoid,source: | ",
             [
                 "packagea.noarch | testrepo1 | packagea",
-                "packageb.x86_64 | testrepo1 | packageb",
+                "packageb.{target_cpu} | testrepo1 | packageb",
             ],
             id="line-special-formatter",
         ),
@@ -393,7 +393,7 @@ def formatter_test_query() -> PackageQueryCompat:
             "line:line:na,repoid: | ",
             [
                 "packagea.noarch | testrepo1",
-                "packageb.x86_64 | testrepo1",
+                "packageb.{target_cpu} | testrepo1",
             ],
             id="line-stacked",
         ),
@@ -425,6 +425,7 @@ def formatter_test_query() -> PackageQueryCompat:
 )
 def test_formatter_p(
     patch_config_dirs,
+    target_cpu: str,
     formatter_: str | Collection[str],
     expected_output: Collection[str],
 ) -> None:
@@ -432,4 +433,6 @@ def test_formatter_p(
     query = formatter_test_query()
     for fmt in formatters:
         output = formatter(query, fmt, sort=False, repoquery=get_rq())
-        assert output == expected_output, fmt
+        assert output == [
+            item.format(target_cpu=target_cpu) for item in expected_output
+        ], fmt
