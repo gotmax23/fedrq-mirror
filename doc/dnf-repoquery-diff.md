@@ -86,7 +86,7 @@ interface.
 
 `dnf repoquery` has flags such as `--requires` and `--provides` to determine
 certain package attributes.
-`fedrq`'s supports these operations via the `pkgs` subcommand and
+`fedrq` supports these operations via the `pkgs` subcommand and
 the `-F` / `--formatter` flag.
 
 <table>
