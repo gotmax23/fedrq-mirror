@@ -530,7 +530,7 @@ class RequiresMatchFormatter(SpecialFormatter):
         requires = {
             str(require) for package in packages for require in package.requires
         }
-        match_names = self.args.split(",")
+        match_names = self.args.split(";") if ";" in self.args else self.args.split(",")
         if self._WRSRC:
             src_packages = self.rq.resolve_pkg_specs(match_names).filterm(arch="src")
             match_packages = set(self.rq.get_subpackages(src_packages))
