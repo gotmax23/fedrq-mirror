@@ -18,6 +18,7 @@ from fedrq.cli.base import CheckConfig, Command
 from fedrq.cli.commands.cache import MakeCacheCommand
 from fedrq.cli.commands.changelogs import ChangelogCommand
 from fedrq.cli.commands.download import DownloadCommand, DownloadSpecCommand
+from fedrq.cli.commands.formatters import FormattersCommand
 from fedrq.cli.commands.pkgs import Pkgs
 from fedrq.cli.commands.repolist import Repolist
 from fedrq.cli.commands.subpkgs import Subpkgs
@@ -40,6 +41,7 @@ __all__ = (
     "ChangelogCommand",
     "DownloadCommand",
     "DownloadSpecCommand",
+    "FormattersCommand",
     "MakeCacheCommand",
     "WhatCommand",
     "Whatenhances",
@@ -81,6 +83,7 @@ COMMANDS: dict[str, type[Command]] = {
     "changelog": ChangelogCommand,
     "download": DownloadCommand,
     "download-spec": DownloadSpecCommand,
+    "formatters": FormattersCommand,
     "pkgs": Pkgs,
     "subpkgs": Subpkgs,
     "repolist": Repolist,
