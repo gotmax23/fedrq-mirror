@@ -12,6 +12,8 @@ fedrq - Simplified repository querying
 
 *\[fedrq \| python -m fedrq]* *check-config* [--dump] [--debug]
 
+*\[fedrq \| python -m fedrq]* *formatters* [formatters options...]
+
 # DESCRIPTION
 
 fedrq is a tool to simplify querying the Fedora and EPEL repositories.
@@ -153,9 +155,25 @@ These options have the same meaning across multiple subcommands.
 *-o*, *--destdir* <path>
 	Directory in which to download/extract files
 
+## formatters
+
+The *formatters* subcommand lists available formatters.
+By default, all available formatters are shown,
+but they can be filtered by passing one or more of the following options.
+
+*--attrs*, *--only-attrs*
+	Only list package attributes
+*--formatters*, *--only-formatters*
+	Only list regular formatters
+*--special-formatters*, *--only-special-formatters*
+	Only list special formatters
+	(i.e., formatters that accept their own arguments)
+
 # FORMATTERS
 
-Package attributes (nonexhaustive; see *dnf repoquery --querytags*):
+## Package attributes
+
+This list is nonexhaustive. See *fedrq formatters --attrs*.
 
 *-F* name
 	Show package names ++
@@ -167,7 +185,7 @@ Package attributes (nonexhaustive; see *dnf repoquery --querytags*):
 	Show package's repo. ++
 	(example line: *updates-testing*)
 
-Custom formatters:
+## Regular formatters
 
 *-F* na
 	Show package _name_._arch_ ++
@@ -190,6 +208,11 @@ Custom formatters:
 *-F* breakdown
 	Only supported by *fedrq --whatrequires*.
 	Shows a breakdown of runtime and buildtime dependencies.
+
+## Special formatters
+
+"Special formatters" accept arguments.
+
 *-F* json:_[comma separated list of Package attrs]_
 	Return an array of objects containing the specified Package attributes.
 	The JSON output is formatted with _indent=2_.
