@@ -245,6 +245,14 @@ This list is nonexhaustive. See *fedrq formatters --attrs*.
 *-F* narm:_[comma- or semicolon-separated list of packages]_
 	Shortcut for *-F* na-requiresmatch
 
+There are also _requiresmatch-src_ / _rmsrc_ and _na-requiresmatch_ / _narmsrc_
+formatters that work similarly to their non-src conterparts, expect they take a
+list of source packages.
+The list of source packages is converted into a list of binary packages
+(like the *subpkgs* subcommand) and then processed in the same way.
+If, say, a source package named *foo* has *foo*, *foo-devel*, and *foo-static*
+subpackages, *-F* _rmsrc:foo_ is equivalent to *-F* _rm:foo,foo-devel,foo-static_
+
 # REPO CLASSES
 
 The following generic repo class macros are available for all releases:
