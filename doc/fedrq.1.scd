@@ -195,15 +195,32 @@ Custom formatters:
 	The JSON output is formatted with _indent=2_.
 	The output can be piped to jq.
 *-F* line:_[comma separated list of Package attrs]_
-	Return the specified package attributes on a single line.
+	Return the specified package attributes on a single line.++
+	*NOTE*: The attributes provided must fit on one line. Attributes such as
+	_files_ or _requires_ that contain a list of items are not supported by
+	the *line* formatter.
+	See *-F* multiline for that usecase.
 *-F* multiline:_[single line attribute]_,_[multiline attribute]_
-	Display two package attributes together.
-	See EXAMPLES for usage.
+	Display two package attributes together.++
+	(example call: -F multiline:name,files)++
+	(example line: _yt-dlp : /usr/bin/yt-dlp_)
 *-F* plainwithrepo
 	Show default format and repoid separated by space: ++
 	(example line: *yt-dlp-2023.01.06-2.fc38.noarch rawhide*)
 *-F* nevrr
 	Alias to plainwithrepo formatter.
+*-F* requiresmatch:_[comma- or semicolon-separated list of packages]_
+	List the Requires of *[package ...]* that resolve to the list of
+	packages provided to requiresmatch.
+	For example, *python3dist(ansible-core)* resolves to
+	requiresmatch:_ansible-core_.
+*-F* rm:_[comma- or semicolon-separated list of packages]_
+	Alias for *-F* requiresmatch
+*-F* na-requiresmatch:_[comma- or semicolon-separated list of packages]_
+	Combine the *-F* na and *-F* requiresmatch on a single line.
+	See the whatrequires EXAMPLES for usage.
+*-F* narm:_[comma- or semicolon-separated list of packages]_
+	Shortcut for *-F* na-requiresmatch
 
 # REPO CLASSES
 
