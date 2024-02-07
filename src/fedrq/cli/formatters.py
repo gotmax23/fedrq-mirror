@@ -295,13 +295,29 @@ class Formatters(Mapping[str, type[Formatter]]):
         parser: argparse.ArgumentParser,  # noqa: ARG002
         parsed_args: argparse.Namespace,  # noqa: ARG002
     ) -> list[str]:
-        opts: list[str] = [*_ATTRS]
+        return sorted(self.formatters_it())
+
+    def formatters_it(
+        self,
+        attrs: bool = True,
+        formatters: bool = True,
+        special_formatters: bool = True,
+    ) -> Iterator[str]:
+        """
+        Yields:
+            Names of formatters in this container. `SpecialFormatter`s have a
+            `:` appended to their names.
+        """
+        if attrs:
+            yield from _ATTRS
+        if {formatters, special_formatters} == {False}:
+            return
         for name, formatter in self.items():
             if issubclass(formatter, SpecialFormatter):
-                opts.append(f"{name}:")
-            else:
-                opts.append(name)
-        return opts
+                if special_formatters:
+                    yield f"{name}:"
+            elif formatters:
+                yield name
 
 
 class SourceFromatter(Formatter):
