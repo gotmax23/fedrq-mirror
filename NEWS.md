@@ -1,6 +1,28 @@
 NEWS
 =====
 
+## 0.14.0 - 2024-02-07 <a id='0.14.0'></a>
+
+### Added
+
+- api: add `fedrq.cli.formatters.Formatters.formatters_it()` method
+- cli: add `formatters` subcommand to list formatters
+- formatters: add `-F multiline`
+- formatters: add `-F requiresmatch` and related formatters
+- releases: add `--branch=eln` / `--repo=buildroot` repo definition
+
+### Changed
+
+- api: clean up INTERNAL `fedrq.cli.formatters` API
+
+### Deprecated
+
+- api: deprecate standalone `fedrq.repoquery` module
+
+### Removed
+
+- all: drop support for libdnf5 version less than 5.0.12
+
 ## 0.13.0 - 2023-12-18 <a id='0.13.0'></a>
 
 !!! warning
