@@ -11,16 +11,18 @@ fedrq uses the TOML syntax for its configuration files.
 
 # DIRECTORIES
 
-*PYTHON_SITELIB/fedrq/data/\*.toml* Builtin configuration files. These should not be
-modified directly but may be overridden or used as examples.
+*PYTHON_SITELIB/fedrq/data/\*.toml*
+	Builtin configuration files.
+	These should not be modified directly but may be overridden or used as examples.
 
-*/etc/fedrq/\*.toml* System wide configuration files. Has precedence over
-builtin configuration files.
+*/etc/fedrq/\*.toml*
+	System wide configuration files.
+	Has precedence over builtin configuration files.
 
-*~/.config/fedrq/\*.toml* User configuration files. Highest precedence
-
-Top level options and releases in the *[releases]* table can be redefined
-by creating a configuration file with higher precedence.
+*~/.config/fedrq/\*.toml* 
+	User configuration files. Highest precedence.
+	Top level options and releases in the *[releases]* table can be redefined
+	by creating a configuration file with higher precedence.
 
 # OPTIONS
 

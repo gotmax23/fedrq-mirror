@@ -25,10 +25,10 @@ fedrq is a tool to simplify querying the Fedora and EPEL repositories.
    config. *--dump* requires *tomli-w*.
 |  pkgs
 :  Find the packages that match a list of package specs. Allows
-   *--whatprovides* like functionality with *--resolve-packages*.
+   *--whatprovides*-like functionality with the *--resolve-packages* flag.
 |  subpkgs
 :  Find the subpackages provided by a list of SRPMs.
-   Doesn't have *--src*, because subpkgs aren't SRPMs.
+   Doesn't support a *--src* flag, because subpkgs aren't SRPMs.
 |  whatenhances
 :  Find the packages that Enhance *[package...]*
 |  whatrecommends
@@ -36,12 +36,12 @@ fedrq is a tool to simplify querying the Fedora and EPEL repositories.
 |  whatrequires
 :  Find the packages that Require *[package...]*
 |  wr
-:  Alias for _whatrequires_
+:  Alias for *whatrequires*
 |  whatrequires-src
 :  Find the packages Require the subpackages of *[package...]*.
    *[package...]* must be source package(s).
 |  wrsrc
-:  Alias for _whatrequires-src_
+:  Alias for *whatrequires-src*
 |  whatsuggests
 :  Find the packages that Suggest *[package...]*
 |  whatsupplements
@@ -77,13 +77,13 @@ These options have the same meaning across multiple subcommands.
 *-r*, *--repo* <repo class> (default: _@base_)
 	Enable <repo class> and disable all others for this operation. <repo
 	class> can be a standard repoid that's configured in /etc/yum.repos.d in
-	a ReleaseConfig's *defpaths* (see fedrq(5)). In addition, release
-	specifc repo groups and generic release class macros (e.g. *@copr*) are
+	a ReleaseConfig's *defpaths* (see fedrq(5)). In addition, release-
+	specifc repo groups and generic release class macros (e.g., *@copr*) are
 	accepted. When *--repo* isn't specified, the repositories in a Release's
 	*@base* repo group are selected. See REPO CLASSES for more information.
 *-e*, *--enablerepo* <repo class>
 	Enable certain repositories for this operation. All repositories in the
-	system configuration and any fedrq repo classes are accepted. Can be
+	system configuration and any fedrq repo classes are accepted. The option can be
 	specified multiple times. Accepts comma separated values. See REPO
 	CLASSES.
 *-l*, *--latest* <integer|"all"> (default: _1_)
@@ -411,13 +411,16 @@ The following generic repo class macros are available for Fedora releases:
 
 ## CONFIGURATION
 
-*PYTHON_SITELIB/fedrq/data/\*.toml* Builtin configuration files. These should not be
-modified directly but may be overridden or used as examples.
+*PYTHON_SITELIB/fedrq/data/\*.toml* 
+	Builtin configuration files.
+	These should not be modified directly but may be overridden or used as examples.
 
-*/etc/fedrq/\*.toml* System wide configuration files. Has precedence over
-builtin configuration files.
+*/etc/fedrq/\*.toml*
+	System wide configuration files.
+	Has precedence over builtin configuration files.
 
-*~/.config/fedrq/\*.toml* User configuration files. Highest precedence
+*~/.config/fedrq/\*.toml*
+	User configuration files. Highest precedence.
 
 See fedrq(5) for configuration file syntax.
 

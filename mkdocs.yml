@@ -33,6 +33,7 @@ theme:
         name: Switch to light mode
 markdown_extensions:
   - admonition
+  - smarty
   - toc:
       permalink: true
   - tables
@@ -58,11 +59,16 @@ plugins:
             - https://docs.python.org/3/objects.inv
             - https://dnf.readthedocs.io/en/latest/objects.inv
             - https://dnf5.readthedocs.io/en/latest/objects.inv
+  - gen-files:
+      scripts:
+        - doc/mkdocs_mangen.py
   - exclude:
       glob:
         - "*.tar.gz"
         - "fedrq.1*"
         - "fedrq.5*"
+        - "*.py"
+        - "requirements.*"
 watch:
   - "README.md"
   - "NEWS.md"

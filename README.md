@@ -12,7 +12,7 @@ Python bindings and does not shell out to `dnf repoquery`. It allows querying
 for reverse dependencies, packages that contain a certain Provide or file,
 subpackages of an SRPM, and package metadata.
 
-The tool doesn't seek to replace every feature of dnf repoquery. It provides a
+The tool doesn't seek to replace every feature of `dnf repoquery`. It provides a
 more user friendly interface than `dnf repoquery` for certain common tasks.
 
 [![builds.sr.ht status](https://builds.sr.ht/~gotmax23/fedrq/commits/main.svg)](https://builds.sr.ht/~gotmax23/fedrq/commits/main?)
@@ -34,10 +34,10 @@ more user friendly interface than `dnf repoquery` for certain common tasks.
 
 ## Installation
 
-fedrq has a copr repository at [gotmax23/fedrq][link-copr] that contains
+fedrq has a Copr repository at [gotmax23/fedrq][link-copr] that contains
 released versions.
 Development snapshots are available at [gotmax23/fedrq-dev][link-copr-dev].
-The RPM specfile is in the repository root.
+The RPM specfile is located in the repository root.
 
 fedrq is also [published to PyPI](https://pypi.org/project/fedrq/) so you can
 `pip install fedrq`.
@@ -105,9 +105,9 @@ See [NEWS.md](https://git.sr.ht/~gotmax23/fedrq/tree/main/NEWS.md).
 ## Python API
 
 The `fedrq.config` module and the `fedrq.backend` package are public API.
-Everything under `fedrq.cli` is internal. fedrq is a primarily a CLI tool and
-its API abstracts the specific dnf/libdnf5 functionality that it uses. The
-API's main purpose is repoquerying, but you can use the fedrq functionality
+Everything under `fedrq.cli` is internal. fedrq is primarily a CLI tool and
+its API only abstracts the specific dnf/libdnf5 functionality that the CLI uses. The
+API's main purpose is "repoquerying", but you can use the fedrq functionality
 you'd like and then access the underlying dnf Base object to preform other
 tasks if needed.
 
@@ -120,7 +120,7 @@ the mailing list (see [Contributing](#contributing)).
 
 ## Documentation
 
-See our new [docsite][link-docsite] for rendered manpages, changelogs, and
+See fedrq's [documentation site][link-docsite] for rendered manpages, changelogs, and
 Python API documentation.
 
 
@@ -134,7 +134,7 @@ See [CONTRIBUTING.md].
 
 ## Credits
 Thank you to the dnf maintainers. This tool is inspired by `dnf repoquery` and
-uses the `dnf` python bindings.
+uses the dnf python bindings.
 
 
 ## License
@@ -147,7 +147,7 @@ This project follows the REUSE specification. In general:
 - The embedded repo defs in src/fedrq/data/repos from fedora-repos.rpm are MIT
   licensed.
   These are only used when the needed repo defs are not available in the system
-  config (i.e. for querying the Fedora repos from a non Fedora system).
+  config (i.e., for querying the Fedora repos from a non Fedora system).
 - `enum.StrEnum` is copied from Cpython 3.11 for older Python versions. It's
   ~30 lines of PSF-2.0 licensed code.
 

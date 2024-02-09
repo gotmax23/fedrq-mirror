@@ -211,37 +211,9 @@ def mockbuild(session: nox.Session):
 
 
 @nox.session
-def docgen(session: nox.Session):
-    """
-    Generate extra content for the docsite
-    """
-    for i in ("1", "5"):
-        # Long, terrible pipeline to convert scdoc to markdown
-        # fmt: off
-        session.run(
-            "sh", "-euo", "pipefail", "-c",
-            # Convert scdoc to html
-            f"scd2html < doc/fedrq.{i}.scd"
-            # Remove aria-hidden attributes so pandoc doesn't try to convert them
-            "| sed 's|aria-hidden=\"true\"||'"
-            "| pandoc --from html "
-            # mkdocs doesn't support most of the pandoc markdown extensions.
-            # Use markdown_strict and only enable pipe_tables.
-            "--to markdown_strict+pipe_tables"
-            "| sed "
-            # Remove anchors that scd2html inserts
-            r"-e 's| \[¶\].*||' "
-            f"> doc/fedrq{i}.md",
-            external=True,
-        )
-        # fmt: on
-
-
-@nox.session
 def mkdocs(session: nox.Session):
     install(session, "-e", ".[doc]", constraint="doc")
-    docgen(session)
-    session.run("mkdocs", *session.posargs)
+    session.run("mkdocs", *(session.posargs or ["build"]))
 
 
 @nox.session(venv_backend="none")
@@ -280,7 +252,7 @@ def pip_compile(session: nox.Session):
     # Use --upgrade by default unless a user passes -P.
     args = list(session.posargs)
     if not any(
-        arg.startswith("-P") or arg.startswith("--upgrade-package") for arg in args
+        arg.startswith(("-P", "--upgrade-package", "--no-upgrade")) for arg in args
     ):
         args.append("--upgrade")
 

@@ -6,10 +6,11 @@ SPDX-License-Identifier: GPL-2.0-or-later
 # fedrq's Python API
 
 The `fedrq.config` module and the `fedrq.backend` package are public API.
-Everything under `fedrq.cli` is internal. fedrq is a primarily a CLI tool and
-its API abstracts the specific dnf/libdnf5 functionality that it uses. Its main
-purpose is repoquerying, but you can use the fedrq functionality you want and
-then access the underlying dnf Base object to preform other tasks if needed.
+Everything under `fedrq.cli` is internal. fedrq is primarily a CLI tool and
+its API only abstracts the specific dnf/libdnf5 functionality that the CLI uses. The
+API's main purpose is "repoquerying", but you can use the fedrq functionality
+you'd like and then access the underlying dnf Base object to preform other
+tasks if needed.
 
 Take a look at the docstrings for more information.
 
@@ -18,10 +19,12 @@ changes.
 
 ## fedrq.backends
 
-This is the heart of fedrq's API. There is a dnf backend (`fedrq.backends.dnf`)
-and a libdnf5 backend (`fedrq.backends.libdnf5`). This package provides an
-interface to configure a Base session, load repositories, preform queries, and
-related functionality. The main primitives are:
+[`fedrq.backends`][fedrq.backends] is the heart of fedrq's API.
+There is a dnf backend (`fedrq.backends.dnf`)
+and a libdnf5 backend (`fedrq.backends.libdnf5`).
+This package provides an interface to configure a Base session, load
+repositories, preform queries, and related functionality.
+The main primitives are:
 
 ### BaseMaker
 
@@ -31,7 +34,7 @@ related functionality. The main primitives are:
 
 **libdnf5 backend:** [`fedrq.backends.libdnf5.backend.BaseMaker`][fedrq.backends.libdnf5.backend.BaseMaker]
 
-`BaseMaker` allows configuring a dnf Base session and loading repositories.
+`BaseMaker` allows configuring a dnf `Base` session and loading repositories.
 
 ### Repoquery
 
@@ -41,8 +44,8 @@ related functionality. The main primitives are:
 
 **libdnf5 backend:** [`fedrq.backends.libdnf5.backend.Repoquery`][fedrq.backends.libdnf5.backend.Repoquery]
 
-`Repoquery` takes an initialized Base object (see `BaseMaker`) and allows
-preforming a large range of queries. Most of its methods return
+`Repoquery` accepts an initialized Base object (see `BaseMaker`) and allows
+performing a large range of queries. Most of its methods return
 `PackageQueryCompat` or `PackageCompat` objects.
 
 
@@ -55,11 +58,11 @@ preforming a large range of queries. Most of its methods return
 **libdnf5 backend:** [`fedrq.backends.libdnf5.backend.PackageQuery`][fedrq.backends.libdnf5.backend.PackageQuery]
 ([`libdnf5.rpm.PackageQuery`][libdnf5.rpm.PackageQuery] subclass)
 
-PackageQueryCompat is a set like object of PackageCompat objects. It contains
-methods to filter its Packages based on certain criteria. Typically, you'd
-access these through the Repoquery class.
+`PackageQueryCompat` is a set-like object of `PackageCompat` objects. It contains
+methods to filter its Packages based on certain criteria. Typically, you would
+access the filtering methods through the `Repoquery` class's wrappers.
 
-- `fedrq.backends.libdnf5.backend.PackageQuery` - subclass of
+- `fedrq.backends.libdnf5.backend.PackageQuery` --- subclass of
   `libdnf5.rpm.PackageQuery`. adds back missing `query` and `querym` methods.
 
 
@@ -73,14 +76,15 @@ access these through the Repoquery class.
 **libdnf5 backend:** [`fedrq.backends.libdnf5.backend.Package`][fedrq.backends.libdnf5.backend.Package]
 ([`libdnf5.rpm.Package`][libdnf5.rpm.Package] subclass)
 
-- [`fedrq.backends.libdnf5.backend.Package`][fedrq.backends.libdnf5.backend.Package] -
+- [`fedrq.backends.libdnf5.backend.Package`][fedrq.backends.libdnf5.backend.Package] ---
   subclass of [`libdnf5.rpm.Package`][libdnf5.rpm.Package]
-  that implements missing functionality and compatability with
-  [`dnf.package.Package`][dnf.package.Package]. includes properties to access Package attributes.
+  that implements missing functionality and compatibility with
+  [`dnf.package.Package`][dnf.package.Package].
+  The subclass includes properties to access Package attributes.
   These properties were removed from libdnf5 in favor of `get_foo()` methods.
   It also includes rich comparison support (`__lt__`, `__gt__`, etc.) and
   implements roughly the same sort order as the dnf backend and adds a
-  `__hash__()` method so it can e.g. be used in a set or as a dictionary key.
+  `__hash__()` method so it can e.g., be used in a set or as a dictionary key.
 
     Importing
     [`fedrq.backends.libdnf5.backend`][fedrq.backends.libdnf5.backend]
