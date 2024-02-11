@@ -80,5 +80,5 @@ class ChangelogCommand(Command):
         for i, entry in enumerate(changelogs):
             print(entry)
             print()
-            if self.args.entry_limit is not None and i >= self.args.entry_limit:
+            if self.args.entry_limit is not None and i + 1 >= self.args.entry_limit:
                 break
