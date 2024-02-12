@@ -20,9 +20,9 @@ packaging==23.2
     # via pytest
 pluggy==1.4.0
     # via pytest
-pydantic==2.6.0
+pydantic==2.6.1
     # via fedrq (pyproject.toml)
-pydantic-core==2.16.1
+pydantic-core==2.16.2
     # via pydantic
 pytest==8.0.0
     # via

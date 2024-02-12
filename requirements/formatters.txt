@@ -26,9 +26,9 @@ pathspec==0.12.1
     # via black
 platformdirs==4.2.0
     # via black
-pydantic==2.6.0
+pydantic==2.6.1
     # via fedrq (pyproject.toml)
-pydantic-core==2.16.1
+pydantic-core==2.16.2
     # via pydantic
 requests==2.31.0
     # via fedrq (pyproject.toml)
