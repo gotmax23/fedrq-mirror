@@ -132,9 +132,9 @@ These options have the same meaning across multiple subcommands.
 *-L*, *--filelists* <always|auto|never> (default: _auto_)
 	Whether to load filelists. By default, filelists are only loaded when
 	using the files formatter (i.e. *-F files* or *-F json:files*). This
-	only applies when using the libdnf5 backend, which doesn't load
-	filelists by default to save memory and bandwidth. dnf4 always loads
-	filelists.
+	only applies when using the libdnf5 backend or newer versions of dnf4,
+	which do not load filelists by default to save memory and bandwidth.
+	*dnf < 4.19.0* always loads filelists.
 
 ## whatrequires, whatrecommends, whatsuggests
 

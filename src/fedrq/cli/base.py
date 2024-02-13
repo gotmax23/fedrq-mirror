@@ -13,6 +13,7 @@ import logging
 import re
 import sys
 from functools import wraps
+from textwrap import dedent
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -310,11 +311,7 @@ class Command(metaclass=abc.ABCMeta):
             "--filelists",
             choices=tuple(LoadFilelists),
             dest="load_filelists",
-            help="Whether to load filelists."
-            " By default, filelists are only loaded when using the files formatter."
-            " This only applies when using the libdnf5 backend,"
-            " which doesn't load filelists by default to save memory and bandwidth."
-            " dnf4 always loads filelists.",
+            help="Whether to load filelists",
         )
         parser.add_argument("-B", "--backend", choices=tuple(BACKENDS))
         parser.add_argument(
