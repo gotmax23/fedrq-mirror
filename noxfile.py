@@ -26,8 +26,6 @@ PROJECT = "fedrq"
 SPECFILE = "fedrq.spec"
 LINT_SESSIONS = ("formatters", "codeqa", "typing")
 LINT_FILES = (f"src/{PROJECT}", "tests/", "noxfile.py")
-RELEASERR = "releaserr @ git+https://git.sr.ht/~gotmax23/releaserr"
-# RELEASERR = "-e../releaserr"
 
 nox.options.sessions = ("lint", "covtest")
 nox.options.reuse_existing_virtualenvs = True
@@ -125,7 +123,7 @@ def typing(session: nox.Session):
 def bump(session: nox.Session):
     version = session.posargs[0]
 
-    install(session, RELEASERR, "flit", "fclogr")
+    install(session, "releaserr", "flit", "fclogr")
 
     session.run("releaserr", "check-tag", version)
     session.run("releaserr", "ensure-clean")
@@ -152,7 +150,7 @@ def bump(session: nox.Session):
 @nox.session
 def publish(session: nox.Session):
     # Setup
-    install(session, RELEASERR, "twine")
+    install(session, "releaserr", "twine")
     session.run("releaserr", "ensure-clean")
 
     # Upload to PyPI
