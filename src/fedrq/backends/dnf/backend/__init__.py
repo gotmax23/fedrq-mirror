@@ -67,9 +67,10 @@ class BaseMaker(BaseMakerBase):
 
     def load_filelists(self, enable: bool = True) -> None:
         # Old versions of dnf always load filelists
-        if not hasattr(self.conf, "optional_metadata_types"):
+        try:
+            types: list[str] = self.conf.optional_metadata_types
+        except AttributeError:
             return
-        types: list[str] = self.conf.optional_metadata_types
         if enable:
             types.append("filelists")
             return
