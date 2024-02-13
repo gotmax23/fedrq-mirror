@@ -1,6 +1,22 @@
 NEWS
 =====
 
+## 0.15.0 - 2024-02-13 <a id='0.15.0'></a>
+
+### Added
+
+- backends dnf: add `load_filelists()` implementation. This makes sure that
+  systems with `dnf >= 4.19.0` can, for example, use `-L always` to load
+  filelists.
+
+### Changed
+
+- doc: revamp and cleanup
+
+### Fixed
+
+- changelogs: fix off-by-one error with `--entry-limit` flag
+
 ## 0.14.0 - 2024-02-07 <a id='0.14.0'></a>
 
 ### Added
