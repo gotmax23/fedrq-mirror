@@ -65,6 +65,17 @@ class BaseMaker(BaseMakerBase):
             raise KeyError(f"{key} is not a valid substitution")
         self.set(key, value)
 
+    def load_filelists(self, enable: bool = True) -> None:
+        # Old versions of dnf always load filelists
+        if not hasattr(self.conf, "optional_metadata_types"):
+            return
+        types: list[str] = self.conf.optional_metadata_types
+        if enable:
+            types.append("filelists")
+            return
+        while "filelists" in types:
+            types.remove("filelists")
+
     def load_changelogs(self, enable: bool = True) -> None:
         for repo in self.base.repos.iter_enabled():
             repo.load_metadata_other = enable
