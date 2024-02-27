@@ -1,0 +1,56 @@
+# Copyright (C) 2023 Maxwell G <maxwell@gtmx.me>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+ARG IMAGE=registry.access.redhat.com/ubi8
+ARG RHEL=8
+
+FROM ${IMAGE} as base
+
+RUN set -xeuo pipefail ;\
+    dnf install -y --nogpgcheck \
+        https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
+        wget \
+    ;\
+    wget \
+        https://copr.fedorainfracloud.org/coprs/gotmax23/python3.11-dnf/repo/epel-8/gotmax23-python3.11-dnf-epel-8.repo \
+        -O /etc/yum.repos.d/gotmax23-python3.11-dnf-epel-8.repo \
+    ;\
+    dnf install -y --setopt=install_weak_deps=False --nobest --nogpgcheck \
+        python3.11 \
+        python3.11-devel \
+        python3.11-gpg \
+        python3.11-hawkey \
+        python3.11-libcomps \
+        python3.11-libdnf \
+        python3.11-rpm \
+        python3.11-six \
+    ;\
+    dnf clean all
+
+FROM base as builder
+
+RUN python3.11 -m venv --system-site-packages /opt/fedrq
+
+COPY . /usr/src/fedrq
+
+RUN /opt/fedrq/bin/pip install --verbose /usr/src/fedrq tomli_w
+
+
+FROM base as final
+
+COPY --from=builder /opt/fedrq /opt/fedrq
+RUN ln -s /usr/lib/python3.6/site-packages/dnf /opt/fedrq/lib/python3.11/site-packages/dnf
+
+COPY contrib/container/000-container.toml /etc/fedrq/000-container.toml
+COPY contrib/container/rhel8.toml /etc/fedrq/rhel8.toml
+
+ENV PATH="/opt/fedrq/bin:${PATH}"
+
+RUN fedrq check-config
+
+COPY contrib/container/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+ENV XDG_CACHE_HOME=/fedrq-cache
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh", "/opt/fedrq/bin/fedrq"]
+CMD ["--help"]
+VOLUME /fedrq-cache

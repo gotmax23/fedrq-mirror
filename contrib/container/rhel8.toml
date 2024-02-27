@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Unlicense
+# SPDX-FileCopyrightText: None
+
+[releases.rhel8]
+matcher = "^rhel(8)$"
+copr_chroot_fmt = "epel-8"
+defpaths = [
+    "epel.repo",
+]
+defs.no-crb = [
+    "rhel-8-for-x86_64-baseos-rpms", "rhel-8-for-x86_64-baseos-source-rpms",
+    "rhel-8-for-x86_64-appstream-rpms", "rhel-8-for-x86_64-appstream-source-rpms",
+]
+defs.base = [
+    "@no-crb",
+    "codeready-builder-for-rhel-8-x86_64-rpms",
+    "codeready-builder-for-rhel-8-x86_64-source-rpms"
+]
+defs.epel = [
+    "@base",
+    "@repo:epel",
+    "epel-source",
+]
