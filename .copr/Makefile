@@ -4,7 +4,8 @@
 outdir ::= results_fedrq
 
 srpm:
-	command -v pipx || $(sudo) dnf install -y pipx
-	command -v git || $(sudo) dnf install -y git-core
-	pipx run nox -e srpm -- -o $(outdir)
-
+	command -v repoquery || $(SUDO) dnf install -y dnf-plugins-core
+	command -v fclogr || $(SUDO) dnf copr enable -y gotmax23/fclogr
+	command -v fclogr || $(SUDO) dnf install -y fclogr
+	command -v nox || $(SUDO) dnf install -y nox
+	nox --no-venv -e srpm -- -o $(outdir)
