@@ -4,6 +4,7 @@
 outdir ::= results_fedrq
 
 srpm:
+	command -v pip || $(SUDO) dnf install -y python3-pip
 	command -v fclogr || $(SUDO) dnf install -y python3-pygit2
 	command -v fclogr || pip install --user fclogr
 	command -v nox || $(SUDO) dnf install -y nox
