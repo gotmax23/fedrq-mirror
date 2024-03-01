@@ -421,6 +421,11 @@ def formatter_test_query() -> PackageQueryCompat:
             ["packagea.noarch : vpackage(b)"],
             id="narm",
         ),
+        pytest.param(
+            ["source+requiresmatch:packageb", "source+rm:packageb"],
+            ["packagea : vpackage(b)"],
+            id="source+requiresmatch",
+        ),
     ],
 )
 def test_formatter_p(

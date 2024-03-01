@@ -11,7 +11,7 @@ import warnings
 from collections.abc import Callable, Container, ItemsView, Iterable, Iterator, Mapping
 from contextlib import suppress
 from functools import partial
-from typing import TYPE_CHECKING, Any, NoReturn
+from typing import TYPE_CHECKING, Any, ClassVar, NoReturn
 
 from fedrq._utils import get_source_name
 from fedrq.backends.base import RepoqueryBase
@@ -550,11 +550,29 @@ class RequiresMatchSrcFormatter(RequiresMatchFormatter):
     _WRSRC = True
 
 
-class NARequiresMatchFormatter(RequiresMatchFormatter):
+class _RequiresMatchPrefixFormatter(RequiresMatchFormatter):
+    PREFIX: ClassVar[str | Callable[[PackageCompat], str]]
+
     def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
         for package in sorted(packages):
-            prefix = f"{package.name}.{package.arch} : "
+            prefix_fmt = self.PREFIX
+            prefix = (
+                prefix_fmt(package)
+                if callable(prefix_fmt)
+                else prefix_fmt.format(package=package)
+            )
             yield from (prefix + o for o in super().format([package]))
+
+
+class NARequiresMatchFormatter(_RequiresMatchPrefixFormatter):
+    PREFIX = "{package.name}.{package.arch} : "
+
+
+class SourceRequiresMatch(_RequiresMatchPrefixFormatter):
+
+    @staticmethod
+    def PREFIX(package: PackageCompat) -> str:  # type: ignore[override]
+        return f"{get_source_name(package)} : "
 
 
 class NARequiresMatchSrcFormatter(
@@ -592,6 +610,8 @@ DefaultFormatters = _DefaultFormatters(
         "multiline": MultilineFormatter,
         "requiresmatch": RequiresMatchFormatter,
         "rm": RequiresMatchFormatter,
+        "source+requiresmatch": SourceRequiresMatch,
+        "source+rm": SourceRequiresMatch,
         "na-requiresmatch": NARequiresMatchFormatter,
         "narm": NARequiresMatchFormatter,
         "requiresmatch-src": RequiresMatchSrcFormatter,

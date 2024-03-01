@@ -68,6 +68,8 @@ rm:
 rmsrc:
 size
 source
+source+requiresmatch:
+source+rm:
 source_debug_name
 source_name
 sourcerpm

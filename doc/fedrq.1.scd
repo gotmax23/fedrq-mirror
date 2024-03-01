@@ -244,6 +244,10 @@ This list is nonexhaustive. See *fedrq formatters --attrs*.
 	See the whatrequires EXAMPLES for usage.
 *-F* narm:_[comma- or semicolon-separated list of packages]_
 	Shortcut for *-F* na-requiresmatch
+*-F* source+requiresmatch:_[comma- or semicolon-separated list of packages]_
+	Combine the *-F* source and *-F* requiresmatch on a single line.
+*-F* source+rm:_[comma- or semicolon-separated list of packages]_
+	Shortcut for *-F* na-requiresmatch
 
 There are also _requiresmatch-src_ / _rmsrc_ and _na-requiresmatch_ / _narmsrc_
 formatters that work similarly to their non-src conterparts, expect they take a
