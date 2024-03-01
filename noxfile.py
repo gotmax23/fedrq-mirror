@@ -37,6 +37,10 @@ nox.options.reuse_existing_virtualenvs = True
 def install(
     session: nox.Session, *args, editable=False, constraint: str | None = None, **kwargs
 ):
+    # nox --no-venv
+    if isinstance(session.virtualenv, nox.virtualenv.PassthroughEnv):
+        session.warn(f"No venv. Skipping installation of {args}")
+        return
     largs = []
     if constraint and PINNED:
         largs.extend(("-c", f"requirements/{constraint}.txt"))
