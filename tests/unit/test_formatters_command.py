@@ -117,9 +117,9 @@ def test_formatters_command_options(
     output_check: Callable[[Collection[str]], Any] | None,
     capsys: pytest.CaptureFixture,
 ) -> None:
-    mocked = mocker.spy(DefaultFormatters, "formatters_it")
+    mocked = mocker.spy(DefaultFormatters.__class__, "formatters_it")
     fedrq.cli.main(["formatters", *args])
-    mocked.assert_called_once_with(**formatters_kwargs)
+    mocked.assert_called_once_with(DefaultFormatters, **formatters_kwargs)
     out, err = capsys.readouterr()
     assert not err
     if output_check:

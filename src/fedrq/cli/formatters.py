@@ -7,7 +7,6 @@ from __future__ import annotations
 import abc
 import argparse
 import logging
-import warnings
 from collections.abc import Callable, Container, ItemsView, Iterable, Iterator, Mapping
 from contextlib import suppress
 from functools import partial
@@ -580,17 +579,7 @@ class NARequiresMatchSrcFormatter(
 ): ...
 
 
-class _DefaultFormatters(Formatters):
-    def __call__(self) -> Any:
-        warnings.warn(
-            "DEPRECATED since 0.4.0: DefaultFormatters no longer needs to be called."
-            " It's already initialized."
-            " Just call DefaultFormatters.get_formatter() directly."
-        )
-        return self
-
-
-DefaultFormatters = _DefaultFormatters(
+DefaultFormatters = Formatters(
     {
         "plain": "{0}",
         "plainwithrepo": "{0} {0.reponame}",
