@@ -8,4 +8,4 @@ srpm:
 	command -v fclogr || $(SUDO) dnf install -y python3-pygit2
 	command -v fclogr || pip install --user fclogr
 	command -v nox || $(SUDO) dnf install -y nox
-	nox --no-venv -e srpm -- -o $(outdir)
+	python3 -m nox --no-venv -e srpm -- -o $(outdir)
