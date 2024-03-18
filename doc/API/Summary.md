@@ -19,7 +19,7 @@ changes.
 
 ## fedrq.backends
 
-[`fedrq.backends`][fedrq.backends] is the heart of fedrq's API.
+`fedrq.backends` is the heart of fedrq's API.
 There is a dnf backend (`fedrq.backends.dnf`)
 and a libdnf5 backend (`fedrq.backends.libdnf5`).
 This package provides an interface to configure a Base session, load
