@@ -103,7 +103,7 @@ def lint(session: nox.Session):
 @nox.session()
 def codeqa(session: nox.Session):
     install(session, ".[codeqa]", constraint="codeqa")
-    session.run("ruff", *session.posargs, *LINT_FILES)
+    session.run("ruff", "check", *session.posargs, *LINT_FILES)
     session.run("reuse", "lint")
 
 
