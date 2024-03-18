@@ -10,7 +10,7 @@ import logging
 from collections.abc import Callable, Container, ItemsView, Iterable, Iterator, Mapping
 from contextlib import suppress
 from functools import partial
-from typing import TYPE_CHECKING, Any, ClassVar, NoReturn
+from typing import TYPE_CHECKING, Any, ClassVar, NoReturn, cast
 
 from fedrq._utils import get_source_name
 from fedrq.backends.base import RepoqueryBase
@@ -216,6 +216,7 @@ class Formatters(Mapping[str, type[Formatter]]):
     ) -> Formatter:
         if fallback is ...:
             fallback = self.fallback
+        fallback = cast("type[Formatter] | None", fallback)
         name, seperator, args = key.partition(":")
         with suppress(KeyError):
             return self[name](name, seperator, args, self, repoquery=repoquery)
