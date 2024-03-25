@@ -33,7 +33,7 @@ exceptiongroup==1.2.0
     # via anyio
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.42.0
+griffe==0.42.1
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
@@ -50,7 +50,7 @@ idna==3.6
     #   anyio
     #   httpx
     #   requests
-importlib-metadata==7.0.2
+importlib-metadata==7.1.0
     # via
     #   markdown
     #   mkdocs
@@ -95,7 +95,7 @@ mkdocs-exclude==1.0.2
     # via fedrq (pyproject.toml)
 mkdocs-gen-files==0.5.0
     # via fedrq (pyproject.toml)
-mkdocs-material==9.5.14
+mkdocs-material==9.5.15
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
@@ -171,7 +171,7 @@ tomli==2.0.1 ; python_version < "3.11"
     #   black
     #   fedrq (pyproject.toml)
     #   sourcehutx
-typer==0.9.0
+typer==0.10.0
     # via releaserr
 typing-extensions==4.10.0
     # via

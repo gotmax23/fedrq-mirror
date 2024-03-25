@@ -28,7 +28,7 @@ pytest==8.1.1
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
-pytest-mock==3.12.0
+pytest-mock==3.14.0
     # via fedrq (pyproject.toml)
 requests==2.31.0
     # via fedrq (pyproject.toml)
