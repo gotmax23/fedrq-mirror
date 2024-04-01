@@ -6,13 +6,13 @@ fedrq - Simplified repository querying
 
 # SYNOPSIS
 
-*\[fedrq \| python -m fedrq]* *[query type]* [options...] *[package...]*
+*<fedrq \| python -m fedrq>* *QUERY TYPE* [_OPTIONS_] [_PACKAGE_...]
 
-*\[fedrq \| python -m fedrq]* *[query type]* [options...] *\[-i \| --stdin ]*
+*<fedrq \| python -m fedrq>* *QUERY TYPE* [_OPTIONS_] _<-i|--stdin>_
 
-*\[fedrq \| python -m fedrq]* *check-config* [--dump] [--debug]
+*<fedrq \| python -m fedrq>* *check-config* [_--dump_] [_--debug_]
 
-*\[fedrq \| python -m fedrq]* *formatters* [formatters options...]
+*<fedrq | python -m fedrq>* *formatters* [_FORMATTERS OPTIONS_...]
 
 # DESCRIPTION
 
@@ -30,22 +30,22 @@ fedrq is a tool to simplify querying the Fedora and EPEL repositories.
 :  Find the subpackages provided by a list of SRPMs.
    Doesn't support a *--src* flag, because subpkgs aren't SRPMs.
 |  whatenhances
-:  Find the packages that Enhance *[package...]*
+:  Find the packages that Enhance [_PACKAGE_...]
 |  whatrecommends
-:  Find the packages that Recommend *[package...]*
+:  Find the packages that Recommend [_PACKAGE_...]
 |  whatrequires
-:  Find the packages that Require *[package...]*
+:  Find the packages that Require [_PACKAGE_...]
 |  wr
 :  Alias for *whatrequires*
 |  whatrequires-src
-:  Find the packages Require the subpackages of *[package...]*.
-   *[package...]* must be source package(s).
+:  Find the packages Require the subpackages of [_PACKAGE_...].
+   [_PACKAGE_...] must be source package(s).
 |  wrsrc
 :  Alias for *whatrequires-src*
 |  whatsuggests
-:  Find the packages that Suggest *[package...]*
+:  Find the packages that Suggest [_PACKAGE_...]
 |  whatsupplements
-:  Find the packages that Supplement *[package...]*
+:  Find the packages that Supplement [_PACKAGE_...]
 |  make-cache
 :  Load the repodata for the current branch/repo config
 |  download
@@ -67,31 +67,33 @@ These options have the same meaning across multiple subcommands.
 
 *-i*, *--stdin*
 	Read package names from stdin. Cannot be used when passing positional
-	*[packages...]*.
-*-b*, *--branch* <branch name> (default: _rawhide_)
+	\[_PACKAGE_...].
+*-b* _BRANCH NAME_, *--branch* _BRANCH NAME_ (default: *rawhide*)
 	Distribution release. This matches distgit branch names by convention.
 	See BUILTIN RELEASES for the releases available out of the box. Extra
 	configurations may be specified by the user. The chosen release impacts
-	what the releasever will be set to and which repositories will be
+	what the value of *$releasever* and which repositories will be
 	enabled by default.
-*-r*, *--repo* <repo class> (default: _@base_)
-	Enable <repo class> and disable all others for this operation. <repo
-	class> can be a standard repoid that's configured in /etc/yum.repos.d in
-	a ReleaseConfig's *defpaths* (see fedrq(5)). In addition, release-
-	specifc repo groups and generic release class macros (e.g., *@copr*) are
-	accepted. When *--repo* isn't specified, the repositories in a Release's
+*-r* _REPO CLASS_, *--repo* _REPO CLASS_ (default: *@base*)
+	Enable _REPO CLASS_ and disable all others for this operation.
+	_REPO CLASS_ can be a standard repoid that's configured in
+	/etc/yum.repos.d or a custom one specified in a ReleaseConfig's
+	*defpaths* (see fedrq(5)).
+	In addition, release-specific repo groups and generic release class
+	macros (e.g., *@copr*) are accepted.
+	When *--repo* isn't specified, the repositories in a Release's
 	*@base* repo group are selected. See REPO CLASSES for more information.
-*-e*, *--enablerepo* <repo class>
+*-e* _REPO CLASS_, *--enablerepo* _REPO CLASS_
 	Enable certain repositories for this operation. All repositories in the
 	system configuration and any fedrq repo classes are accepted. The option can be
-	specified multiple times. Accepts comma separated values. See REPO
-	CLASSES.
-*-l*, *--latest* <integer|"all"> (default: _1_)
+	specified multiple times. Accepts comma separated values.
+	See REPO CLASSES.
+*-l* _<integer|"all">_, *--latest* _<integer|"all">_ (default: _1_)
 	How many package versions to show for a given _name.arch_.
 	By default, only the latest is included.
 
 	*NOTE*: *dnf repoquery* includes _all_ by default.
-*-F*, *--formatter* <str> (default: _plain_)
+*-F*, *--formatter* _<str>_ (default: _plain_)
 	How the output should be formatted.
 	This is similar to *dnf repoquery --qf* but more limited.
 	All Package attributes from *dnf repoquery --querytags* are supported.
@@ -101,7 +103,7 @@ These options have the same meaning across multiple subcommands.
 *-P*, *--resolve-packages*
 	Resolve the correct Package when given a virtual Provide or file path.
 	For instance, /usr/bin/yt-dlp would resolve to yt-dlp.
-*-A*, *--arch* <str>
+*-A* _<str>_, *--arch* _<str>_
 	Only include packages that match this arch.
 	This does not apply \--forcearch.
 
@@ -121,15 +123,15 @@ These options have the same meaning across multiple subcommands.
 	Equivalent to *--arch=notsrc*. This is a pseudo arch that does not exist
 	in rpm. It includes noarch and the system architecture. It does NOT
 	include multilib.
-*--forcearch* <str>
+*--forcearch* _ARCHITECTURE_
 	Query a foreign architecture's repositories
-*-B*, *--backend* <dnf|libdnf5>
+*-B* _<dnf|libdnf5>_, *--backend* _<dnf|libdnf5>_
 	Which package manager backend to use.
 	By default, fedrq uses dnf and falls back to libdnf5. Set *-B* /
 	*--backend* to make an explicit choice.
 	If you explicitly choose a backend whose dependencies are not met on
 	your system, fedrq will not fallback to another one.
-*-L*, *--filelists* <always|auto|never> (default: _auto_)
+*-L*  _<always|auto|never>_, *--filelists* _<always|auto|never>_ (default: _auto_)
 	Whether to load filelists. By default, filelists are only loaded when
 	using the files formatter (i.e. *-F files* or *-F json:files*). This
 	only applies when using the libdnf5 backend or newer versions of dnf4,
@@ -145,15 +147,16 @@ These options have the same meaning across multiple subcommands.
 
 ## subpkgs
 
-*-M*, *--match* <pattern> (can be repeated to match against multiple patterns)
+*-M* _PATTERN_, *--match* _PATTERN_ (can be repeated to match against multiple patterns)
 	Only show subpackages whose name matches this string. Glob
 	patterns are permitted. When specified multiple times, _any_
 	match is included.
 
 ## download and download-spec
 
-*-o*, *--destdir* <path>
-	Directory in which to download/extract files
+*-o* _PATH_, *--destdir* _PATH_
+	Directory in which to download/extract files.
+	Defaults to the current directory.
 
 ## formatters
 
@@ -173,7 +176,7 @@ but they can be filtered by passing one or more of the following options.
 
 ## Package attributes
 
-This list is nonexhaustive. See *fedrq formatters --attrs*.
+This list is non-exhaustive. See *fedrq formatters --attrs*.
 
 *-F* name
 	Show package names ++
@@ -261,21 +264,21 @@ subpackages, *-F* _rmsrc:foo_ is equivalent to *-F* _rm:foo,foo-devel,foo-static
 
 The following generic repo class macros are available for all releases:
 
-*@file:[url or local path]*
+*@file:*_[url or local path]_
 	Load a .repo file from a local path or a url. Repositories with
 	*enabled=0* won't be loaded unless they are enabled explicitly with
 	*--enablerepo*.
-*@baseurl:[url]*
-	Load a repository from *url*. gpgcheck will be disabled.
-*@baseurl:[url],[gpgkey]*
-	Load a repository from *url* and set its gpgkey to *gpgkey*
-*@copr:[user/name]* or *@copr:[@group/name]*
+*@baseurl:*_[url]_
+	Load a repository from _[url]_. *gpgcheck* will be disabled.
+*@baseurl:*_[url]_,_[gpgkey]_
+	Load a repository from *url* and set its *gpgkey* to _[gpgkey]_
+*@copr:*_[user/name]_ or *@copr:*_[@group/name]_
 	Load a Copr repository. The Copr instance defaults to
 	*https://copr.fedoraproject.org* but may be configured in fedrq's
 	configuration. *copr_chroot_fmt* must be specifced in the selected
 	branch's release configuration for this repo class to work. This is
 	configured for the builtin releases.
-*@copr:[user/name@copr_baseurl]* or *@copr:[@group/name@copr_baseurl]*
+*@copr:*_[user/name@copr_baseurl]_ or *@copr:*_[@group/name@copr_baseurl]_
 	The *@copr* repo class also accepts a custom Copr instance.
 	Append *@* and a url.
 *@source-repos*
@@ -283,12 +286,13 @@ The following generic repo class macros are available for all releases:
 	repositories
 *@base* or *base* or other group
 	The default repositories for a release specified in a ReleaseConfig's
-	*defs.base*. Any other repo group specified in a release's is accepted,
-	with or without the *@*. See SPECIAL REPOS for which repo groups are
-	available for each release.
-*@repo:[key]* or *key* (fallback)
+	*defs.base*.
+	Any other repo group specified in a release's configuration is accepted,
+	with or without the *@*.
+	See SPECIAL REPOS for which repo groups are available for each release.
+*@repo:*_[key]_ or _key_ (fallback)
 	Accepts any repoid available in the system configuration or a .repo file
-	specific in the current ReleaseConfig's *defpaths*. If *key* is the name
+	specified in the current ReleaseConfig's *defpaths*. If *key* is the name
 	of a release's repo group (see above), that will be enabled instead.
 
 The following generic repo class macros are available for Fedora releases:
