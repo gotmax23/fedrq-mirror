@@ -123,7 +123,7 @@ def typing(session: nox.Session):
     session.run("mypy", "--enable-incomplete-feature=Unpack", "src/fedrq/")
 
 
-@nox.session
+@nox.session(reuse_venv=False)
 def bump(session: nox.Session):
     version = session.posargs[0]
 
@@ -151,7 +151,7 @@ def bump(session: nox.Session):
     session.run("releaserr", "build", "--sign", "--backend", "flit_core")
 
 
-@nox.session
+@nox.session(reuse_venv=False)
 def publish(session: nox.Session):
     # Setup
     install(session, "releaserr", "twine")
