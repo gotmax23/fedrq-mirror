@@ -8,13 +8,13 @@ cffi==1.16.0
     # via pygit2
 fclogr==0.8.0
     # via -r requirements/srpm.in
-pycparser==2.21
+pycparser==2.22
     # via cffi
 pygit2==1.14.1
     # via fclogr
 rpm==0.1.0
     # via specfile
-specfile==0.28.0
+specfile==0.28.1
     # via fclogr
 typing-extensions==4.10.0
     # via specfile
