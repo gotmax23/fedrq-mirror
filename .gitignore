@@ -13,7 +13,7 @@ fedrq.1
 /doc/fedrq.*.html
 /doc/fedrq*.tar.gz
 /venv/
-FRAG.md
+NEWS_FRAGMENT.md
 /doc/fedrq?.md
 /site/
 GIT_MSG
