@@ -1,6 +1,28 @@
 NEWS
 =====
 
+## 1.0.0 - 2024-04-01 <a id='1.0.0'></a>
+
+First stable release
+
+### Added
+
+- Containerfiles: add experimental UBI 8–based Containerfile
+- cli formatters: add `source+requiresmatch` and `source+rm` formatters
+
+### Changed
+
+- Containerfiles: license under `GPL-2.0-or-later`
+- doc fedrq.1: use formatting consistent with `man-pages(7)`
+
+### Fixed
+
+- doc: remove broken reference
+
+### Removed
+
+- cli formatters: remove long-deprecated `_DefaultFormatters` class (INTERNAL API)
+
 ## 0.15.0 - 2024-02-13 <a id='0.15.0'></a>
 
 ### Added
