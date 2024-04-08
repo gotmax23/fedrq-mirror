@@ -18,7 +18,7 @@ packaging==24.0
     # via pytest
 pluggy==1.4.0
     # via pytest
-pydantic==1.10.14
+pydantic==1.10.15
     # via
     #   -c requirements/pydanticv1.in
     #   fedrq (pyproject.toml)
@@ -38,7 +38,7 @@ tomli==2.0.1 ; python_version < "3.11"
     #   pytest
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via pydantic
 urllib3==2.2.1
     # via requests

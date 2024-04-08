@@ -16,5 +16,5 @@ rpm==0.1.0
     # via specfile
 specfile==0.28.1
     # via fclogr
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via specfile
