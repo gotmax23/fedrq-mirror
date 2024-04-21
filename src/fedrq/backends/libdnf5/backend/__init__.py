@@ -23,7 +23,14 @@ from urllib.parse import urlparse
 
 from fedrq._utils import filter_latest
 from fedrq.backends import MissingBackendError
-from fedrq.backends.base import BackendMod, BaseMakerBase, ChangelogEntry, RepoqueryBase
+from fedrq.backends.base import (
+    BackendMod,
+    BaseMakerBase,
+    ChangelogEntry,
+    PackageCompat,
+    PackageQueryCompat,
+    RepoqueryBase,
+)
 from fedrq.backends.libdnf5 import BACKEND  # noqa: F401
 
 if t.TYPE_CHECKING:
@@ -437,8 +444,7 @@ class BaseMaker(BaseMakerBase):
         self.rs.enable_source_repos()
 
 
-@functools.total_ordering
-class Package(libdnf5.rpm.Package):
+class Package(libdnf5.rpm.Package, PackageCompat):
     DEBUGINFO_SUFFIX = "-debuginfo"
     DEBUGSOURCE_SUFFIX = "-debugsource"
     """
@@ -458,8 +464,14 @@ class Package(libdnf5.rpm.Package):
             return evrcmp > 0
         return self.get_arch() > other.get_arch()
 
+    def __ge__(self, other) -> bool:
+        return self > other or self == other
+
     def __lt__(self, other) -> bool:
         return not (self > other)
+
+    def __le__(self, other) -> bool:
+        return self < other or self == other
 
     @property
     def name(self) -> str:
@@ -667,7 +679,7 @@ class Reldep5(libdnf5.rpm.Reldep):
 libdnf5._rpm.Reldep_swigregister(Reldep5)
 
 
-class PackageQuery(libdnf5.rpm.PackageQuery):
+class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
     __rq__: Repoquery
 
     """
@@ -809,7 +821,7 @@ class NEVRAForms(int, Enum):
     NAME = libdnf5.rpm.Nevra.Form_NAME
 
 
-class Repoquery(RepoqueryBase):
+class Repoquery(RepoqueryBase[PackageQuery]):
     def __init__(self, base: libdnf5.base.Base) -> None:
         self.base: libdnf5.base.Base = base
 

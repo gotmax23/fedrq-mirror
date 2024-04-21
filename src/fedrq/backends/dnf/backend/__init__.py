@@ -39,6 +39,12 @@ if t.TYPE_CHECKING:
 
 LOG = logging.getLogger(__name__)
 
+PackageCompat.register(dnf.package.Package)
+Package: PackageCompat = dnf.package.Package
+PackageQueryCompat.register(dnf.query.Query)
+PackageQuery: PackageQueryCompat = dnf.query.Query
+RepoError = dnf.exceptions.RepoError
+
 
 class BaseMaker(BaseMakerBase):
     """
@@ -195,7 +201,9 @@ class NEVRAForms(int, Enum):
     NAME = hawkey.FORM_NAME
 
 
-class Repoquery(RepoqueryBase):
+# Use PackageCompat and PackageQueryCompat as the TypeVar, as the the native dnf objects
+# don't provide typing.
+class Repoquery(RepoqueryBase[PackageQueryCompat[PackageCompat]]):
     def __init__(self, base: dnf.Base) -> None:
         self.base: dnf.Base = base
 
@@ -246,11 +254,6 @@ def get_releasever():
     Return the system releasever
     """
     return dnf.rpm.detect_releasever("/")
-
-
-Package: PackageCompat = dnf.package.Package
-PackageQuery: PackageQueryCompat = dnf.query.Query
-RepoError = dnf.exceptions.RepoError
 
 
 def get_changelogs(package: t.Any) -> Iterator[ChangelogEntry]:

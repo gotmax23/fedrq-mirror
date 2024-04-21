@@ -9,7 +9,7 @@ import importlib.resources
 import logging
 from collections.abc import Callable, Collection, Iterable, Iterator
 from datetime import date
-from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar, runtime_checkable
+from typing import TYPE_CHECKING, Any, Generic, Optional, Protocol, TypeVar
 from warnings import warn
 
 if TYPE_CHECKING:
@@ -18,133 +18,173 @@ if TYPE_CHECKING:
     from fedrq.config import Release
 
 _QueryT = TypeVar("_QueryT", bound="PackageQueryCompat")
+_PackageT = TypeVar("_PackageT", bound="PackageCompat")
 LOG = logging.getLogger("fedrq.backends")
 
 
-@runtime_checkable
-class PackageCompat(Protocol):  # pragma: no cover
+class PackageCompat(metaclass=abc.ABCMeta):  # pragma: no cover
     """
     Common interface provided by dnf.package.Package and other backends
     """
 
     @property
+    @abc.abstractmethod
     def name(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def arch(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def a(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def epoch(self) -> int: ...
 
     @property
+    @abc.abstractmethod
     def e(self) -> int: ...
 
     @property
+    @abc.abstractmethod
     def version(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def v(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def release(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def r(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def from_repo(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def evr(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def debug_name(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def source_name(self) -> Optional[str]: ...
 
     @property
+    @abc.abstractmethod
     def source_debug_name(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def installtime(self) -> int: ...
 
     @property
+    @abc.abstractmethod
     def buildtime(self) -> int: ...
 
     @property
+    @abc.abstractmethod
     def size(self) -> int: ...
 
     @property
+    @abc.abstractmethod
     def downloadsize(self) -> int: ...
 
     @property
+    @abc.abstractmethod
     def installsize(self) -> int: ...
 
     @property
+    @abc.abstractmethod
     def provides(self) -> Iterable: ...
 
     @property
+    @abc.abstractmethod
     def requires(self) -> Iterable: ...
 
     @property
+    @abc.abstractmethod
     def recommends(self) -> Iterable: ...
 
     @property
+    @abc.abstractmethod
     def suggests(self) -> Iterable: ...
 
     @property
+    @abc.abstractmethod
     def supplements(self) -> Iterable: ...
 
     @property
+    @abc.abstractmethod
     def enhances(self) -> Iterable: ...
 
     @property
+    @abc.abstractmethod
     def obsoletes(self) -> Iterable: ...
 
     @property
+    @abc.abstractmethod
     def conflicts(self) -> Iterable: ...
 
     @property
+    @abc.abstractmethod
     def sourcerpm(self) -> Optional[str]: ...
 
     @property
+    @abc.abstractmethod
     def description(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def summary(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def license(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def url(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def reason(self) -> Optional[str]: ...
 
     @property
+    @abc.abstractmethod
     def files(self) -> Iterable[str]: ...
 
     @property
+    @abc.abstractmethod
     def reponame(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def repoid(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def vendor(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def packager(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def location(self) -> str: ...
 
     @property
+    @abc.abstractmethod
     def repo(self) -> Any:
         """
         Return the package's Repo object.
@@ -156,24 +196,29 @@ class PackageCompat(Protocol):  # pragma: no cover
         self, schemes: Collection[str] | None = ("http", "ftp", "file", "https")
     ) -> str | None: ...
 
+    @abc.abstractmethod
     def __hash__(self) -> int: ...
 
+    @abc.abstractmethod
     def __lt__(self, other) -> bool: ...
 
+    @abc.abstractmethod
     def __le__(self, other) -> bool: ...
 
+    @abc.abstractmethod
     def __gt__(self, other) -> bool: ...
 
+    @abc.abstractmethod
     def __ge__(self, other) -> bool: ...
 
 
-@runtime_checkable
-class PackageQueryCompat(Protocol):  # pragma: no cover
+class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: no cover
     """
     Common PackageQuery interface provided by hawkey.Query and other backends.
     """
 
-    def filter(self, **kwargs) -> PackageQueryCompat:
+    @abc.abstractmethod
+    def filter(self: _QueryT, **kwargs) -> _QueryT:
         """
         Filter the PackageQuery.
         Depending on the backend, this either modifies 'self' in place and
@@ -183,7 +228,8 @@ class PackageQueryCompat(Protocol):  # pragma: no cover
         """
         ...
 
-    def filterm(self, **kwargs) -> PackageQueryCompat:
+    @abc.abstractmethod
+    def filterm(self: _QueryT, **kwargs) -> _QueryT:
         """
         Filter the PackageQuery in place and return 'self'.
         See https://dnf.readthedocs.io/en/latest/api_queries.html#dnf.query.Query.filter
@@ -191,6 +237,7 @@ class PackageQueryCompat(Protocol):  # pragma: no cover
         """
         ...
 
+    @abc.abstractmethod
     def union(self: _QueryT, other: _QueryT) -> _QueryT:
         """
         Combine two PackageQuery objects.
@@ -199,9 +246,11 @@ class PackageQueryCompat(Protocol):  # pragma: no cover
         """
         ...
 
+    @abc.abstractmethod
     def __len__(self) -> int: ...
 
-    def __iter__(self) -> Iterator[PackageCompat]: ...
+    @abc.abstractmethod
+    def __iter__(self) -> Iterator[_PackageT]: ...
 
 
 class BaseMakerBase(metaclass=abc.ABCMeta):
@@ -228,7 +277,7 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         *,
         from_cache: bool = False,
         load_system_repo: bool = False,
-    ):
+    ) -> Any:
         """
         Fill the sack and returns the Base object.
         The repository configuration shouldn't be manipulated after this.
@@ -394,7 +443,7 @@ class NEVRAFormsCompat(Protocol):
     NAME: int
 
 
-class RepoqueryBase(metaclass=abc.ABCMeta):
+class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
     """
     Helpers to query a repository.
     Provides a unified repoquery interface for different backends.
@@ -436,7 +485,7 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
         with_filenames: bool | None = None,
         with_provides: bool | None = None,
         resolve_provides: bool | None = None,
-    ) -> PackageQueryCompat:
+    ) -> _QueryT:
         """
         Resolve pkg specs.
         See
@@ -459,8 +508,10 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
         ...
 
     def arch_filterm(
-        self, query: PackageQueryCompat, arch: str | Iterable[str] | None = None
-    ) -> PackageQueryCompat:
+        self: RepoqueryBase[_QueryT],
+        query: _QueryT,
+        arch: str | Iterable[str] | None = None,
+    ) -> _QueryT:
         """
         Filter a query's architectures in place and return it.
         It includes a little more functionality than query.filterm(arch=...).
@@ -483,8 +534,10 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
             return query.filterm(arch=arch)
 
     def arch_filter(
-        self, query: PackageQueryCompat, arch: str | Iterable[str] | None = None
-    ) -> PackageQueryCompat:
+        self: RepoqueryBase[_QueryT],
+        query: _QueryT,
+        arch: str | Iterable[str] | None = None,
+    ) -> _QueryT:
         """
         Filter a query's architectures and return it.
         It includes a little more functionality than query.filter(arch=...).
@@ -506,15 +559,18 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
         return query.filter(arch=arch)
 
     @abc.abstractmethod
-    def _query(self) -> PackageQueryCompat:
+    def _query(self) -> _QueryT:
         """
         Return the PackageQuery object for this backend
         """
         return self.base.sack.query()
 
     def query(
-        self, *, arch: str | Iterable[str] | None = None, **kwargs
-    ) -> PackageQueryCompat:
+        self,
+        *,
+        arch: str | Iterable[str] | None = None,
+        **kwargs,
+    ) -> _QueryT:
         """
         Return an inital PackageQuery that's filtered with **kwargs.
         Further filtering can be applied with the PackageQuery's filter and
@@ -541,9 +597,7 @@ class RepoqueryBase(metaclass=abc.ABCMeta):
             raise ValueError(f"Zero packages found for {name} on {arch}")
         return next(iter(query))
 
-    def get_subpackages(
-        self, packages: Iterable[PackageCompat], **kwargs
-    ) -> PackageQueryCompat:
+    def get_subpackages(self, packages: Iterable[PackageCompat], **kwargs) -> _QueryT:
         """
         Return a PackageQuery containing the binary RPMS/subpackages produced
         by {packages}.
