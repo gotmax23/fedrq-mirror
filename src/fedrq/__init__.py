@@ -17,7 +17,7 @@ __version__ = "1.0.0.post0"
 
 
 def _filter_pydantic_v2_warnings() -> None:
-    typ: DeprecationWarning | None
+    typ: type[DeprecationWarning] | None
     if typ := getattr(pydantic, "PydanticDeprecatedSince20", None):
         warnings.simplefilter(action="ignore", category=typ)
 
