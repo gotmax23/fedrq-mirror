@@ -8,13 +8,13 @@ annotated-types==0.6.0
     # via pydantic
 anyio==4.3.0
     # via httpx
-argcomplete==3.2.3
+argcomplete==3.3.0
     # via fedrq (pyproject.toml)
 babel==2.14.0
     # via mkdocs-material
 binaryornot==0.4.4
     # via reuse
-black==24.3.0
+black==24.4.0
     # via fedrq (pyproject.toml)
 boolean-py==4.0
     # via
@@ -41,13 +41,13 @@ colorama==0.4.6
     # via
     #   griffe
     #   mkdocs-material
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via
     #   anyio
     #   pytest
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.42.1
+griffe==0.44.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
@@ -59,7 +59,7 @@ httpx==0.27.0
     # via
     #   releaserr
     #   sourcehutx
-idna==3.6
+idna==3.7
     # via
     #   anyio
     #   httpx
@@ -68,6 +68,7 @@ importlib-metadata==7.1.0
     # via
     #   markdown
     #   mkdocs
+    #   mkdocs-get-deps
     #   mkdocstrings
 iniconfig==2.0.0
     # via pytest
@@ -100,7 +101,9 @@ markupsafe==2.1.5
 mdurl==0.1.2
     # via markdown-it-py
 mergedeep==1.3.4
-    # via mkdocs
+    # via
+    #   mkdocs
+    #   mkdocs-get-deps
 mkdocs==1.5.3
     # via
     #   fedrq (pyproject.toml)
@@ -115,7 +118,7 @@ mkdocs-exclude==1.0.2
     # via fedrq (pyproject.toml)
 mkdocs-gen-files==0.5.0
     # via fedrq (pyproject.toml)
-mkdocs-material==9.5.17
+mkdocs-material==9.5.18
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
@@ -123,7 +126,7 @@ mkdocstrings==0.24.3
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.9.2
+mkdocstrings-python==1.10.0
     # via mkdocstrings
 mypy==1.9.0
     # via fedrq (pyproject.toml)
@@ -146,21 +149,22 @@ platformdirs==4.2.0
     # via
     #   black
     #   mkdocs
+    #   mkdocs-get-deps
     #   mkdocstrings
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
-pydantic==2.6.4
+pydantic==2.7.0
     # via
     #   fedrq (pyproject.toml)
     #   releaserr
     #   sourcehutx
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 pygments==2.17.2
     # via
     #   mkdocs-material
     #   rich
-pymdown-extensions==10.7.1
+pymdown-extensions==10.8
     # via
     #   mkdocs-material
     #   mkdocstrings
@@ -177,19 +181,20 @@ python-debian==0.1.49
 pyyaml==6.0.1
     # via
     #   mkdocs
+    #   mkdocs-get-deps
     #   pymdown-extensions
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2023.12.25
+regex==2024.4.16
     # via mkdocs-material
-releaserr==0.1.dev129
+releaserr==0.1.dev131
     # via fedrq (pyproject.toml)
 requests==2.31.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocs-material
-reuse==3.0.1
+reuse==3.0.2
     # via fedrq (pyproject.toml)
 rich==13.7.1
     # via
@@ -197,7 +202,7 @@ rich==13.7.1
     #   typer
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.3.5
+ruff==0.4.1
     # via fedrq (pyproject.toml)
 shellingham==1.5.4
     # via typer
@@ -218,7 +223,7 @@ tomli==2.0.1 ; python_version < "3.11"
     #   sourcehutx
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-typer==0.12.1
+typer==0.12.3
     # via releaserr
 types-requests==2.31.0.20240406
     # via fedrq (pyproject.toml)

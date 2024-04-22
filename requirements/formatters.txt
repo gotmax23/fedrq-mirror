@@ -6,7 +6,7 @@
 #
 annotated-types==0.6.0
     # via pydantic
-black==24.3.0
+black==24.4.0
     # via fedrq (pyproject.toml)
 certifi==2024.2.2
     # via requests
@@ -14,7 +14,7 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via black
-idna==3.6
+idna==3.7
     # via requests
 isort==5.13.2
     # via fedrq (pyproject.toml)
@@ -26,9 +26,9 @@ pathspec==0.12.1
     # via black
 platformdirs==4.2.0
     # via black
-pydantic==2.6.4
+pydantic==2.7.0
     # via fedrq (pyproject.toml)
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 requests==2.31.0
     # via fedrq (pyproject.toml)

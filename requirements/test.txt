@@ -10,19 +10,19 @@ certifi==2024.2.2
     # via requests
 charset-normalizer==3.3.2
     # via requests
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via pytest
-idna==3.6
+idna==3.7
     # via requests
 iniconfig==2.0.0
     # via pytest
 packaging==24.0
     # via pytest
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
-pydantic==2.6.4
+pydantic==2.7.0
     # via fedrq (pyproject.toml)
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 pytest==8.1.1
     # via
