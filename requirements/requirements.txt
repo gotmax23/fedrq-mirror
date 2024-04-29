@@ -12,9 +12,9 @@ charset-normalizer==3.3.2
     # via requests
 idna==3.7
     # via requests
-pydantic==2.7.0
+pydantic==2.7.1
     # via fedrq (pyproject.toml)
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 requests==2.31.0
     # via fedrq (pyproject.toml)
