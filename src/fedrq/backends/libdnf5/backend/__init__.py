@@ -214,7 +214,11 @@ class BaseMaker(BaseMakerBase):
         self.base = base or libdnf5.base.Base()
         self.initialized = initialized if base else False
         if not base or not config_loaded:
-            self.base.load_config_from_file()
+            # dnf 5.2.0
+            try:
+                self.base.load_config()
+            except AttributeError:
+                self.base.load_config_from_file()
 
     def setup(self) -> None:
         if not self.initialized:
@@ -275,7 +279,14 @@ class BaseMaker(BaseMakerBase):
         """
         if from_cache:
             raise NotImplementedError
-        self.rs.update_and_load_enabled_repos(load_system_repo)
+        try:
+            self.rs.load_repos(
+                libdnf5.repo.Repo.Type_SYSTEM
+                if load_system_repo
+                else libdnf5.repo.Repo.Type_AVAILABLE
+            )
+        except AttributeError:
+            self.rs.update_and_load_enabled_repos(load_system_repo)
         return self.base
 
     def read_system_repos(self, disable: bool = True) -> None:
@@ -679,6 +690,35 @@ class Reldep5(libdnf5.rpm.Reldep):
 libdnf5._rpm.Reldep_swigregister(Reldep5)
 
 
+def _getattr_compat(obj: t.Any, attr: str, /) -> t.Any:
+    """
+    Compatability with `get_foo()` methods from dnf 5.2.0
+    """
+    meth_name = f"get_{attr}"
+    if meth := getattr(obj, meth_name, None):
+        return meth()
+    return getattr(obj, attr)
+
+
+_gc = _getattr_compat
+
+
+def _setattr_compat(obj: t.Any, attr: str, value: t.Any, /) -> None:
+    """
+    Compatability with `set_foo()` methods from dnf 5.2.0
+    """
+    meth_name = f"set_{attr}"
+    if meth := getattr(obj, meth_name, None):
+        meth(value)
+    elif hasattr(obj, attr):
+        setattr(obj, attr, value)
+    else:
+        raise AttributeError(attr)
+
+
+_sc = _setattr_compat
+
+
 class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
     __rq__: Repoquery
 
@@ -721,6 +761,9 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
         for key, value in kwargs.items():
             split = key.rsplit("__", 1)
             name = "filter_" + filter_mapping.get(split[0], split[0])
+            # TODO: Remove _convert_value once we drop support for libdnf5
+            # 5.2.0 and can rely on support for passing plain strings to query
+            # functions.
             args = [_convert_value(key, value)]
             if len(split) == 2:
                 args.append(comp_mapping[split[1]])
@@ -856,12 +899,14 @@ class Repoquery(RepoqueryBase[PackageQuery]):
             resolve, with_filenames, with_provides, resolve_provides
         )
         settings = libdnf5.base.ResolveSpecSettings()
-        settings.with_filenames = opts["with_filenames"]
-        settings.with_provides = opts["with_provides"]
+        _sc(settings, "with_filenames", opts["with_filenames"])
+        _sc(settings, "with_provides", opts["with_provides"])
+        _sc(settings, "nevra_forms", libdnf5.rpm.VectorNevraForm())
         if nevra_forms:
+            v_nevra_forms = libdnf5.rpm.VectorNevraForm()
             for form in nevra_forms:
-                settings.nevra_forms.append(form)
-
+                v_nevra_forms.append(form)
+            _sc(settings, "nevra_forms", v_nevra_forms)
         r_query = self.query(empty=True)
         for spec in specs:
             query = self._query()
@@ -891,8 +936,10 @@ def get_releasever() -> str:
 def get_changelogs(package: Package) -> Iterator[ChangelogEntry]:
     entries = package.get_changelogs()
     for entry in entries:
-        date_obj = DT.fromtimestamp(entry.timestamp, tz=TZ.utc).date()
-        yield ChangelogEntry(text=entry.text, author=entry.author, date=date_obj)
+        date_obj = DT.fromtimestamp(_gc(entry, "timestamp"), tz=TZ.utc).date()
+        yield ChangelogEntry(
+            text=_gc(entry, "text"), author=_gc(entry, "author"), date=date_obj
+        )
 
 
 RepoError = RuntimeError
