@@ -1,6 +1,16 @@
 NEWS
 =====
 
+## 1.1.0 - 2024-05-01 <a id='1.1.0'></a>
+
+### Added
+
+- backends libdnf5: add dnf 5.2.0.x compatibility
+
+### Changed
+
+- backends: revamp typing for `Package` and `PackageQuery`
+
 ## 1.0.0 - 2024-04-01 <a id='1.0.0'></a>
 
 First stable release
