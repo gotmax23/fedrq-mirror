@@ -4,9 +4,9 @@
 #
 #    pip-compile --allow-unsafe --extra=test --output-file=requirements/test.txt --strip-extras
 #
-annotated-types==0.6.0
+annotated-types==0.7.0
     # via pydantic
-certifi==2024.2.2
+certifi==2024.6.2
     # via requests
 charset-normalizer==3.3.2
     # via requests
@@ -20,17 +20,17 @@ packaging==24.0
     # via pytest
 pluggy==1.5.0
     # via pytest
-pydantic==2.7.1
+pydantic==2.7.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.18.2
+pydantic-core==2.18.3
     # via pydantic
-pytest==8.2.0
+pytest==8.2.1
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
 pytest-mock==3.14.0
     # via fedrq (pyproject.toml)
-requests==2.31.0
+requests==2.32.3
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
@@ -40,7 +40,7 @@ tomli==2.0.1 ; python_version < "3.11"
     #   pytest
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via
     #   pydantic
     #   pydantic-core

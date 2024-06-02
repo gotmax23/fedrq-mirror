@@ -4,7 +4,7 @@
 #
 #    pip-compile --allow-unsafe --constraint=requirements/pydanticv1.in --extra=test --output-file=requirements/pydanticv1_test.txt --strip-extras
 #
-certifi==2024.2.2
+certifi==2024.6.2
     # via requests
 charset-normalizer==3.3.2
     # via requests
@@ -22,13 +22,13 @@ pydantic==1.10.15
     # via
     #   -c requirements/pydanticv1.in
     #   fedrq (pyproject.toml)
-pytest==8.2.0
+pytest==8.2.1
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
 pytest-mock==3.14.0
     # via fedrq (pyproject.toml)
-requests==2.31.0
+requests==2.32.3
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
@@ -38,7 +38,7 @@ tomli==2.0.1 ; python_version < "3.11"
     #   pytest
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via pydantic
 urllib3==2.2.1
     # via requests

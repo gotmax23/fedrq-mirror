@@ -10,11 +10,11 @@ fclogr==0.8.0
     # via -r requirements/srpm.in
 pycparser==2.22
     # via cffi
-pygit2==1.14.1
+pygit2==1.15.0
     # via fclogr
 rpm==0.1.0
     # via specfile
-specfile==0.28.2
+specfile==0.28.3
     # via fclogr
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via specfile

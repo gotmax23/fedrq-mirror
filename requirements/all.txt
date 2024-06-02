@@ -4,13 +4,13 @@
 #
 #    pip-compile --allow-unsafe --extra=codeqa --extra=doc --extra=formatters --extra=test --extra=typing --output-file=requirements/all.txt --strip-extras
 #
-annotated-types==0.6.0
+annotated-types==0.7.0
     # via pydantic
-anyio==4.3.0
+anyio==4.4.0
     # via httpx
 argcomplete==3.3.0
     # via fedrq (pyproject.toml)
-babel==2.14.0
+babel==2.15.0
     # via mkdocs-material
 binaryornot==0.4.4
     # via reuse
@@ -20,7 +20,7 @@ boolean-py==4.0
     # via
     #   license-expression
     #   reuse
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   httpcore
     #   httpx
@@ -47,7 +47,7 @@ exceptiongroup==1.2.1
     #   pytest
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.44.0
+griffe==0.45.2
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
@@ -74,7 +74,7 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via fedrq (pyproject.toml)
-jinja2==3.1.3
+jinja2==3.1.4
     # via
     #   mkdocs
     #   mkdocs-material
@@ -120,15 +120,15 @@ mkdocs-gen-files==0.5.0
     # via fedrq (pyproject.toml)
 mkdocs-get-deps==0.2.0
     # via mkdocs
-mkdocs-material==9.5.19
+mkdocs-material==9.5.25
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
-mkdocstrings==0.25.0
+mkdocstrings==0.25.1
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.10.0
+mkdocstrings-python==1.10.3
     # via mkdocstrings
 mypy==1.10.0
     # via fedrq (pyproject.toml)
@@ -147,21 +147,21 @@ pathspec==0.12.1
     # via
     #   black
     #   mkdocs
-platformdirs==4.2.1
+platformdirs==4.2.2
     # via
     #   black
     #   mkdocs-get-deps
     #   mkdocstrings
 pluggy==1.5.0
     # via pytest
-pydantic==2.7.1
+pydantic==2.7.2
     # via
     #   fedrq (pyproject.toml)
     #   releaserr
     #   sourcehutx
-pydantic-core==2.18.2
+pydantic-core==2.18.3
     # via pydantic
-pygments==2.17.2
+pygments==2.18.0
     # via
     #   mkdocs-material
     #   rich
@@ -169,7 +169,7 @@ pymdown-extensions==10.8.1
     # via
     #   mkdocs-material
     #   mkdocstrings
-pytest==8.2.0
+pytest==8.2.1
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
@@ -187,11 +187,11 @@ pyyaml==6.0.1
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2024.4.28
+regex==2024.5.15
     # via mkdocs-material
 releaserr==0.1.dev131
     # via fedrq (pyproject.toml)
-requests==2.31.0
+requests==2.32.3
     # via
     #   fedrq (pyproject.toml)
     #   mkdocs-material
@@ -203,7 +203,7 @@ rich==13.7.1
     #   typer
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.4.2
+ruff==0.4.7
     # via fedrq (pyproject.toml)
 shellingham==1.5.4
     # via typer
@@ -226,9 +226,9 @@ tomli-w==1.0.0
     # via fedrq (pyproject.toml)
 typer==0.12.3
     # via releaserr
-types-requests==2.31.0.20240406
+types-requests==2.32.0.20240602
     # via fedrq (pyproject.toml)
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via
     #   anyio
     #   black
@@ -243,7 +243,7 @@ urllib3==2.2.1
     # via
     #   requests
     #   types-requests
-watchdog==4.0.0
+watchdog==4.0.1
     # via mkdocs
-zipp==3.18.1
+zipp==3.19.1
     # via importlib-metadata

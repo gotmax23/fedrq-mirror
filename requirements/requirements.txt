@@ -4,25 +4,25 @@
 #
 #    pip-compile --allow-unsafe --output-file=requirements/requirements.txt --strip-extras
 #
-annotated-types==0.6.0
+annotated-types==0.7.0
     # via pydantic
-certifi==2024.2.2
+certifi==2024.6.2
     # via requests
 charset-normalizer==3.3.2
     # via requests
 idna==3.7
     # via requests
-pydantic==2.7.1
+pydantic==2.7.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.18.2
+pydantic-core==2.18.3
     # via pydantic
-requests==2.31.0
+requests==2.32.3
     # via fedrq (pyproject.toml)
 rpm==0.1.0
     # via fedrq (pyproject.toml)
 tomli==2.0.1 ; python_version < "3.11"
     # via fedrq (pyproject.toml)
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via
     #   pydantic
     #   pydantic-core
