@@ -17,14 +17,14 @@ enabled = False
 
 [epel-testing]
 name = "epel-testing"
-metalink = "https://mirrors.fedoraproject.org/metalink?repo=testing-epel-$releasever&arch=$basearch"
+metalink = "https://mirrors.fedoraproject.org/metalink?repo=testing-epel$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
 enabled = False
 
 [epel-testing-source]
 name = "epel-testing-source"
-metalink = "https://mirrors.fedoraproject.org/metalink?repo=testing-source-epel-$releasever&arch=$basearch"
+metalink = "https://mirrors.fedoraproject.org/metalink?repo=testing-source-epel$releasever&arch=$basearch"
 gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
 gpgcheck = True
 enabled = False
