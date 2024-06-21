@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Sequence
+from contextlib import suppress
 from glob import iglob
 from pathlib import Path
 from shutil import copy2
@@ -246,7 +247,8 @@ def pydanticv1_test(session: nox.Session):
 
 @nox.session(name="pip-compile", python=["3.9"], reuse_venv=False)
 def pip_compile(session: nox.Session):
-    session.install("pip-tools")
+    # session.install("pip-tools")
+    session.install("uv")
     Path("requirements").mkdir(exist_ok=True)
 
     # Use --upgrade by default unless a user passes -P.
@@ -255,10 +257,15 @@ def pip_compile(session: nox.Session):
         arg.startswith(("-P", "--upgrade-package", "--no-upgrade")) for arg in args
     ):
         args.append("--upgrade")
+    with suppress(ValueError):
+        args.remove("--no-upgrade")
+
+    # pip_compile_cmd = ("pip-compile",)
+    pip_compile_cmd = ("uv", "pip", "compile", "pyproject.toml", "--quiet")
 
     # fmt: off
     session.run(
-        "pip-compile",
+        *pip_compile_cmd,
         "-o", "requirements/requirements.txt",
         *args,
     )
@@ -272,21 +279,21 @@ def pip_compile(session: nox.Session):
     )
     for extra in extras:
         session.run(
-            "pip-compile",
+            *pip_compile_cmd,
             "-o", f"requirements/{extra}.txt",
             f"--extra={extra}",
             *args,
         )
 
     extras_a = [f"--extra={extra}" for extra in extras]
-    session.run("pip-compile", "-o", "requirements/all.txt", *extras_a, *args)
+    session.run(*pip_compile_cmd, "-o", "requirements/all.txt", *extras_a, *args)
 
     session.run(
-        "pip-compile", "-o", "requirements/srpm.txt", *args, "requirements/srpm.in"
+        *pip_compile_cmd, "-o", "requirements/srpm.txt", *args, "requirements/srpm.in"
     )
 
     session.run(
-        "pip-compile",
+        *pip_compile_cmd,
         "-o", "requirements/pydanticv1_test.txt",
         "-c", "requirements/pydanticv1.in",
         "--extra=test",
