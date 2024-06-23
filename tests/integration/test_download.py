@@ -18,7 +18,7 @@ def test_download_spec(tmp_path: Path):
             "download-spec",
             "ansible-core",
             "-b",
-            "f38",
+            "f39",
             "-r",
             "@release",
             "-y",

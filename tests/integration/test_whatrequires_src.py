@@ -17,7 +17,7 @@ import pytest
 )
 def test_whatrequires_src_integration(runs, args):
     stdout, stderr = runs(
-        ["wrsrc", "-b", "f38", "-r", "@release", "-Fna", *args], False
+        ["wrsrc", "-b", "f39", "-r", "@release", "-Fna", *args], False
     )
     assert not stderr
     assert any(p.startswith("ansible-collection") for p in stdout)
@@ -27,7 +27,7 @@ def test_whatrequires_src_integration(runs, args):
 @pytest.mark.no_rpm_mock
 def test_whatrequires_src_integration_exclude(runs):
     stdout, stderr = runs(
-        ["wrsrc", "-b", "f38", "-r", "@release", "-Fsource", "-X", "ansible-packaging"],
+        ["wrsrc", "-b", "f39", "-r", "@release", "-Fsource", "-X", "ansible-packaging"],
         False,
     )
     assert not stderr
@@ -41,7 +41,7 @@ def test_whatrequires_src_integration_exclude(runs):
 @pytest.mark.no_rpm_mock
 def test_whatrequires_src_integration_exclude_control(runs):
     stdout, stderr = runs(
-        ["wrsrc", "-b", "f38", "-r", "@release", "-Fsource", "ansible-packaging"], False
+        ["wrsrc", "-b", "f39", "-r", "@release", "-Fsource", "ansible-packaging"], False
     )
     assert not stderr
     assert {

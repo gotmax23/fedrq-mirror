@@ -10,7 +10,7 @@ import fedrq.cli
 
 @mark.no_rpm_mock
 def test_cli_make_cache(capsys: CaptureFixture):
-    fedrq.cli.main(["make-cache", "-b", "f38"])
+    fedrq.cli.main(["make-cache", "-b", "f39"])
     out, err = capsys.readouterr()
     assert out == "Loaded 4 repos\n"
     assert not err

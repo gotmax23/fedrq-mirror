@@ -22,9 +22,9 @@ ARGS = (
 
 @pytest.mark.no_rpm_mock
 @pytest.mark.parametrize("args", ARGS)
-def test_whatrequires_exclude_subpackages_f38(capsys, args):
+def test_whatrequires_exclude_subpackages_f39(capsys, args):
     fedrq.cli.main(
-        ["whatrequires", "-b", "f38", "-r", "@release", "--sc", "-X", "-Fname", *args]
+        ["whatrequires", "-b", "f39", "-r", "@release", "--sc", "-X", "-Fname", *args]
     )
     stdout, stderr = capsys.readouterr()
     stdout_lines = set(stdout.splitlines())
@@ -35,9 +35,9 @@ def test_whatrequires_exclude_subpackages_f38(capsys, args):
 
 @pytest.mark.no_rpm_mock
 @pytest.mark.parametrize("args", ARGS)
-def test_whatrequires_not_exclude_subpackages_f38(capsys, args):
+def test_whatrequires_not_exclude_subpackages_f39(capsys, args):
     fedrq.cli.main(
-        ["whatrequires", "-b", "f38", "-r", "@release", "--sc", "-Fname", *args]
+        ["whatrequires", "-b", "f39", "-r", "@release", "--sc", "-Fname", *args]
     )
     stdout, stderr = capsys.readouterr()
     stdout_lines = set(stdout.splitlines())
@@ -57,7 +57,7 @@ def test_whatrequires_resolve(capsys):
         [
             "whatrequires",
             "-b",
-            "f38",
+            "f39",
             "-r",
             "@release",
             "-P",

@@ -20,7 +20,7 @@ def test_subpkgs_match1(capsys):
         [
             "subpkgs",
             "-b",
-            "f38",
+            "f39",
             "-r",
             "@release",
             "yt-dlp",
@@ -42,7 +42,7 @@ def test_subpkgs_match2(capsys):
         [
             "subpkgs",
             "-b",
-            "f38",
+            "f39",
             "-r",
             "@release",
             "ansible-core",
