@@ -41,6 +41,9 @@ ignore = [
     "A003",
     # No explicit `stacklevel` keyword argument found
     "B028",
+    # Line with empty comment
+    # I occassionally use these on purpose for sorting/formatting reasons
+    "PLR2044",
 ]
 
 

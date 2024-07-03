@@ -319,8 +319,8 @@ class BaseMaker(BaseMakerBase):
         repoq.filter_id(repo, libdnf5.common.QueryCmp_GLOB)
         if not repoq:
             raise ValueError(f"{repo} repo definition was not found.")
-        for repo in repoq:
-            repo.enable()  # type: ignore
+        for result in repoq:
+            result.enable()  # type: ignore
 
     def disable_repo(self, repo: str, ignore_missing: bool = True) -> None:
         """
@@ -332,8 +332,8 @@ class BaseMaker(BaseMakerBase):
         repoq.filter_id(repo, libdnf5.common.QueryCmp_GLOB)
         if not ignore_missing and not repoq:
             raise ValueError(f"{repo} repo definition was not found.")
-        for repo in repoq:
-            repo.disable()  # type: ignore
+        for result in repoq:
+            result.disable()  # type: ignore
 
     def read_repofile(self, file: StrPath) -> None:
         """
