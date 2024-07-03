@@ -912,8 +912,10 @@ class Repoquery(RepoqueryBase[PackageQuery]):
             query = self._query()
             query.resolve_pkg_spec(spec, settings, with_src)
             r_query.union(query)
-        if opts["resolve_provides"]:
+        if opts["with_provides"]:
             r_query = r_query.union(self.query(provides=specs))
+        if opts["with_filenames"]:
+            r_query = r_query.union(self.query(file=specs))
         filter_latest(r_query, latest)
         return r_query
 

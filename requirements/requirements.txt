@@ -2,15 +2,15 @@
 #    uv pip compile pyproject.toml -o requirements/requirements.txt
 annotated-types==0.7.0
     # via pydantic
-certifi==2024.6.2
+certifi==2024.7.4
     # via requests
 charset-normalizer==3.3.2
     # via requests
 idna==3.7
     # via requests
-pydantic==2.7.4
+pydantic==2.8.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.18.4
+pydantic-core==2.20.1
     # via pydantic
 requests==2.32.3
     # via fedrq (pyproject.toml)

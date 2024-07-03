@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml -o requirements/srpm.txt requirements/srpm.in
 annotated-types==0.7.0
     # via pydantic
-certifi==2024.6.2
+certifi==2024.7.4
     # via requests
 cffi==1.16.0
     # via pygit2
@@ -14,11 +14,11 @@ idna==3.7
     # via requests
 pycparser==2.22
     # via cffi
-pydantic==2.7.4
+pydantic==2.8.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.18.4
+pydantic-core==2.20.1
     # via pydantic
-pygit2==1.15.0
+pygit2==1.15.1
     # via fclogr
 requests==2.32.3
     # via fedrq (pyproject.toml)
@@ -26,7 +26,7 @@ rpm==0.1.0
     # via
     #   fedrq (pyproject.toml)
     #   specfile
-specfile==0.29.0
+specfile==0.31.0
     # via fclogr
 tomli==2.0.1
     # via fedrq (pyproject.toml)

@@ -238,8 +238,10 @@ class Repoquery(RepoqueryBase[PackageQueryCompat[PackageCompat]]):
         for p in specs:
             subject = dnf.subject.Subject(p).get_best_query(self.base.sack, **opts)
             query = query.union(subject)
-        if resolve_provides:
+        if opts["with_provides"]:
             query = query.union(self.query(provides=specs))
+        if opts["with_filenames"]:
+            query = query.union(self.query(file=specs))
         filter_latest(query, latest)
         return query
 
