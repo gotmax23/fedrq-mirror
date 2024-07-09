@@ -11,6 +11,10 @@ import fedrq.cli
 
 
 @pytest.mark.no_rpm_mock
+# TODO: Implement downloader that tries multiple mirrors.
+# We don't want to download additional metadata for a newer Fedora during tests
+# in addition to f39 that we already download.
+@pytest.mark.xfail(reason="Download from EOL Fedora is flaky.")
 def test_download_spec(tmp_path: Path):
     fedrq.cli.main(
         [
