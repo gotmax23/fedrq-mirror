@@ -14,10 +14,10 @@ from warnings import warn
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
+    from typing_extensions import Self
 
     from fedrq.config import Release
 
-_QueryT = TypeVar("_QueryT", bound="PackageQueryCompat")
 _PackageT = TypeVar("_PackageT", bound="PackageCompat")
 LOG = logging.getLogger("fedrq.backends")
 
@@ -218,7 +218,7 @@ class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: 
     """
 
     @abc.abstractmethod
-    def filter(self: _QueryT, **kwargs) -> _QueryT:
+    def filter(self, **kwargs) -> Self:
         """
         Filter the PackageQuery.
         Depending on the backend, this either modifies 'self' in place and
@@ -229,7 +229,7 @@ class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: 
         ...
 
     @abc.abstractmethod
-    def filterm(self: _QueryT, **kwargs) -> _QueryT:
+    def filterm(self, **kwargs) -> Self:
         """
         Filter the PackageQuery in place and return 'self'.
         See https://dnf.readthedocs.io/en/latest/api_queries.html#dnf.query.Query.filter
@@ -238,7 +238,7 @@ class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: 
         ...
 
     @abc.abstractmethod
-    def union(self: _QueryT, other: _QueryT) -> _QueryT:
+    def union(self: Self, other: Self) -> Self:
         """
         Combine two PackageQuery objects.
         Depending on the backend, this either modifies 'self' in place and
@@ -443,7 +443,7 @@ class NEVRAFormsCompat(Protocol):
     NAME: int
 
 
-class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
+class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
     """
     Helpers to query a repository.
     Provides a unified repoquery interface for different backends.
@@ -485,7 +485,7 @@ class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
         with_filenames: bool | None = None,
         with_provides: bool | None = None,
         resolve_provides: bool | None = None,
-    ) -> _QueryT:
+    ) -> PackageQueryCompat[_PackageT]:
         """
         Resolve pkg specs.
         See
@@ -508,10 +508,10 @@ class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
         ...
 
     def arch_filterm(
-        self: RepoqueryBase[_QueryT],
-        query: _QueryT,
+        self,
+        query: PackageQueryCompat,
         arch: str | Iterable[str] | None = None,
-    ) -> _QueryT:
+    ) -> PackageQueryCompat[_PackageT]:
         """
         Filter a query's architectures in place and return it.
         It includes a little more functionality than query.filterm(arch=...).
@@ -534,10 +534,10 @@ class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
             return query.filterm(arch=arch)
 
     def arch_filter(
-        self: RepoqueryBase[_QueryT],
-        query: _QueryT,
+        self,
+        query: PackageQueryCompat,
         arch: str | Iterable[str] | None = None,
-    ) -> _QueryT:
+    ) -> PackageQueryCompat[_PackageT]:
         """
         Filter a query's architectures and return it.
         It includes a little more functionality than query.filter(arch=...).
@@ -559,7 +559,7 @@ class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
         return query.filter(arch=arch)
 
     @abc.abstractmethod
-    def _query(self) -> _QueryT:
+    def _query(self) -> PackageQueryCompat[_PackageT]:
         """
         Return the PackageQuery object for this backend
         """
@@ -570,7 +570,7 @@ class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
         *,
         arch: str | Iterable[str] | None = None,
         **kwargs,
-    ) -> _QueryT:
+    ) -> PackageQueryCompat[_PackageT]:
         """
         Return an inital PackageQuery that's filtered with **kwargs.
         Further filtering can be applied with the PackageQuery's filter and
@@ -587,7 +587,7 @@ class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
         self,
         name: str,
         arch: str | Iterable[str] | None = None,
-    ) -> PackageCompat:
+    ) -> _PackageT:
         """
         Return the latest Package that matches the 'name' and 'arch'.
         A ValueError is raised when no matches are found.
@@ -597,7 +597,9 @@ class RepoqueryBase(Generic[_QueryT], metaclass=abc.ABCMeta):
             raise ValueError(f"Zero packages found for {name} on {arch}")
         return next(iter(query))
 
-    def get_subpackages(self, packages: Iterable[PackageCompat], **kwargs) -> _QueryT:
+    def get_subpackages(
+        self, packages: Iterable[PackageCompat], **kwargs
+    ) -> PackageQueryCompat[_PackageT]:
         """
         Return a PackageQuery containing the binary RPMS/subpackages produced
         by {packages}.

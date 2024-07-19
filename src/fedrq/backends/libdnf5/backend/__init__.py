@@ -864,7 +864,7 @@ class NEVRAForms(int, Enum):
     NAME = libdnf5.rpm.Nevra.Form_NAME
 
 
-class Repoquery(RepoqueryBase[PackageQuery]):
+class Repoquery(RepoqueryBase[Package]):
     def __init__(self, base: libdnf5.base.Base) -> None:
         self.base: libdnf5.base.Base = base
 

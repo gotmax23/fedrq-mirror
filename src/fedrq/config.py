@@ -35,14 +35,16 @@ from fedrq._compat import StrEnum
 from fedrq._config import ConfigError
 from fedrq._utils import merge_dict, mklog
 from fedrq.backends import BACKENDS, get_default_backend
-from fedrq.backends.base import BaseMakerBase
+from fedrq.backends.base import BaseMakerBase, PackageCompat, RepoqueryBase
 from fedrq.release_repo import AliasRepoG, DefaultRepoGs, RepoG, Repos
 
 if t.TYPE_CHECKING:
     import dnf
     import libdnf5
 
-    from fedrq.backends.base import BackendMod, RepoqueryBase
+    from fedrq.backends.base import BackendMod
+    from fedrq.backends.dnf.backend import Repoquery as _dnfRepoquery
+    from fedrq.backends.libdnf5.backend import Repoquery as _libdnf5RepoQuery
 
 CONFIG_DIRS = (Path.home() / ".config/fedrq", Path("/etc/fedrq"))
 DEFAULT_REPO_CLASS = "base"
@@ -392,7 +394,7 @@ class RQConfig(BaseModel):
         repo: str | None = None,
         base_conf: dict[str, t.Any] | None = None,
         base_vars: dict[str, t.Any] | None = None,
-    ) -> RepoqueryBase:
+    ) -> _dnfRepoquery | _libdnf5RepoQuery | RepoqueryBase[PackageCompat]:
         """
         Higher level interface that finds the Release object that mathces
         {branch} and {repo}, creates a (lib)dnf(5).base.Base session, and

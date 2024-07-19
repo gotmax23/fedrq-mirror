@@ -201,9 +201,9 @@ class NEVRAForms(int, Enum):
     NAME = hawkey.FORM_NAME
 
 
-# Use PackageCompat and PackageQueryCompat as the TypeVar, as the the native dnf objects
+# Use PackageCompat as the TypeVar, as the the native dnf objects
 # don't provide typing.
-class Repoquery(RepoqueryBase[PackageQueryCompat[PackageCompat]]):
+class Repoquery(RepoqueryBase[PackageCompat]):
     def __init__(self, base: dnf.Base) -> None:
         self.base: dnf.Base = base
 
@@ -225,7 +225,7 @@ class Repoquery(RepoqueryBase[PackageQueryCompat[PackageCompat]]):
         with_provides: bool | None = None,
         resolve_provides: bool | None = None,
         nevra_forms: list[NEVRAForms] | None = None,
-    ) -> dnf.query.Query:
+    ):
         opts = self._get_resolve_options(
             resolve, with_filenames, with_provides, resolve_provides
         )
