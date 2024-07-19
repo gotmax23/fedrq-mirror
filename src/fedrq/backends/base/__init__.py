@@ -14,7 +14,7 @@ from warnings import warn
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
-    from typing_extensions import Self
+    from typing_extensions import Self, TypeAlias
 
     from fedrq.config import Release
 
@@ -215,6 +215,8 @@ class PackageCompat(metaclass=abc.ABCMeta):  # pragma: no cover
 class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: no cover
     """
     Common PackageQuery interface provided by hawkey.Query and other backends.
+    When using to annotate function parameters and return value, use
+    `PackageQueryAlias` instead of directly annotating with this type.
     """
 
     @abc.abstractmethod
@@ -675,3 +677,6 @@ class BackendMod(Protocol):
     RepoError: type[BaseException]
     get_releasever: Callable[[], str]
     get_changelogs: _get_changelogs
+
+
+PackageQueryAlias: TypeAlias = PackageQueryCompat[PackageCompat]
