@@ -60,7 +60,7 @@ def main(*, releases: list[str]):
     # with the provided kwargs.
 
     # Create a Query with only source packages
-    query: PackageQueryCompat = rq.query(arch="src")
+    query: PackageQueryCompat[PackageCompat] = rq.query(arch="src")
 
     # PackageCompat is a Protocol implemented by both the dnf and libdnf5
     # backends.
