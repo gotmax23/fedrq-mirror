@@ -29,7 +29,7 @@ else:
 
     import tomllib
 
-from pydantic import BaseModel, Field, PrivateAttr, validator
+from pydantic import BaseModel, Field, PrivateAttr, root_validator, validator
 
 from fedrq._compat import StrEnum
 from fedrq._config import ConfigError
@@ -326,9 +326,9 @@ class Release:
 
 
 class RQConfig(BaseModel):
-    backend: t.Optional[str] = os.environ.get("FEDRQ_BACKEND")
+    backend: t.Optional[str] = None
     releases: dict[str, ReleaseConfig]
-    default_branch: str = os.environ.get("FEDRQ_BRANCH", "rawhide")
+    default_branch: str = "rawhide"
     smartcache: t.Union[bool, t.Literal["always"]] = True
     load_other_metadata: t.Optional[bool] = None
     load_filelists: LoadFilelists = LoadFilelists.auto
@@ -341,6 +341,14 @@ class RQConfig(BaseModel):
             zipfile.Path: lambda path: str(path),
         }
         validate_assignment = True
+
+    @root_validator(skip_on_failure=True)
+    def _v_envvars(cls, values):
+        if "FEDRQ_BACKEND" in os.environ:
+            values["backend"] = os.environ["FEDRQ_BACKEND"] or None
+        if "FEDRQ_BRANCH" in os.environ:
+            values["branch"] = os.environ["FEDRQ_BRANCH"]
+        return values
 
     @validator("backend")
     def _v_backend(cls, value) -> str:
