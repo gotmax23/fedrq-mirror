@@ -1,6 +1,27 @@
 NEWS
 =====
 
+## 1.2.0 - 2024-08-03 <a id='1.2.0'></a>
+
+### Added
+
+- backends base: add `fedrq.backends.base.PackageQueryAlias` that should be
+  used to type `PackageQuery`-like objects instead of `PackageQueryCompat`
+  directly
+- contrib api_examples: add `longest_license` script
+
+### Changed
+
+- backends: fix TypeVar bound type cannot be generic error and refactor
+  `PackageQueryCompat` and `RepoqueryBase` typing
+- contrib: adjust example scripts for `PackageQueryCompat` typing changes
+- config: allow environment variables (`FEDRQ_BRANCH` and `FEDRQ_REPO`) to override config file
+
+
+### Fixed
+
+- repos epel: fix epel-testing metalink url
+
 ## 1.1.0 - 2024-05-01 <a id='1.1.0'></a>
 
 ### Added
