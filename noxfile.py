@@ -121,7 +121,7 @@ def formatters(session: nox.Session):
 @nox.session
 def typing(session: nox.Session):
     install(session, ".[typing]", editable=True, constraint="typing")
-    session.run("mypy", "--enable-incomplete-feature=Unpack", "src/fedrq/")
+    session.run("mypy", "src/fedrq/")
 
 
 @nox.session(reuse_venv=False)
