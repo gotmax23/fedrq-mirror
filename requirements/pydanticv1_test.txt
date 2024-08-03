@@ -4,7 +4,7 @@ certifi==2024.7.4
     # via requests
 charset-normalizer==3.3.2
     # via requests
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via pytest
 idna==3.7
     # via requests
@@ -18,7 +18,7 @@ pydantic==1.10.17
     # via
     #   -c requirements/pydanticv1.in
     #   fedrq (pyproject.toml)
-pytest==8.2.2
+pytest==8.3.2
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock

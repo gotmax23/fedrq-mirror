@@ -10,7 +10,7 @@ charset-normalizer==3.3.2
     # via requests
 idna==3.7
     # via requests
-mypy==1.10.1
+mypy==1.11.1
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
@@ -28,7 +28,7 @@ tomli==2.0.1
     #   mypy
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-types-requests==2.32.0.20240622
+types-requests==2.32.0.20240712
     # via fedrq (pyproject.toml)
 typing-extensions==4.12.2
     # via

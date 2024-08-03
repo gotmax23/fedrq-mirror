@@ -6,13 +6,15 @@ anyio==4.4.0
     # via httpx
 argcomplete==3.4.0
     # via fedrq (pyproject.toml)
-attrs==23.2.0
+attrs==24.1.0
     # via reuse
 babel==2.15.0
     # via mkdocs-material
+backports-strenum==1.3.1
+    # via griffe
 binaryornot==0.4.4
     # via reuse
-black==24.4.2
+black==24.8.0
     # via fedrq (pyproject.toml)
 boolean-py==4.0
     # via
@@ -39,13 +41,13 @@ colorama==0.4.6
     # via
     #   griffe
     #   mkdocs-material
-exceptiongroup==1.2.1
+exceptiongroup==1.2.2
     # via
     #   anyio
     #   pytest
 ghp-import==2.1.0
     # via mkdocs
-griffe==0.47.0
+griffe==0.48.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
@@ -62,7 +64,7 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-importlib-metadata==8.0.0
+importlib-metadata==8.2.0
     # via
     #   markdown
     #   mkdocs
@@ -118,17 +120,17 @@ mkdocs-gen-files==0.5.0
     # via fedrq (pyproject.toml)
 mkdocs-get-deps==0.2.0
     # via mkdocs
-mkdocs-material==9.5.28
+mkdocs-material==9.5.31
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
-mkdocstrings==0.25.1
+mkdocstrings==0.25.2
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.10.5
+mkdocstrings-python==1.10.7
     # via mkdocstrings
-mypy==1.10.1
+mypy==1.11.1
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via
@@ -163,11 +165,11 @@ pygments==2.18.0
     # via
     #   mkdocs-material
     #   rich
-pymdown-extensions==10.8.1
+pymdown-extensions==10.9
     # via
     #   mkdocs-material
     #   mkdocstrings
-pytest==8.2.2
+pytest==8.3.2
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
@@ -185,7 +187,7 @@ pyyaml==6.0.1
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2024.5.15
+regex==2024.7.24
     # via mkdocs-material
 releaserr==0.1.dev131
     # via fedrq (pyproject.toml)
@@ -201,7 +203,7 @@ rich==13.7.1
     #   typer
 rpm==0.1.0
     # via fedrq (pyproject.toml)
-ruff==0.5.1
+ruff==0.5.6
     # via fedrq (pyproject.toml)
 shellingham==1.5.4
     # via typer
@@ -222,11 +224,11 @@ tomli==2.0.1
     #   sourcehutx
 tomli-w==1.0.0
     # via fedrq (pyproject.toml)
-tomlkit==0.12.5
+tomlkit==0.13.0
     # via reuse
 typer==0.12.3
     # via releaserr
-types-requests==2.32.0.20240622
+types-requests==2.32.0.20240712
     # via fedrq (pyproject.toml)
 typing-extensions==4.12.2
     # via

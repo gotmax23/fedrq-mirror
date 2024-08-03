@@ -26,7 +26,7 @@ rpm==0.1.0
     # via
     #   fedrq (pyproject.toml)
     #   specfile
-specfile==0.31.0
+specfile==0.32.1
     # via fclogr
 tomli==2.0.1
     # via fedrq (pyproject.toml)
