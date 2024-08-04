@@ -62,7 +62,6 @@ def main(
         reverse=True,
     )
     total = 0
-    length = 0
     last_package: PackageCompat | None = None
     for package in packages_sorted:
         if total >= limit:
@@ -75,10 +74,9 @@ def main(
             and get_source_name(last_package) == get_source_name(package)
         ):
             continue
-        length = len(package.license)
         print(
             f"{package.name}.{package.arch} (from {get_source_name(package)}):",
-            package.license if show_license else length,
+            package.license if show_license else len(package.license),
         )
         total += 1
         last_package = package
