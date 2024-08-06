@@ -14,7 +14,7 @@ import logging
 import sys
 import typing as t
 import warnings
-from collections.abc import Collection, Iterable, Iterator
+from collections.abc import Collection, Iterable, Iterator, Sequence
 from datetime import datetime as DT
 from datetime import timezone as TZ
 from enum import Enum
@@ -564,35 +564,35 @@ class Package(libdnf5.rpm.Package, PackageCompat):
         return self.get_install_size()
 
     @property
-    def provides(self) -> Iterable[Reldep5]:
+    def provides(self) -> Collection[Reldep5]:
         return self.get_provides()
 
     @property
-    def requires(self) -> Iterable[Reldep5]:
+    def requires(self) -> Collection[Reldep5]:
         return self.get_requires()
 
     @property
-    def recommends(self) -> Iterable[Reldep5]:
+    def recommends(self) -> Collection[Reldep5]:
         return self.get_recommends()
 
     @property
-    def suggests(self) -> Iterable[Reldep5]:
+    def suggests(self) -> Collection[Reldep5]:
         return self.get_suggests()
 
     @property
-    def supplements(self) -> Iterable[Reldep5]:
+    def supplements(self) -> Collection[Reldep5]:
         return self.get_supplements()
 
     @property
-    def enhances(self) -> Iterable[Reldep5]:
+    def enhances(self) -> Collection[Reldep5]:
         return self.get_enhances()
 
     @property
-    def obsoletes(self) -> Iterable[Reldep5]:
+    def obsoletes(self) -> Collection[Reldep5]:
         return self.get_obsoletes()
 
     @property
-    def conflicts(self) -> Iterable[Reldep5]:
+    def conflicts(self) -> Collection[Reldep5]:
         return self.get_conflicts()
 
     @property
@@ -622,7 +622,7 @@ class Package(libdnf5.rpm.Package, PackageCompat):
         return reason_str
 
     @property
-    def files(self) -> Iterable[str]:
+    def files(self) -> Sequence[str]:
         return self.get_files()
 
     @property

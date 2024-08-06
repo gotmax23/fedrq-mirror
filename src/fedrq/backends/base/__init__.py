@@ -7,7 +7,7 @@ import abc
 import dataclasses
 import importlib.resources
 import logging
-from collections.abc import Callable, Collection, Iterable, Iterator
+from collections.abc import Callable, Collection, Iterable, Iterator, Sequence
 from datetime import date
 from typing import TYPE_CHECKING, Any, Generic, Optional, Protocol, TypeVar
 from warnings import warn
@@ -105,35 +105,35 @@ class PackageCompat(metaclass=abc.ABCMeta):  # pragma: no cover
 
     @property
     @abc.abstractmethod
-    def provides(self) -> Iterable: ...
+    def provides(self) -> Collection[Any]: ...
 
     @property
     @abc.abstractmethod
-    def requires(self) -> Iterable: ...
+    def requires(self) -> Collection[Any]: ...
 
     @property
     @abc.abstractmethod
-    def recommends(self) -> Iterable: ...
+    def recommends(self) -> Collection[Any]: ...
 
     @property
     @abc.abstractmethod
-    def suggests(self) -> Iterable: ...
+    def suggests(self) -> Collection[Any]: ...
 
     @property
     @abc.abstractmethod
-    def supplements(self) -> Iterable: ...
+    def supplements(self) -> Collection[Any]: ...
 
     @property
     @abc.abstractmethod
-    def enhances(self) -> Iterable: ...
+    def enhances(self) -> Collection[Any]: ...
 
     @property
     @abc.abstractmethod
-    def obsoletes(self) -> Iterable: ...
+    def obsoletes(self) -> Collection[Any]: ...
 
     @property
     @abc.abstractmethod
-    def conflicts(self) -> Iterable: ...
+    def conflicts(self) -> Collection[Any]: ...
 
     @property
     @abc.abstractmethod
@@ -161,7 +161,7 @@ class PackageCompat(metaclass=abc.ABCMeta):  # pragma: no cover
 
     @property
     @abc.abstractmethod
-    def files(self) -> Iterable[str]: ...
+    def files(self) -> Sequence[str]: ...
 
     @property
     @abc.abstractmethod
