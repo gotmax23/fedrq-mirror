@@ -203,13 +203,31 @@ class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: 
         ...
 
     @abc.abstractmethod
-    def union(self: Self, other: Self) -> Self:
+    def union(self, other: Any) -> Self:
         """
         Combine two PackageQuery objects.
         Depending on the backend, this either modifies 'self' in place and
         returns 'self' or returns a new PackageQuery object.
         """
         ...
+
+    @abc.abstractmethod
+    def difference(self, other) -> Self:
+        """
+        Return the difference between `self` and `other`
+        (packages that are in `self` but not `other`).
+        Depending on the backend, this either modifies 'self' in place and
+        returns 'self' or returns a new PackageQuery object.
+        """
+
+    @abc.abstractmethod
+    def intersection(self, other) -> Self:
+        """
+        Return the difference between `self` and `other`
+        (packages that are in both `self` and `other`).
+        Depending on the backend, this either modifies 'self' in place and
+        returns 'self' or returns a new PackageQuery object.
+        """
 
     @abc.abstractmethod
     def __len__(self) -> int: ...

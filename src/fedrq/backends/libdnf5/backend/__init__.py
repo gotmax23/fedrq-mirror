@@ -786,8 +786,16 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
     def __len__(self) -> int:
         return self.size()
 
-    def union(self, other: PackageQuery) -> PackageQuery:
+    def union(self, other) -> PackageQuery:
         self.update(other)
+        return self
+
+    def intersection(self, other) -> PackageQuery:
+        libdnf5.rpm.PackageQuery.intersection(self, other)
+        return self
+
+    def difference(self, other) -> PackageQuery:
+        libdnf5.rpm.PackageQuery.difference(self, other)
         return self
 
     def __ior__(self, other: PackageQuery) -> PackageQuery:
