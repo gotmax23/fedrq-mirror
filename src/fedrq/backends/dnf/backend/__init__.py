@@ -39,7 +39,6 @@ if t.TYPE_CHECKING:
 
 LOG = logging.getLogger(__name__)
 
-PackageCompat.register(dnf.package.Package)
 Package: type[PackageCompat] = dnf.package.Package
 PackageQueryCompat.register(dnf.query.Query)
 PackageQuery: type[PackageQueryCompat] = dnf.query.Query

@@ -9,7 +9,15 @@ import importlib.resources
 import logging
 from collections.abc import Callable, Collection, Iterable, Iterator, Sequence
 from datetime import date
-from typing import TYPE_CHECKING, Any, Generic, Optional, Protocol, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Optional,
+    Protocol,
+    TypeVar,
+    runtime_checkable,
+)
 from warnings import warn
 
 if TYPE_CHECKING:
@@ -22,193 +30,148 @@ _PackageT = TypeVar("_PackageT", bound="PackageCompat")
 LOG = logging.getLogger("fedrq.backends")
 
 
-class PackageCompat(metaclass=abc.ABCMeta):  # pragma: no cover
+@runtime_checkable
+class PackageCompat(Protocol):  # pragma: no cover
     """
     Common interface provided by dnf.package.Package and other backends
     """
 
     @property
-    @abc.abstractmethod
     def name(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def arch(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def a(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def epoch(self) -> int: ...
 
     @property
-    @abc.abstractmethod
     def e(self) -> int: ...
 
     @property
-    @abc.abstractmethod
     def version(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def v(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def release(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def r(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def from_repo(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def evr(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def debug_name(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def source_name(self) -> Optional[str]: ...
 
     @property
-    @abc.abstractmethod
     def source_debug_name(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def installtime(self) -> int: ...
 
     @property
-    @abc.abstractmethod
     def buildtime(self) -> int: ...
 
     @property
-    @abc.abstractmethod
     def size(self) -> int: ...
 
     @property
-    @abc.abstractmethod
     def downloadsize(self) -> int: ...
 
     @property
-    @abc.abstractmethod
     def installsize(self) -> int: ...
 
     @property
-    @abc.abstractmethod
     def provides(self) -> Collection[Any]: ...
 
     @property
-    @abc.abstractmethod
     def requires(self) -> Collection[Any]: ...
 
     @property
-    @abc.abstractmethod
     def recommends(self) -> Collection[Any]: ...
 
     @property
-    @abc.abstractmethod
     def suggests(self) -> Collection[Any]: ...
 
     @property
-    @abc.abstractmethod
     def supplements(self) -> Collection[Any]: ...
 
     @property
-    @abc.abstractmethod
     def enhances(self) -> Collection[Any]: ...
 
     @property
-    @abc.abstractmethod
     def obsoletes(self) -> Collection[Any]: ...
 
     @property
-    @abc.abstractmethod
     def conflicts(self) -> Collection[Any]: ...
 
     @property
-    @abc.abstractmethod
     def sourcerpm(self) -> Optional[str]: ...
 
     @property
-    @abc.abstractmethod
     def description(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def summary(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def license(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def url(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def reason(self) -> Optional[str]: ...
 
     @property
-    @abc.abstractmethod
     def files(self) -> Sequence[str]: ...
 
     @property
-    @abc.abstractmethod
     def reponame(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def repoid(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def vendor(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def packager(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def location(self) -> str: ...
 
     @property
-    @abc.abstractmethod
     def repo(self) -> Any:
         """
         Return the package's Repo object.
         The exact object depends on which backend is used.
         """
 
-    @abc.abstractmethod
     def remote_location(
         self, schemes: Collection[str] | None = ("http", "ftp", "file", "https")
     ) -> str | None: ...
 
-    @abc.abstractmethod
     def __hash__(self) -> int: ...
 
-    @abc.abstractmethod
     def __lt__(self, other) -> bool: ...
 
-    @abc.abstractmethod
     def __le__(self, other) -> bool: ...
 
-    @abc.abstractmethod
     def __gt__(self, other) -> bool: ...
 
-    @abc.abstractmethod
     def __ge__(self, other) -> bool: ...
 
 
