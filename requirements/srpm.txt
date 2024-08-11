@@ -4,7 +4,7 @@ annotated-types==0.7.0
     # via pydantic
 certifi==2024.7.4
     # via requests
-cffi==1.16.0
+cffi==1.17.0
     # via pygit2
 charset-normalizer==3.3.2
     # via requests

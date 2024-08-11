@@ -4,7 +4,7 @@ annotated-types==0.7.0
     # via pydantic
 anyio==4.4.0
     # via httpx
-babel==2.15.0
+babel==2.16.0
     # via mkdocs-material
 backports-strenum==1.3.1
     # via griffe
@@ -141,7 +141,7 @@ pymdown-extensions==10.9
     #   mkdocstrings
 python-dateutil==2.9.0.post0
     # via ghp-import
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   mkdocs
     #   mkdocs-get-deps
