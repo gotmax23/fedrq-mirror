@@ -1,5 +1,0 @@
-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-
-Files: requirements/*.txt requirements/*.in
-Copyright: None
-License: Unlicense

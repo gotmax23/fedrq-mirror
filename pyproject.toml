@@ -43,7 +43,7 @@ requires-python = ">=3.9"
 [project.optional-dependencies]
 codeqa = [
     "ruff",
-    "reuse",
+    "reuse >= 4",
 ]
 doc = [
     # mkdocstrings-python uses black to format function signatures
