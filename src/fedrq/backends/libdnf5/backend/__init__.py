@@ -39,7 +39,7 @@ if t.TYPE_CHECKING:
 
 
 try:
-    import libdnf5
+    import libdnf5  # type: ignore[import]
 except ImportError as exc:
     raise MissingBackendError(str(exc)) from None
 
