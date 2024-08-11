@@ -264,6 +264,8 @@ def get_changelogs(package: t.Any) -> Iterator[ChangelogEntry]:
         )
 
 
+PackageQueryAlias: t.TypeAlias = PackageQueryCompat[PackageCompat]
+
 __all__ = (
     "BACKEND",
     "BaseMaker",
@@ -274,6 +276,7 @@ __all__ = (
     "Repoquery",
     "get_releasever",
     "get_changelogs",
+    "PackageQueryAlias",
     #
     "dnf",
     "hawkey",

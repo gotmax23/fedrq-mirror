@@ -654,6 +654,7 @@ class BackendMod(Protocol):
     Package: type[PackageCompat]
     NEVRAForms: type[NEVRAFormsCompat]
     PackageQuery: type[PackageQueryCompat]
+    PackageQueryAlias: type[PackageQueryCompat]
     Repoquery: type[RepoqueryBase]
     RepoError: type[BaseException]
     get_releasever: Callable[[], str]

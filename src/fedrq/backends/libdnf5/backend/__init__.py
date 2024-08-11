@@ -954,6 +954,8 @@ def get_changelogs(package: Package) -> Iterator[ChangelogEntry]:
 
 RepoError = RuntimeError
 
+PackageQueryAlias: TypeAlias = PackageQueryCompat[Package]
+
 __all__ = (
     "BACKEND",
     "BaseMaker",
@@ -964,6 +966,7 @@ __all__ = (
     "RepoError",
     "get_releasever",
     "get_changelogs",
+    "PackageQueryAlias",
     #
     "libdnf5",
 )

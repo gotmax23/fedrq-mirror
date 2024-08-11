@@ -19,7 +19,8 @@ def test_repoquery_interface():
     """
     import fedrq.repoquery
 
-    assert set(dir(fedrq.repoquery)) & BACKEND_MEMBERS == BACKEND_MEMBERS
+    members = BACKEND_MEMBERS - {"PackageQueryAlias"}
+    assert (set(dir(fedrq.repoquery))) & members == members
 
 
 def test_backend_interface(default_backend):
