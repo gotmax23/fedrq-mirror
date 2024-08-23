@@ -14,7 +14,7 @@ import re
 import sys
 from functools import wraps
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from fedrq.backends.base import BaseMakerBase, PackageCompat
 
@@ -51,6 +51,8 @@ These modules are only available for the default system Python interpreter.
 
 
 SPLIT_REGEX = re.compile(r"\s*[,\s]\s*")
+
+DOES_NOT_REQUIRE_FILELISTS = ("/etc", "/usr/bin", "/usr/sbin")
 
 
 # Based on dnf.cli.option_parser._RepoCallback
@@ -130,15 +132,34 @@ class Command(metaclass=abc.ABCMeta):
             sys.exit(str(exc))
         self._set_config("backend")
         self._set_config("smartcache")
+        self._set_config("load_filelists")
         if (
-            self.args.load_filelists == LoadFilelists.auto
-            and "files" in self.args.formatter
+            self.config.load_filelists == LoadFilelists.auto
+            and self._should_load_filelists()
         ):
             self.config.load_filelists = LoadFilelists.always
-        else:
-            self._set_config("load_filelists")
 
         self._v_errors: list[str] = []
+
+    def _should_load_filelists(self) -> bool:
+        """
+        Method to determine whether filelists should be automatically loaded in
+        auto mode.
+        Can be overrideen in subclasses.
+        """
+        return "files" in getattr(self.args, "formatter", "") or (
+            self._paths_need_filelists(self.args.names)
+        )
+
+    def _paths_need_filelists(self, names: cabc.Iterable[str]) -> bool:
+        """
+        Given a list of package specs, determine whether filelists are needed
+        to resolve them.
+        """
+        return any(
+            name.startswith("/") and not name.startswith(DOES_NOT_REQUIRE_FILELISTS)
+            for name in cast(list[str], names)
+        )
 
     def _get_config(self):
         # This makes it easier to mock the config
@@ -238,7 +259,7 @@ class Command(metaclass=abc.ABCMeta):
             "-P",
             "--resolve-packages",
             action="store_true",
-            help="Resolve the correct Package when given a virtual Provide."
+            help="Resolve the correct Package when given a virtual Provide or filename."
             " For instance, /usr/bin/yt-dlp would resolve to yt-dlp",
         )
         return parser
@@ -309,8 +330,9 @@ class Command(metaclass=abc.ABCMeta):
             "-L",
             "--filelists",
             choices=tuple(LoadFilelists),
+            type=LoadFilelists,
             dest="load_filelists",
-            help="Whether to load filelists",
+            help="Whether to load filelists.",
         )
         parser.add_argument("-B", "--backend", choices=tuple(BACKENDS))
         parser.add_argument(

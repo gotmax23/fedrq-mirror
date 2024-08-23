@@ -38,6 +38,13 @@ class Pkgs(Command):
 
         return parser
 
+    def _paths_need_filelists(self, names: cabc.Iterable[str]) -> bool:
+        """
+        Override the parent _paths_need_filelists to only resolve files when
+        --resolve-packages is passed.
+        """
+        return self.args.resolve_packages and super()._paths_need_filelists(names)
+
     def run(self) -> None:
         self.query = self.rq.query(empty=True)
 
