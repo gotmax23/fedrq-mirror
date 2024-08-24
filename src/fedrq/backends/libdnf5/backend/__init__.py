@@ -741,7 +741,7 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
             "eq": libdnf5.common.QueryCmp_EQ,
             "neq": libdnf5.common.QueryCmp_NEQ,
             "glob": libdnf5.common.QueryCmp_GLOB,
-            "contains": libdnf5.common.QueryCmp_NOT_CONTAINS,
+            "contains": libdnf5.common.QueryCmp_CONTAINS,
             "gt": libdnf5.common.QueryCmp_GT,
             "gte": libdnf5.common.QueryCmp_GTE,
             "lt": libdnf5.common.QueryCmp_LT,
