@@ -13,9 +13,9 @@ def run_command(capsys, patch_config_dirs):
     def runner(args, *, return_tuples=False):
         fedrq.cli.main(["whatrequires", "--sc", *args])
         stdout, stderr = capsys.readouterr()
-        result = stdout.splitlines(), stderr.splitlines()
+        result = (stdout.splitlines(), stderr.splitlines())
         if return_tuples:
-            result = tuple(tuple(r) for r in result)
+            return tuple(tuple(r) for r in result)
         return result
 
     return runner
@@ -111,7 +111,7 @@ def test_exact_no_result(args, exact_optional, run_command, target_cpu):
     These work with -P, but should not print any results
     with --exact.
     """
-    expected = ([], [])
+    expected: tuple[list, list] = ([], [])
     args = [arg.format(target_cpu=target_cpu) for arg in args]
     output = run_command(args + ["-E"])
     assert output == expected

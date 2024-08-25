@@ -3,17 +3,18 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
-
-try:
-    import tomllib
-except ImportError:
-    import tomli as tomllib
 
 import pytest
 import tomli_w
 
 import fedrq.cli
+
+if sys.version_info < (3, 11):
+    import tomli as tomllib
+else:
+    import tomllib
 
 
 @pytest.fixture

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -17,6 +17,7 @@ from fedrq.backends.base import (
     PackageQueryCompat,
     RepoqueryBase,
 )
+from fedrq.release_repo import MultiNameG
 
 
 def test_make_base_rawhide_repos() -> None:
@@ -25,8 +26,9 @@ def test_make_base_rawhide_repos() -> None:
     bm = config.backend_mod.BaseMaker()
     base = rawhide.make_base(config, fill_sack=False, base_maker=bm)  # noqa: F841
     repos = bm.repolist(True)
-    assert len(repos) == len(rawhide.repog.repos)
-    assert set(repos) == set(rawhide.repog.repos)
+    repog = cast(MultiNameG, rawhide.repog)
+    assert len(repos) == len(repog.repos)
+    assert set(repos) == set(repog.repos)
 
 
 def test_package_protocol(repo_test_rq: RepoqueryBase):
@@ -61,7 +63,7 @@ def test_resolve_pkg_specs_forms(
     forms = default_backend.NEVRAForms
 
     # nevra_forms excludes "packagea.noarch" (0)
-    nevra_forms = [forms.NAME]
+    nevra_forms: list[int] | None = [forms.NAME]
     assert not list(func(["packagea.noarch"], nevra_forms=nevra_forms))
 
     # forms.NAME (2)
@@ -119,6 +121,6 @@ def test_resolve_pkg_specs_resolve(
     specs: Sequence[str],
     kwargs: dict[str, Any],
     count: int,
-) -> bool:
+) -> None:
     results = repo_test_rq.resolve_pkg_specs(specs, **kwargs)
     assert len(results) == count
