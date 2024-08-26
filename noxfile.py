@@ -261,7 +261,14 @@ def pip_compile(session: nox.Session):
         args.remove("--no-upgrade")
 
     # pip_compile_cmd = ("pip-compile",)
-    pip_compile_cmd = ("uv", "pip", "compile", "pyproject.toml", "--quiet")
+    pip_compile_cmd = (
+        "uv",
+        "pip",
+        "compile",
+        "pyproject.toml",
+        "--quiet",
+        "--universal",
+    )
 
     # fmt: off
     session.run(
