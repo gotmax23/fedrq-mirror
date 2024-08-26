@@ -901,7 +901,7 @@ class Repoquery(RepoqueryBase[Package]):
         with_filenames: bool | None = None,
         with_provides: bool | None = None,
         resolve_provides: bool | None = None,
-        nevra_forms: list[NEVRAForms] | None = None,
+        nevra_forms: list[NEVRAForms | int] | None = None,
     ) -> PackageQuery:
         opts = self._get_resolve_options(
             resolve, with_filenames, with_provides, resolve_provides

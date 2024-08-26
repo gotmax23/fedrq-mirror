@@ -468,6 +468,7 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
         with_filenames: bool | None = None,
         with_provides: bool | None = None,
         resolve_provides: bool | None = None,
+        nevra_forms: list[int] | None = None,
     ) -> PackageQueryCompat[_PackageT]:
         """
         Resolve pkg specs.
