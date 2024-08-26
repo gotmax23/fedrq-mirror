@@ -12,7 +12,7 @@ click==8.1.7
     # via black
 colorama==0.4.6 ; platform_system == 'Windows'
     # via click
-idna==3.7
+idna==3.8
     # via requests
 isort==5.13.2
     # via fedrq (pyproject.toml)
@@ -30,7 +30,7 @@ pydantic-core==2.20.1
     # via pydantic
 requests==2.32.3
     # via fedrq (pyproject.toml)
-rpm==0.1.0
+rpm==0.2.0
     # via fedrq (pyproject.toml)
 tomli==2.0.1 ; python_full_version < '3.11'
     # via
