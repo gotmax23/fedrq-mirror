@@ -3,7 +3,11 @@
 
 [tool.basedpyright]
 include = [
+    "src/fedrq/backends/base/experimental.py",
+    "src/fedrq/backends/dnf/backend/experimental.py",
     "src/fedrq/backends/libdnf5/backend/__init__.py",
+    "src/fedrq/backends/libdnf5/backend/experimental.py",
+    "tests/integration/test_experimental_comps.py",
     "tests/unit/test_dnf.py",
 ]
 

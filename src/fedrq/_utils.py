@@ -7,6 +7,7 @@ import logging
 import typing as t
 from collections import deque
 from collections.abc import Iterator, MutableMapping
+from enum import Enum
 
 if t.TYPE_CHECKING:
     from fedrq.backends.base import PackageCompat, PackageQueryCompat
@@ -47,3 +48,10 @@ def exhaust_it(it: Iterator[t.Any]) -> None:
     Exhaust an iterator in the most efficient manner possible
     """
     deque(it, maxlen=0)
+
+
+_EnumT = t.TypeVar("_EnumT", bound=Enum)
+
+
+def enum_from_int(typ: type[_EnumT], value: t.Any) -> _EnumT:
+    return {i: i for i in typ}[value]
