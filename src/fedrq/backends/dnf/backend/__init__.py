@@ -36,6 +36,7 @@ except ImportError:
 
 if t.TYPE_CHECKING:
     from _typeshed import StrPath
+    from typing_extensions import TypeAlias
 
 LOG = logging.getLogger(__name__)
 
@@ -264,7 +265,7 @@ def get_changelogs(package: t.Any) -> Iterator[ChangelogEntry]:
         )
 
 
-PackageQueryAlias: t.TypeAlias = PackageQueryCompat[PackageCompat]
+PackageQueryAlias: TypeAlias = PackageQueryCompat[PackageCompat]
 
 __all__ = (
     "BACKEND",
