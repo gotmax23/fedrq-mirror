@@ -121,6 +121,22 @@ def test_resolve_pkg_specs_resolve(
     specs: Sequence[str],
     kwargs: dict[str, Any],
     count: int,
+    request: pytest.FixtureRequest,
 ) -> None:
     results = repo_test_rq.resolve_pkg_specs(specs, **kwargs)
-    assert len(results) == count
+    canfail = False
+    # https://github.com/rpm-software-management/libdnf/issues/1673
+    if (
+        request.node.callspec.id == "resolve-without-filenames"
+        and repo_test_rq.backend.BACKEND == "dnf"
+    ):
+        import hawkey
+
+        if hawkey.VERSION == "0.73.3":
+            canfail = True
+    try:
+        assert len(results) == count
+    except AssertionError:
+        if not canfail:
+            raise
+        pytest.xfail("rpm-software-management/libdnf/issues/1673")
