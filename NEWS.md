@@ -1,6 +1,30 @@
 NEWS
 =====
 
+## 1.3.0 - 2024-08-27 <a id='1.3.0'></a>
+
+### CLI improvements
+
+- Make automatic loading of filelists more intelligent.
+  Filelists are now loaded automatically when the formatter name includes
+  `files` or if any argument looks like a path
+
+
+### API changes/improvements
+
+- backends: add `difference()` and `intersection()` methods to `PackageQuery`
+- backends: add `PackageQueryAlias` to backend modules
+- backends base: add missing `nevra_forms` parameter to
+  `RepoqueryBase.resolve_pkg_specs()`.
+  The dnf and libdnf5 `Repoquery` implementations both accept this argument,
+  but it wasn't included in the base class's definition.
+- backends base: convert `PackageCompat` to a `Protocol`
+- backends libdnf5: fix `filter()` and `filterm()`'s handling of `__contains`
+  comparisons, such as `query.filter(name__contains="substring")`.
+  Previously, `name__contains` mistakenly checked for packages whose names do
+  **not** include the substring.
+- packaging: declare project as stable in classifiers
+
 ## 1.2.0 - 2024-08-03 <a id='1.2.0'></a>
 
 ### Added
