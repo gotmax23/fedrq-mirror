@@ -148,7 +148,7 @@ class Command(metaclass=abc.ABCMeta):
         Can be overrideen in subclasses.
         """
         return "files" in getattr(self.args, "formatter", "") or (
-            self._paths_need_filelists(self.args.names)
+            self._paths_need_filelists(getattr(self.args, "names", []))
         )
 
     def _paths_need_filelists(self, names: cabc.Iterable[str]) -> bool:
