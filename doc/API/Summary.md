@@ -12,7 +12,8 @@ API's main purpose is "repoquerying", but you can use the fedrq functionality
 you'd like and then access the underlying dnf Base object to preform other
 tasks if needed.
 
-Take a look at the docstrings for more information.
+Take a look at the docstrings — in particular the base classes' documentation — 
+for more information.
 
 Note that fedrq is still in beta and its API may be subject to breaking
 changes.
