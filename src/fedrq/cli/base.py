@@ -280,12 +280,12 @@ class Command(metaclass=abc.ABCMeta):
             add_help=False, parents=[cls.branch_repo_parser()]
         )
         if name:
-            parser.add_argument(  # type: ignore[attr-defined]
+            parser.add_argument(
                 "names",
                 metavar="NAME",
                 nargs="*",
                 help="Mutually exclusive with --stdin",
-            ).completer = lambda **_: ()
+            ).completer = lambda **_: ()  # type: ignore[attr-defined]
             parser.add_argument(
                 "-i",
                 "--stdin",
@@ -295,11 +295,11 @@ class Command(metaclass=abc.ABCMeta):
         if latest:
             parser.add_argument("-l", "--latest", default=1, help="'all' or an integer")
         if formatter:
-            parser.add_argument(  # type: ignore[attr-defined]
+            parser.add_argument(
                 "-F",
                 "--formatter",
                 default="plain",
-            ).completer = cls.formatters._argcompleter
+            ).completer = cls.formatters._argcompleter  # type: ignore[attr-defined]
         cachedir_group = parser.add_mutually_exclusive_group()
         cachedir_group.add_argument(
             "--system-cache",

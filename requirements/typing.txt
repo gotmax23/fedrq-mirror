@@ -4,6 +4,8 @@ annotated-types==0.7.0
     # via pydantic
 argcomplete==3.5.0
     # via fedrq (pyproject.toml)
+basedpyright==1.17.5
+    # via fedrq (pyproject.toml)
 certifi==2024.8.30
     # via requests
 charset-normalizer==3.3.2
@@ -14,6 +16,8 @@ mypy==1.11.2
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
+nodejs-wheel-binaries==20.17.0
+    # via basedpyright
 pydantic==2.9.2
     # via fedrq (pyproject.toml)
 pydantic-core==2.23.4

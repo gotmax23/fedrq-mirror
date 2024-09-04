@@ -25,7 +25,7 @@ PINNED = os.environ.get("PINNED", "true").lower() in (
 
 PROJECT = "fedrq"
 SPECFILE = "fedrq.spec"
-LINT_SESSIONS = ("formatters", "codeqa", "typing")
+LINT_SESSIONS = ("formatters", "codeqa", "typing", "basedpyright")
 LINT_FILES = (f"src/{PROJECT}", "tests/", "noxfile.py")
 
 nox.options.sessions = ("lint", "covtest", "mkdocs")
@@ -85,7 +85,7 @@ def coverage(session: nox.Session):
     session.run("coverage", "report", "--fail-under=90")
 
 
-@nox.session
+@nox.session(venv_backend=None)
 def covtest(session: nox.Session):
     session.run("rm", "-f", *iglob(".nox/*/tmp/.coverage"), external=True)
     for name in ("dnf_test", "libdnf5_test", "pydanticv1_test", "coverage"):
@@ -119,9 +119,24 @@ def formatters(session: nox.Session):
 
 
 @nox.session
+def alltyping(session: nox.Session):
+    session.notify("typing")
+    session.notify("basedpyright")
+
+
+@nox.session
 def typing(session: nox.Session):
     install(session, ".[typing]", editable=True, constraint="typing")
-    session.run("mypy", "src/fedrq/")
+    session.run("mypy", "src/fedrq/", "tests/unit", "tests/integration")
+
+
+@nox.session(venv_params=["--system-site-packages"])
+def basedpyright(session: nox.Session):
+    """
+    Run basedpyright with system dependencies enabled
+    """
+    install(session, ".[typing]", editable=True, constraint="typing")
+    session.run("basedpyright", "--project", "custom-basedpyright.toml")
 
 
 @nox.session(reuse_venv=False)

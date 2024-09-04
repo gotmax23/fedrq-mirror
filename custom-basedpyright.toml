@@ -1,0 +1,10 @@
+# Copyright (C) 2024 Maxwell G <maxwell@gtmx.me>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+[tool.basedpyright]
+include = [
+    "src/fedrq/backends/libdnf5/backend/__init__.py",
+    "tests/unit/test_dnf.py",
+]
+
+typeCheckingMode = "standard"

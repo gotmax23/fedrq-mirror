@@ -40,6 +40,10 @@ if t.TYPE_CHECKING:
 
 try:
     import libdnf5  # type: ignore[import]
+    import libdnf5._rpm
+    import libdnf5.common
+    import libdnf5.conf
+    import libdnf5.rpm
 except ImportError as exc:
     raise MissingBackendError(str(exc)) from None
 
@@ -226,12 +230,12 @@ class BaseMaker(BaseMakerBase):
             self.initialized = True
 
     @property
-    def conf(self) -> libdnf5.config.ConfigMain:
+    def conf(self) -> libdnf5.conf.ConfigMain:
         return self.base.get_config()
 
     # Not part of the BaseMakerBase interface
     @property
-    def config(self) -> libdnf5.config.ConfigMain:
+    def config(self) -> libdnf5.conf.ConfigMain:
         """
         **DEPRECATED: use `conf` property instead**
         """
@@ -280,13 +284,15 @@ class BaseMaker(BaseMakerBase):
         if from_cache:
             raise NotImplementedError
         try:
-            self.rs.load_repos(
+            self.rs.load_repos(  # pyright: ignore[reportAttributeAccessIssue]
                 libdnf5.repo.Repo.Type_SYSTEM
                 if load_system_repo
                 else libdnf5.repo.Repo.Type_AVAILABLE
             )
         except AttributeError:
-            self.rs.update_and_load_enabled_repos(load_system_repo)
+            self.rs.update_and_load_enabled_repos(
+                load_system_repo
+            )  # pyright: ignore[reportAttributeAccessIssue]
         return self.base
 
     def read_system_repos(self, disable: bool = True) -> None:
@@ -443,7 +449,7 @@ class BaseMaker(BaseMakerBase):
 
     @property
     def backend(self) -> BackendMod:
-        return sys.modules[__name__]
+        return t.cast(BackendMod, sys.modules[__name__])
 
     def repolist(self, enabled: bool | None = None) -> list[str]:
         repoq = libdnf5.repo.RepoQuery(self.base)
@@ -468,8 +474,8 @@ class Package(libdnf5.rpm.Package, PackageCompat):
     def __gt__(self, other) -> bool:
         if not isinstance(other, libdnf5.rpm.Package):
             raise TypeError
-        if self.name != other.name:
-            return self.name > other.name
+        if self.get_name() != other.get_name():
+            return self.get_name() > other.get_name()
         evrcmp = libdnf5.rpm.rpmvercmp(self.get_evr(), other.get_evr())
         if evrcmp != 0:
             return evrcmp > 0
@@ -783,26 +789,32 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
         self._filter(**kwargs)
         return self
 
-    def __len__(self) -> int:
-        return self.size()
+    if not hasattr(libdnf5.rpm.PackageSet, "__len__"):
+
+        def __len__(self) -> int:
+            return self.size()
 
     def union(self, other) -> PackageQuery:
         self.update(other)
         return self
 
+    __ior__ = union
+
     def intersection(self, other) -> PackageQuery:
         libdnf5.rpm.PackageQuery.intersection(self, other)
         return self
+
+    __iand__ = intersection
 
     def difference(self, other) -> PackageQuery:
         libdnf5.rpm.PackageQuery.difference(self, other)
         return self
 
-    def __ior__(self, other: PackageQuery) -> PackageQuery:
-        return self.union(other)
+    __isub__ = difference
 
     _pkg_comps: TypeAlias = (
-        "t.Union[libdnf5.common.QueryCmp_EQ, libdnf5.common.QueryCmp_NEQ]"
+        # "t.Union[libdnf5.common.QueryCmp_EQ, libdnf5.common.QueryCmp_NEQ]"
+        "int"
     )
 
     def filter_pkg(
@@ -929,7 +941,7 @@ class Repoquery(RepoqueryBase[Package]):
 
     @property
     def backend(self) -> BackendMod:
-        return sys.modules[__name__]
+        return t.cast(BackendMod, sys.modules[__name__])
 
 
 @functools.cache

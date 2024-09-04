@@ -30,7 +30,17 @@ from fedrq.backends.dnf import BACKEND
 
 try:
     import dnf
+    import dnf.conf
+    import dnf.conf.read
+    import dnf.exceptions
+    import dnf.package
+    import dnf.query
+    import dnf.repodict
+    import dnf.rpm
+    import dnf.sack
+    import dnf.subject
     import hawkey
+    import hawkey._hawkey
 except ImportError:
     raise MissingBackendError from None
 
@@ -57,11 +67,15 @@ class BaseMaker(BaseMakerBase):
         """
         Initialize and configure the base object.
         """
-        self.base: dnf.Base = base or dnf.Base()
+        self.base = base or dnf.Base()
 
     @property
     def conf(self) -> dnf.conf.MainConf:
         return self.base.conf
+
+    @property
+    def _repos(self) -> dnf.repodict.RepoDict:
+        return t.cast("dnf.repodict.RepoDict", self.base.repos)
 
     def set(self, key: str, value: t.Any) -> None:
         setattr(self.conf, key, value)
@@ -74,7 +88,9 @@ class BaseMaker(BaseMakerBase):
     def load_filelists(self, enable: bool = True) -> None:
         # Old versions of dnf always load filelists
         try:
-            types: list[str] = self.conf.optional_metadata_types
+            types: list[str] = (
+                self.conf.optional_metadata_types
+            )  # pyright: ignore[reportAssignmentType]
         except AttributeError:
             return
         if enable:
@@ -84,7 +100,7 @@ class BaseMaker(BaseMakerBase):
             types.remove("filelists")
 
     def load_changelogs(self, enable: bool = True) -> None:
-        for repo in self.base.repos.iter_enabled():
+        for repo in self._repos.iter_enabled():
             repo.load_metadata_other = enable
 
     def fill_sack(
@@ -114,7 +130,7 @@ class BaseMaker(BaseMakerBase):
         self.base.read_all_repos()
         if not disable:
             return None
-        for repo in self.base.repos.iter_enabled():
+        for repo in self._repos.iter_enabled():
             repo.disable()
 
     def enable_repos(self, repos: Collection[str]) -> None:
@@ -130,7 +146,7 @@ class BaseMaker(BaseMakerBase):
         Enable a repo by its id.
         Raise a ValueError if the repoid is not in `self.base`'s configuration.
         """
-        if repo_obj := self.base.repos.get_matching(repo):
+        if repo_obj := self._repos.get_matching(repo):
             repo_obj.enable()
         else:
             raise ValueError(f"{repo} repo definition was not found.")
@@ -141,7 +157,7 @@ class BaseMaker(BaseMakerBase):
         Raise a ValueError if the repoid is not in `self.base`'s configuration
         when ignore_missing is False.
         """
-        if repo_obj := self.base.repos.get_matching(repo):
+        if repo_obj := self._repos.get_matching(repo):
             repo_obj.disable()
         elif not ignore_missing:
             raise ValueError(f"{repo} repo definition was not found.")
@@ -150,7 +166,7 @@ class BaseMaker(BaseMakerBase):
         rr = dnf.conf.read.RepoReader(self.base.conf, None)
         for repo in rr._get_repos(str(file)):
             LOG.debug("Adding %s from %s", repo.id, file)
-            self.base.repos.add(repo)
+            self._repos.add(repo)
 
     # This is private for now
     def _read_repofile_new(self, file: StrPath, ensure_enabled: bool = False) -> None:
@@ -164,10 +180,10 @@ class BaseMaker(BaseMakerBase):
                 LOG.debug("Not adding %s. It's already in the config.", repo.id)
             else:
                 LOG.debug("Adding %s from %s", repo.id, file)
-                self.base.repos.add(repo)
+                self._repos.add(repo)
             if ensure_enabled:
                 LOG.debug("Ensuring that %s is enabled.", repo.id)
-                self.base.repos[repo.id].enable()
+                self._repos[repo.id].enable()
 
     def create_repo(self, repoid: str, **kwargs: t.Any) -> None:
         """
@@ -178,19 +194,19 @@ class BaseMaker(BaseMakerBase):
                 key-values options that should be set on the Repo object values
                 (like `$basearch`) will be substituted automatically.
         """
-        self.base.repos.add_new_repo(repoid, self.conf, **kwargs)
+        self._repos.add_new_repo(repoid, self.conf, **kwargs)
 
     @property
     def backend(self) -> BackendMod:
-        return sys.modules[__name__]
+        return t.cast("BackendMod", sys.modules[__name__])
 
     def repolist(self, enabled: bool | None = None) -> list[str]:
         if enabled is None:
-            return list(self.base.repos)
-        return [r.id for r in self.base.repos.values() if r.enabled is bool(enabled)]
+            return list(self._repos)
+        return [r.id for r in self._repos.values() if r.enabled is bool(enabled)]
 
     def enable_source_repos(self) -> None:
-        self.base.repos.enable_source_repos()
+        self._repos.enable_source_repos()
 
 
 class NEVRAForms(int, Enum):
@@ -211,8 +227,8 @@ class Repoquery(RepoqueryBase[PackageCompat]):
     def base_arches(self) -> set[str]:
         return {self.base.conf.arch, self.base.conf.basearch}
 
-    def _query(self) -> dnf.query.Query:
-        return self.base.sack.query()
+    def _query(self) -> hawkey._hawkey.Query:
+        return t.cast("dnf.sack.Sack", self.base.sack).query()
 
     def resolve_pkg_specs(
         self,
@@ -247,7 +263,7 @@ class Repoquery(RepoqueryBase[PackageCompat]):
 
     @property
     def backend(self) -> BackendMod:
-        return sys.modules[__name__]
+        return t.cast("BackendMod", sys.modules[__name__])
 
 
 @cache

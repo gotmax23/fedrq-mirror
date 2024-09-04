@@ -8,3 +8,9 @@ path = ["requirements/**.txt", "requirements/**.in"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "None"
 SPDX-License-Identifier = "Unlicense"
+
+[[annotations]]
+path = ["typings/libdnf5/*.pyi", "typings/rpm/*.pyi"]
+precedence = "override"
+SPDX-FileCopyrightText = "None"
+SPDX-License-Identifier = "Unlicense"
