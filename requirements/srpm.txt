@@ -2,9 +2,9 @@
 #    uv pip compile pyproject.toml --universal -o requirements/srpm.txt requirements/srpm.in
 annotated-types==0.7.0
     # via pydantic
-certifi==2024.7.4
+certifi==2024.8.30
     # via requests
-cffi==1.17.0
+cffi==1.17.1
     # via pygit2
 charset-normalizer==3.3.2
     # via requests
