@@ -13,6 +13,7 @@ import pytest
 import fedrq.cli
 from fedrq import config as rqconfig
 from fedrq.backends import get_default_backend
+from fedrq.backends.base import BackendMod
 
 TEST_DATA = Path(__file__).parent.resolve() / "test_data"
 
@@ -49,7 +50,10 @@ def clear_cache():
 @pytest.fixture(scope="session", autouse=True)
 def default_backend():
     backend = os.environ.get("FEDRQ_BACKEND")
-    return get_default_backend(backend, bool(backend))
+    gotten = get_default_backend(backend, bool(backend))
+    # Check that get_default_backend does the right thing
+    assert (backend or gotten.BACKEND) == gotten.BACKEND
+    return gotten
 
 
 @pytest.fixture
@@ -95,10 +99,13 @@ def patch_config_dirs(tmp_path, monkeypatch):
 
 
 @pytest.fixture
-def repo_test_rq(patch_config_dirs):
-    return rqconfig.get_config(
-        load_filelists="always", load_other_metadata=True
-    ).get_rq("tester", "base")
+def repo_test_config(patch_config_dirs) -> rqconfig.RQConfig:
+    return rqconfig.get_config(load_filelists="always", load_other_metadata=True)
+
+
+@pytest.fixture
+def repo_test_rq(repo_test_config: rqconfig.RQConfig, default_backend: BackendMod):
+    return repo_test_config.get_rq("tester", "base")
 
 
 @pytest.fixture(scope="session")

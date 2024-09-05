@@ -359,7 +359,7 @@ class RQConfig(BaseModel):
 
     @property
     def backend_mod(self) -> BackendMod:
-        if not self._backend_mod:
+        if not self._backend_mod or self.backend != self._backend_mod.BACKEND:
             self._backend_mod = get_default_backend(
                 self.backend,
                 # allow falling back to a non default backend
@@ -367,6 +367,7 @@ class RQConfig(BaseModel):
                 # when the user does not explicitly request a backend.
                 fallback=not bool(self.backend),
             )
+            self.backend = self._backend_mod.BACKEND
         return self._backend_mod
 
     def get_release(
