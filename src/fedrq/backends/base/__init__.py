@@ -616,6 +616,9 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
     def backend(self) -> BackendMod: ...
 
 
+RepoqueryAlias: TypeAlias = RepoqueryBase[PackageCompat]
+
+
 @dataclasses.dataclass(frozen=True)
 class ChangelogEntry:
     """
