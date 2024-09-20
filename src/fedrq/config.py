@@ -403,7 +403,7 @@ class RQConfig(BaseModel):
         repo: str | None = None,
         base_conf: dict[str, t.Any] | None = None,
         base_vars: dict[str, t.Any] | None = None,
-    ) -> _dnfRepoquery | _libdnf5RepoQuery | RepoqueryBase[PackageCompat]:
+    ) -> RepoqueryBase[PackageCompat]:
         """
         Higher level interface that finds the Release object that mathces
         {branch} and {repo}, creates a (lib)dnf(5).base.Base session, and
@@ -422,6 +422,34 @@ class RQConfig(BaseModel):
         """
         release = self.get_release(branch, repo)
         return self.backend_mod.Repoquery(release.make_base(self, base_conf, base_vars))
+
+    def get_dnf_rq(
+        self,
+        branch: str | None = None,
+        repo: str | None = None,
+        base_conf: dict[str, t.Any] | None = None,
+        base_vars: dict[str, t.Any] | None = None,
+    ) -> _dnfRepoquery:
+        """
+        Shortcut to create a Repoquery object using the dnf backend
+        """
+        self.backend = "dnf"
+        return t.cast("_dnfRepoquery", self.get_rq(branch, repo, base_conf, base_vars))
+
+    def get_libdnf5_rq(
+        self,
+        branch: str | None = None,
+        repo: str | None = None,
+        base_conf: dict[str, t.Any] | None = None,
+        base_vars: dict[str, t.Any] | None = None,
+    ) -> _libdnf5RepoQuery:
+        """
+        Shortcut to create a Repoquery object using the libdnf5 backend
+        """
+        self.backend = "libdnf5"
+        return t.cast(
+            "_libdnf5RepoQuery", self.get_rq(branch, repo, base_conf, base_vars)
+        )
 
 
 def get_smartcache_basedir() -> Path:
