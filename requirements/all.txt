@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml --universal -o requirements/all.txt --extra=codeqa --extra=doc --extra=formatters --extra=typing --extra=test
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.5.0
     # via httpx
 argcomplete==3.5.0
     # via fedrq (pyproject.toml)
@@ -48,7 +48,7 @@ exceptiongroup==1.2.2 ; python_full_version < '3.11'
     #   pytest
 ghp-import==2.1.0
     # via mkdocs
-griffe==1.2.0
+griffe==1.3.1
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
@@ -60,12 +60,12 @@ httpx==0.27.2
     # via
     #   releaserr
     #   sourcehutx
-idna==3.8
+idna==3.10
     # via
     #   anyio
     #   httpx
     #   requests
-importlib-metadata==8.4.0 ; python_full_version < '3.10'
+importlib-metadata==8.5.0 ; python_full_version < '3.10'
     # via
     #   markdown
     #   mkdocs
@@ -123,11 +123,11 @@ mkdocs-gen-files==0.5.0
     # via fedrq (pyproject.toml)
 mkdocs-get-deps==0.2.0
     # via mkdocs
-mkdocs-material==9.5.34
+mkdocs-material==9.5.35
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
-mkdocstrings==0.26.0
+mkdocstrings==0.26.1
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
@@ -150,19 +150,19 @@ pathspec==0.12.1
     # via
     #   black
     #   mkdocs
-platformdirs==4.2.2
+platformdirs==4.3.6
     # via
     #   black
     #   mkdocs-get-deps
     #   mkdocstrings
 pluggy==1.5.0
     # via pytest
-pydantic==2.8.2
+pydantic==2.9.2
     # via
     #   fedrq (pyproject.toml)
     #   releaserr
     #   sourcehutx
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via pydantic
 pygments==2.18.0
     # via
@@ -172,7 +172,7 @@ pymdown-extensions==10.9
     # via
     #   mkdocs-material
     #   mkdocstrings
-pytest==8.3.2
+pytest==8.3.3
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
@@ -190,9 +190,9 @@ pyyaml==6.0.2
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
-regex==2024.7.24
+regex==2024.9.11
     # via mkdocs-material
-releaserr==0.1.dev131
+releaserr==0.1.dev135
     # via fedrq (pyproject.toml)
 requests==2.32.3
     # via
@@ -200,13 +200,13 @@ requests==2.32.3
     #   mkdocs-material
 reuse==4.0.3
     # via fedrq (pyproject.toml)
-rich==13.8.0
+rich==13.8.1
     # via
     #   releaserr
     #   typer
 rpm==0.2.0
     # via fedrq (pyproject.toml)
-ruff==0.6.3
+ruff==0.6.6
     # via fedrq (pyproject.toml)
 shellingham==1.5.4
     # via typer
@@ -231,7 +231,7 @@ tomlkit==0.13.2
     # via reuse
 typer==0.12.5
     # via releaserr
-types-requests==2.32.0.20240712
+types-requests==2.32.0.20240914
     # via fedrq (pyproject.toml)
 typing-extensions==4.12.2
     # via
@@ -244,11 +244,11 @@ typing-extensions==4.12.2
     #   pydantic-core
     #   releaserr
     #   typer
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   requests
     #   types-requests
 watchdog==5.0.2
     # via mkdocs
-zipp==3.20.1 ; python_full_version < '3.10'
+zipp==3.20.2 ; python_full_version < '3.10'
     # via importlib-metadata

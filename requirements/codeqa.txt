@@ -18,7 +18,7 @@ chardet==5.2.0
     #   python-debian
 charset-normalizer==3.3.2
     # via requests
-idna==3.8
+idna==3.10
     # via requests
 jinja2==3.1.4
     # via reuse
@@ -26,9 +26,9 @@ license-expression==30.3.1
     # via reuse
 markupsafe==2.1.5
     # via jinja2
-pydantic==2.8.2
+pydantic==2.9.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via pydantic
 python-debian==0.1.49
     # via reuse
@@ -38,7 +38,7 @@ reuse==4.0.3
     # via fedrq (pyproject.toml)
 rpm==0.2.0
     # via fedrq (pyproject.toml)
-ruff==0.6.3
+ruff==0.6.6
     # via fedrq (pyproject.toml)
 tomli==2.0.1 ; python_full_version < '3.11'
     # via fedrq (pyproject.toml)
@@ -48,5 +48,5 @@ typing-extensions==4.12.2
     # via
     #   pydantic
     #   pydantic-core
-urllib3==2.2.2
+urllib3==2.2.3
     # via requests

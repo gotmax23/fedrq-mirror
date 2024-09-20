@@ -10,7 +10,7 @@ colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
 exceptiongroup==1.2.2 ; python_full_version < '3.11'
     # via pytest
-idna==3.8
+idna==3.10
     # via requests
 iniconfig==2.0.0
     # via pytest
@@ -18,11 +18,11 @@ packaging==24.1
     # via pytest
 pluggy==1.5.0
     # via pytest
-pydantic==2.8.2
+pydantic==2.9.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.20.1
+pydantic-core==2.23.4
     # via pydantic
-pytest==8.3.2
+pytest==8.3.3
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
@@ -42,5 +42,5 @@ typing-extensions==4.12.2
     # via
     #   pydantic
     #   pydantic-core
-urllib3==2.2.2
+urllib3==2.2.3
     # via requests
