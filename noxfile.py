@@ -241,7 +241,7 @@ def libdnf5_test(session: nox.Session):
 
 @nox.session(venv_params=["--system-site-packages"])
 def pydanticv1_test(session: nox.Session):
-    install(session, ".[test]", constraint="pydanticv1_test")
+    install(session, ".[test]", constraint="pydanticv1_test", editable=True)
     test(session, "dnf", ["tests/unit"])
 
 
