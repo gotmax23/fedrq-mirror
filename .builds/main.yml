@@ -33,6 +33,8 @@ tasks:
       if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]
       then
         ssh-keyscan github.com >> ~/.ssh/known_hosts
+        eval "$(ssh-agent)"
+        ssh-add ~/.ssh/37d31b1c-0e98-48d0-86b1-43796005fd14 &>/dev/null
         git remote add --fetch github git@github.com:gotmax23/fedrq-mirror.git
         git push --force github main
       else
