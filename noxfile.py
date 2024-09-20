@@ -221,10 +221,9 @@ def mkdocs(session: nox.Session):
 
 @nox.session(venv_backend="none")
 def testa(session: nox.Session):
-    session.notify("dnf_test", ["--cov"])
-    session.notify("libdnf5_test", ["--cov"])
+    session.notify("dnf_test")
+    session.notify("libdnf5_test")
     session.notify("pydanticv1_test")
-    session.notify("coverage")
 
 
 @nox.session(venv_params=["--system-site-packages"])
