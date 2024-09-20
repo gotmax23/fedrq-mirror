@@ -28,7 +28,7 @@ SPECFILE = "fedrq.spec"
 LINT_SESSIONS = ("formatters", "codeqa", "typing")
 LINT_FILES = (f"src/{PROJECT}", "tests/", "noxfile.py")
 
-nox.options.sessions = ("lint", "covtest")
+nox.options.sessions = ("lint", "covtest", "mkdocs")
 nox.options.reuse_existing_virtualenvs = True
 
 
