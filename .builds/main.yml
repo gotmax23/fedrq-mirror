@@ -36,7 +36,7 @@ tasks:
         eval "$(ssh-agent)"
         ssh-add ~/.ssh/37d31b1c-0e98-48d0-86b1-43796005fd14 &>/dev/null
         git remote add --fetch github git@github.com:gotmax23/fedrq-mirror.git
-        git push --force github main
+        git push --force --follow-tags github main
       else
         echo "Not submitting copr-build. Branch is not main."
         exit
