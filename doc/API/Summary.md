@@ -15,9 +15,6 @@ tasks if needed.
 Take a look at the docstrings — in particular the base classes' documentation — 
 for more information.
 
-Note that fedrq is still in beta and its API may be subject to breaking
-changes.
-
 ## fedrq.backends
 
 `fedrq.backends` is the heart of fedrq's API.
