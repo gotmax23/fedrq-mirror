@@ -1,6 +1,15 @@
 # Copyright (C) 2024 Maxwell G <maxwell@gtmx.me>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+"""
+This module (and the other experimental modules in fedrq) are not meant for
+public use.
+They are subject to breaking changes in minor releases and should not be relied
+on by external code.
+Once the functionality has stabilized, this code will be moved out of the
+experimental namespace.
+"""
+
 from __future__ import annotations
 
 from collections.abc import Iterator
