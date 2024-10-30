@@ -85,7 +85,6 @@ defpaths = [
     "centos-stream-compose.repo",
     "epel.repo",
 ]
-system_repos = false
 defs.base = [
     "fedrq-centos-stream-baseos",
     "fedrq-centos-stream-baseos-source",
@@ -95,13 +94,7 @@ defs.base = [
     "fedrq-centos-stream-crb-source",
 ]
 defs.epel = [
-    # base
-    "fedrq-centos-stream-baseos",
-    "fedrq-centos-stream-baseos-source",
-    "fedrq-centos-stream-appstream",
-    "fedrq-centos-stream-appstream-source",
-    "fedrq-centos-stream-crb",
-    "fedrq-centos-stream-crb-source",
+    "@base",
     # epel
     "@repo:epel",
     "epel-source",
@@ -126,7 +119,6 @@ defpaths = [
     "centos-stream-compose.repo",
     "epel.repo",
 ]
-system_repos = false
 defs.base = [
     "fedrq-centos-stream-baseos",
     "fedrq-centos-stream-baseos-source",
@@ -136,13 +128,7 @@ defs.base = [
     "fedrq-centos-stream-crb-source",
 ]
 defs.epel = [
-    # base
-    "fedrq-centos-stream-baseos",
-    "fedrq-centos-stream-baseos-source",
-    "fedrq-centos-stream-appstream",
-    "fedrq-centos-stream-appstream-source",
-    "fedrq-centos-stream-crb",
-    "fedrq-centos-stream-crb-source",
+    "@base",
     # epel
     "@repo:epel",
     "epel-source",
@@ -178,13 +164,7 @@ defs.base = [
     "centos-stream8-powertools-source",
 ]
 defs.epel = [
-    # base
-    "centos-stream8-baseos",
-    "centos-stream8-baseos-source",
-    "centos-stream8-appstream",
-    "centos-stream8-appstream-source",
-    "centos-stream8-powertools",
-    "centos-stream8-powertools-source",
+    "@base",
     # epel
     "@repo:epel",
     "epel-source",
