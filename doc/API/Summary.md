@@ -6,11 +6,12 @@ SPDX-License-Identifier: GPL-2.0-or-later
 # fedrq's Python API
 
 The `fedrq.config` module and the `fedrq.backend` package are public API.
-Everything under `fedrq.cli` is internal. fedrq is primarily a CLI tool and
-its API only abstracts the specific dnf/libdnf5 functionality that the CLI uses. The
-API's main purpose is "repoquerying", but you can use the fedrq functionality
-you'd like and then access the underlying dnf Base object to preform other
-tasks if needed.
+Everything under `fedrq.cli` is internal.
+fedrq is primarily a CLI tool and its API only abstracts the specific
+dnf/libdnf5 functionality that the CLI uses.
+The API's main purpose is "repoquerying",
+but you can use the fedrq functionality you'd like and then access the
+underlying dnf Base object to preform other tasks if needed.
 
 Take a look at the docstrings — in particular the base classes' documentation — 
 for more information.
