@@ -50,6 +50,7 @@ def new_env_query(
     return lambda: experimental.EnvironmentQuery(f39_base)
 
 
+@pytest.mark.no_rpm_mock
 def test_group_query(new_group_query: Callable[..., GroupQuery]) -> None:
     group_query = new_group_query()
     group_query_new = group_query.filterm(name="Buildsystem building group")
@@ -66,6 +67,7 @@ def test_group_query(new_group_query: Callable[..., GroupQuery]) -> None:
     assert len(group_query) == 0
 
 
+@pytest.mark.no_rpm_mock
 def test_group_query_filters(
     default_backend: BackendMod, new_group_query: Callable[..., GroupQuery]
 ) -> None:
@@ -112,6 +114,7 @@ def test_group_query_filters(
     assert isinstance(group_query, exp.GroupQuery)
 
 
+@pytest.mark.no_rpm_mock
 def test_group(
     default_backend: BackendMod, new_group_query: Callable[..., GroupQuery]
 ) -> None:
@@ -158,6 +161,7 @@ def test_group(
     assert packages2 == packages
 
 
+@pytest.mark.no_rpm_mock
 def test_environment(
     default_backend: BackendMod, new_env_query: Callable[..., EnvironmentQuery]
 ) -> None:
