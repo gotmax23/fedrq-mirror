@@ -295,7 +295,7 @@ The following generic repo class macros are available for all releases:
 	specified in the current ReleaseConfig's *defpaths*. If *key* is the name
 	of a release's repo group (see above), that will be enabled instead.
 
-The following generic repo class macros are available for Fedora releases:
+The following generic repo class macros are available for Fedora and EPEL releases:
 
 *@koji:[key]*
 	Load the repositories for a koji.fedoraproject.org tag. ++

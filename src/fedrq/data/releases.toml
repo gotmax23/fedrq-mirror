@@ -54,6 +54,9 @@ defs.testing = ["epel", "epel-source",
                 "epel-testing", "epel-testing-source"]
 defs.testing-only = ["epel-testing", "epel-testing-source"]
 
+repo_aliases.koji = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/$basearch"
+repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/src"
+
 [releases.epel_next]
 matcher = "^epel(\\d{1,2})-next$"
 koschei_collection = "EPEL {version}"
@@ -76,6 +79,8 @@ def.next-testing = ["epel-next", "epel-next-source",
                     "epel-next-testing", "epel-next-testing-source"]
 defs.next-testing-only = ["epel-next-testing", "epel-next-testing-source"]
 
+repo_aliases.koji = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/$basearch"
+repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/src"
 
 [releases.centos-stream]
 matcher = '^c(1\d)s'
