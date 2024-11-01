@@ -78,7 +78,11 @@ install -Dpm 0644 fedrq.fish %{buildroot}%{fish_completions_dir}/fedrq.fish
 %check
 bash -x ./tests/test_data/build.sh
 
-FEDRQ_BACKEND=dnf %pytest -v -m "not no_rpm_mock"
+# Use python3 -m to ensure the current directory is part of sys.path so the
+# tests can import from its own package.
+
+FEDRQ_BACKEND=dnf %{py3_test_envvars} \
+    %{python3} -m pytest -v -m "not no_rpm_mock"
 
 %if %{with libdnf5}
 # Some tests are failing only in mock and only with Python 3.12
@@ -90,7 +94,8 @@ FEDRQ_BACKEND=dnf %pytest -v -m "not no_rpm_mock"
     and not test_baseurl_repog
 }
 %endif
-FEDRQ_BACKEND=libdnf5 %pytest -v -m "not no_rpm_mock" %{?skips:-k '%{skips}'}
+FEDRQ_BACKEND=libdnf5 %{py3_test_envvars} \
+    %{python3} -m pytest -v -m "not no_rpm_mock" %{?skips:-k '%{skips}'}
 %endif
 
 
