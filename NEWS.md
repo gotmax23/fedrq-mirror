@@ -14,7 +14,7 @@ release configuration.
 - config RQConfig: add `get_dnf_rq` and `get_libdnf5_rq` methods to more explicitly
   create a dnf- or libdnf5-based `Repoquery` object
 - data releases: add `@koji:<tag>` and `@koji-src:<tag>` `--repo` aliases to
-  the `epelX` and `epel-nextX` branch configurations. (Contributed by Michel Lind.)
+  the `epelX` and `epel-nextX` branch configurations.
 - dev: add Github mirror for discoverability
 
 ### Fixed
@@ -24,6 +24,7 @@ release configuration.
   caching the old one.
 - data releases: adjust releases.toml for new EPEL 10+ branching model.
   This fixes `fedrq ... -b c10s -r @epel`.
+  (Contributed by Michel Lind.)
 
 ## 1.3.0 - 2024-08-27 <a id='1.3.0'></a>
 
