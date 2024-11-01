@@ -1,6 +1,30 @@
 NEWS
 =====
 
+## 1.4.0 - 2024-11-01 <a id='1.4.0'></a>
+
+This release contains mostly backend changes and a fix to the CentOS Stream
+release configuration.
+
+### Added
+
+- backends: add experimental support for comps groups and environments.
+  See the stability warning in the API documentation about experimental code.
+- backends base: add `RepoqueryAlias` for typing `RepoqueryBase` subclasses
+- config RQConfig: add `get_dnf_rq` and `get_libdnf5_rq` methods to more explicitly
+  create a dnf- or libdnf5-based `Repoquery` object
+- data releases: add `@koji:<tag>` and `@koji-src:<tag>` `--repo` aliases to
+  the `epelX` and `epel-nextX` branch configurations. (Contributed by Michel Lind.)
+- dev: add Github mirror for discoverability
+
+### Fixed
+- config `RQConfig`: ensure `backend_mod` and `backend` attributes are synced.
+  If the user modifies the `backend` attribute,
+  the `backend` property now returns the correct backend module instead of
+  caching the old one.
+- data releases: adjust releases.toml for new EPEL 10+ branching model.
+  This fixes `fedrq ... -b c10s -r @epel`.
+
 ## 1.3.0 - 2024-08-27 <a id='1.3.0'></a>
 
 ### CLI improvements
