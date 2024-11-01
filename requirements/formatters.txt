@@ -2,11 +2,11 @@
 #    uv pip compile pyproject.toml --universal -o requirements/formatters.txt --extra=formatters
 annotated-types==0.7.0
     # via pydantic
-black==24.8.0
+black==24.10.0
     # via fedrq (pyproject.toml)
 certifi==2024.8.30
     # via requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via requests
 click==8.1.7
     # via black
@@ -30,9 +30,9 @@ pydantic-core==2.23.4
     # via pydantic
 requests==2.32.3
     # via fedrq (pyproject.toml)
-rpm==0.2.0
+rpm==0.3.0
     # via fedrq (pyproject.toml)
-tomli==2.0.1 ; python_full_version < '3.11'
+tomli==2.0.2 ; python_full_version < '3.11'
     # via
     #   fedrq (pyproject.toml)
     #   black
