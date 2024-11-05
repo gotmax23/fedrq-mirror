@@ -44,6 +44,7 @@ try:
     import libdnf5.common
     import libdnf5.conf
     import libdnf5.rpm
+    import rpm
 except ImportError as exc:
     raise MissingBackendError(str(exc)) from None
 
@@ -944,15 +945,74 @@ class Repoquery(RepoqueryBase[Package]):
         return t.cast(BackendMod, sys.modules[__name__])
 
 
+def _dnf_getreleasever() -> str:  # pragma: no cover
+    # This is taken from dnf and slightly modified to fit fedrq's code style standards.
+    #
+    # SPDX-License-Identifier: GPL-2.0-or-later
+    # Copyright (C) 2012-2015  Red Hat, Inc.
+    DISTROVERPKG = (
+        "system-release(releasever)",
+        "system-release",
+        "distribution-release(releasever)",
+        "distribution-release",
+        "redhat-release",
+        "suse-release",
+    )
+    ts = rpm.TransactionSet("/")
+    ts.setVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
+    for distroverpkg in map(lambda p: p.encode("utf-8"), DISTROVERPKG):
+        idx = ts.dbMatch("provides", distroverpkg)
+        if not len(idx):
+            continue
+        try:
+            hdr = next(idx)
+        except StopIteration:
+            raise RuntimeError(
+                "Error: rpmdb failed to list provides. Try: rpm --rebuilddb"
+            ) from None
+        releasever = hdr["version"]
+        try:
+            try:
+                # header returns bytes -> look for bytes
+                # it may fail because rpm returns a decoded string since 10 Apr 2019
+                off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg)
+            except ValueError:
+                # header returns a string -> look for a string
+                off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg.decode("utf8"))
+            flag = hdr[rpm.RPMTAG_PROVIDEFLAGS][off]
+            ver = hdr[rpm.RPMTAG_PROVIDEVERSION][off]
+            if (
+                flag == rpm.RPMSENSE_EQUAL
+                and ver
+                and hdr["name"] not in (distroverpkg, distroverpkg.decode("utf8"))
+            ):
+                # override the package version
+                releasever = ver
+        except (ValueError, KeyError, IndexError):
+            pass
+        if isinstance(releasever, bytes):
+            releasever = releasever.decode("utf-8")
+        return releasever
+    return ""
+
+
 @functools.cache
 def get_releasever() -> str:
     """
     Return the system releasever
     """
+    # Use our copy of dnf4's code for now.
+    # For some reason, `detect_release` from libdnf5 is broken in some libdnf5
+    # versions and returns an empty string instead of the correct value.
+    # Plus, having to create a Base object just for this is expensive.
+    # See also the discussion in https://github.com/rpm-software-management/dnf5/pull/1804.
+    # libdnf5 is considering breaking this API.
+    return _dnf_getreleasever()
+
     # libdnf5 >= 5.0.10
     # https://github.com/rpm-software-management/dnf5/pull/448
-    base = libdnf5.base.Base()
-    return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/").get()
+    # base = libdnf5.base.Base()
+    # return libdnf5.conf.Vars.detect_release(base.get_weak_ptr(), "/").get()
 
 
 def get_changelogs(package: Package) -> Iterator[ChangelogEntry]:
