@@ -23,7 +23,9 @@ changed with the `default_branch` option in the configuration.
 See the [BUILTIN RELEASES](fedrq1.md/#builtin-releases) section of `man fedrq`
 for valid `--branch` options.
 Users can of course configure their own custom release profiles.
-Use the pseudo `-b local` release which includes the default repositories
+
+To emulate dnf's default behavior,
+pass `--branch local` which includes the default repositories
 with `enabled=1` in /etc/yum.repos.d and the system's releasever.
 
 ## Source repositories
