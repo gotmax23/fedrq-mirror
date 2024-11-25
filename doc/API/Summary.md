@@ -114,17 +114,23 @@ This example shows how to load the configuration and preform a basic query.
 #     fedrq whatrequires --arch=noarch -b rawhide -r buildroot bash | grep '^a'
 
 from fedrq.config import get_config, RQConfig
-from fedrq.backends.base import RepoqueryBase
 
+# The get_config() function returns an RqConfig object.
+#
 # Load config from filesystem and override some options
-config: RQConfig = get_config(backend="libdnf5")
+config = get_config(backend="libdnf5")
 
-# Query the Fedora Rawhide koji buildroot repositories
-# This supports any release configuration builtin to fedrq
+# The RQConfig.get_rq() method returns a Repoquery object.
+# Repoquery is fedrq's helper class to perform various types of package queries.
+#
+# This creates a Repoquery containing the Fedora Rawhide koji buildroot repositories.
+# get_rq() supports any release configuration builtin to fedrq
 # or configured on your local system.
-rq: RepoqueryBase = config.get_rq("rawhide", "buildroot")
+rq = config.get_rq("rawhide", "buildroot")
 
-# Get all noarch packages that start with 'a' and depend on bash
+# The Repoquery.query() method returns a PackageQuery implementation.
+#
+# This gets all noarch packages that start with 'a' and depend on bash
 query = rq.query(
     name__glob="a*", arch="noarch", requires=rq.query(name="bash", arch="notsrc")
 )

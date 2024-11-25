@@ -178,8 +178,9 @@ class PackageCompat(Protocol):  # pragma: no cover
 class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: no cover
     """
     Common PackageQuery interface provided by hawkey.Query and other backends.
-    When using to annotate function parameters and return value, use
-    `PackageQueryAlias` instead of directly annotating with this type.
+    When annotating function parameters and return values,
+    use [`PackageQueryAlias`][fedrq.backends.base.PackageQueryAlias] instead of
+    directly annotating with this type.
     """
 
     @abc.abstractmethod
@@ -430,6 +431,9 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
     """
     Helpers to query a repository.
     Provides a unified repoquery interface for different backends.
+    When annotating function parameters and return values,
+    use [`RepoqueryAlias`][fedrq.backends.base.RepoqueryAlias] instead of
+    directly annotating with this type.
     """
 
     def __init__(self, base) -> None:
