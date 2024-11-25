@@ -13,10 +13,9 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, ClassVar, NoReturn, cast
 
 from fedrq._utils import get_source_name
-from fedrq.backends.base import RepoqueryBase
 
 if TYPE_CHECKING:
-    from fedrq.backends.base import PackageCompat
+    from fedrq.backends.base import PackageCompat, RepoqueryBase
 else:
     ellipsis = type(...)
 
