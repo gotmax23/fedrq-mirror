@@ -69,6 +69,7 @@ plugins:
         - "fedrq.5*"
         - "*.py"
         - "requirements.*"
+  - search
 watch:
   - "README.md"
   - "NEWS.md"
