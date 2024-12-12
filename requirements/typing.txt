@@ -2,9 +2,9 @@
 #    uv pip compile pyproject.toml --universal -o requirements/typing.txt --extra=typing
 annotated-types==0.7.0
     # via pydantic
-argcomplete==3.5.1
+argcomplete==3.5.2
     # via fedrq (pyproject.toml)
-basedpyright==1.20.0
+basedpyright==1.22.1
     # via fedrq (pyproject.toml)
 certifi==2024.8.30
     # via requests
@@ -22,17 +22,17 @@ mypy==1.13.0
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via mypy
-nodejs-wheel-binaries==22.11.0
+nodejs-wheel-binaries==22.12.0
     # via basedpyright
-packaging==24.1
+packaging==24.2
     # via pytest
 pluggy==1.5.0
     # via pytest
-pydantic==2.9.2
+pydantic==2.10.3
     # via fedrq (pyproject.toml)
-pydantic-core==2.23.4
+pydantic-core==2.27.1
     # via pydantic
-pytest==8.3.3
+pytest==8.3.4
     # via
     #   fedrq (pyproject.toml)
     #   pytest-mock
@@ -40,9 +40,9 @@ pytest-mock==3.14.0
     # via fedrq (pyproject.toml)
 requests==2.32.3
     # via fedrq (pyproject.toml)
-rpm==0.3.0
+rpm==0.3.1
     # via fedrq (pyproject.toml)
-tomli==2.0.2 ; python_full_version < '3.11'
+tomli==2.2.1 ; python_full_version < '3.11'
     # via
     #   fedrq (pyproject.toml)
     #   mypy
