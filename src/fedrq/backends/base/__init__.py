@@ -15,10 +15,12 @@ from typing import (
     Generic,
     Optional,
     Protocol,
-    TypeVar,
+    cast,
     runtime_checkable,
 )
 from warnings import warn
+
+from typing_extensions import TypeVar
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
@@ -26,7 +28,44 @@ if TYPE_CHECKING:
 
     from fedrq.config import Release
 
-_PackageT = TypeVar("_PackageT", bound="PackageCompat")
+# Use this trick because because the "default" kwarg (PEP 696) requires a newer
+# version of typing_extensions
+if TYPE_CHECKING:
+    _PackageT = TypeVar(
+        "_PackageT",
+        bound="PackageCompat",
+        default="PackageCompat",
+    )
+    _PackageT_co = TypeVar(
+        "_PackageT_co",
+        bound="PackageCompat",
+        covariant=True,
+        default="PackageCompat",
+    )
+    _PackageQueryT = TypeVar(
+        "_PackageQueryT",
+        bound="PackageQueryCompat",
+        default="PackageQueryCompat[PackageCompat]",
+    )
+    _PackageQueryT_co = TypeVar(
+        "_PackageQueryT_co",
+        bound="PackageQueryCompat",
+        covariant=True,
+        default="PackageQueryCompat[PackageCompat]",
+    )
+    _RepoqueryT = TypeVar(
+        "_RepoqueryT",
+        bound="RepoqueryBase",
+        default="RepoqueryBase[PackageCompat, PackageQueryCompat[PackageCompat]]",
+    )
+else:
+    _PackageT = TypeVar("_PackageT", bound="PackageCompat")
+    _PackageT_co = TypeVar("_PackageT_co", bound="PackageCompat", covariant=True)
+    _PackageQueryT = TypeVar("_PackageQueryT", bound="PackageQueryCompat")
+    _PackageQueryT_co = TypeVar(
+        "_PackageQueryT_co", bound="PackageQueryCompat", covariant=True
+    )
+    _RepoqueryT = TypeVar("_RepoqueryT", bound="RepoqueryBase")
 LOG = logging.getLogger("fedrq.backends")
 
 
@@ -175,7 +214,9 @@ class PackageCompat(Protocol):  # pragma: no cover
     def __ge__(self, other) -> bool: ...
 
 
-class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: no cover
+class PackageQueryCompat(
+    Iterable[_PackageT_co], Generic[_PackageT_co], metaclass=abc.ABCMeta
+):  # pragma: no cover
     """
     Common PackageQuery interface provided by hawkey.Query and other backends.
     When annotating function parameters and return values,
@@ -234,7 +275,7 @@ class PackageQueryCompat(Generic[_PackageT], metaclass=abc.ABCMeta):  # pragma: 
     def __len__(self) -> int: ...
 
     @abc.abstractmethod
-    def __iter__(self) -> Iterator[_PackageT]: ...
+    def __iter__(self) -> Iterator[_PackageT_co]: ...
 
 
 class BaseMakerBase(metaclass=abc.ABCMeta):
@@ -427,7 +468,7 @@ class NEVRAFormsCompat(Protocol):
     NAME: int
 
 
-class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
+class RepoqueryBase(Generic[_PackageT_co, _PackageQueryT_co], metaclass=abc.ABCMeta):
     """
     Helpers to query a repository.
     Provides a unified repoquery interface for different backends.
@@ -473,7 +514,7 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
         with_provides: bool | None = None,
         resolve_provides: bool | None = None,
         nevra_forms: list[int] | None = None,
-    ) -> PackageQueryCompat[_PackageT]:
+    ) -> _PackageQueryT_co:
         """
         Resolve pkg specs.
         See
@@ -497,9 +538,9 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
 
     def arch_filterm(
         self,
-        query: PackageQueryCompat,
+        query: _PackageQueryT,
         arch: str | Iterable[str] | None = None,
-    ) -> PackageQueryCompat[_PackageT]:
+    ) -> _PackageQueryT:
         """
         Filter a query's architectures in place and return it.
         It includes a little more functionality than query.filterm(arch=...).
@@ -523,9 +564,9 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
 
     def arch_filter(
         self,
-        query: PackageQueryCompat,
+        query: _PackageQueryT,
         arch: str | Iterable[str] | None = None,
-    ) -> PackageQueryCompat[_PackageT]:
+    ) -> _PackageQueryT:
         """
         Filter a query's architectures and return it.
         It includes a little more functionality than query.filter(arch=...).
@@ -547,7 +588,7 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
         return query.filter(arch=arch)
 
     @abc.abstractmethod
-    def _query(self) -> PackageQueryCompat[_PackageT]:
+    def _query(self) -> _PackageQueryT_co:
         """
         Return the PackageQuery object for this backend
         """
@@ -558,7 +599,7 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
         *,
         arch: str | Iterable[str] | None = None,
         **kwargs,
-    ) -> PackageQueryCompat[_PackageT]:
+    ) -> _PackageQueryT_co:
         """
         Return an inital PackageQuery that's filtered with **kwargs.
         Further filtering can be applied with the PackageQuery's filter and
@@ -575,7 +616,7 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
         self,
         name: str,
         arch: str | Iterable[str] | None = None,
-    ) -> _PackageT:
+    ) -> _PackageT_co:
         """
         Return the latest Package that matches the 'name' and 'arch'.
         A ValueError is raised when no matches are found.
@@ -583,11 +624,11 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
         query = self.query(name=name, arch=arch, latest=1)
         if len(query) < 1:
             raise ValueError(f"Zero packages found for {name} on {arch}")
-        return next(iter(query))
+        return cast("_PackageT_co", next(iter(query)))
 
     def get_subpackages(
         self, packages: Iterable[PackageCompat], **kwargs
-    ) -> PackageQueryCompat[_PackageT]:
+    ) -> _PackageQueryT_co:
         """
         Return a PackageQuery containing the binary RPMS/subpackages produced
         by {packages}.
@@ -620,7 +661,7 @@ class RepoqueryBase(Generic[_PackageT], metaclass=abc.ABCMeta):
     def backend(self) -> BackendMod: ...
 
 
-RepoqueryAlias: TypeAlias = RepoqueryBase[PackageCompat]
+RepoqueryAlias: TypeAlias = RepoqueryBase
 
 
 @dataclasses.dataclass(frozen=True)
@@ -669,4 +710,4 @@ class BackendMod(Protocol):
     get_changelogs: _get_changelogs
 
 
-PackageQueryAlias: TypeAlias = PackageQueryCompat[PackageCompat]
+PackageQueryAlias: TypeAlias = PackageQueryCompat

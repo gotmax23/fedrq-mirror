@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 import tomli_w
 
-import fedrq.cli
+import fedrq.cli.base
 import fedrq.config
 
 SUBCOMMANDS = ("pkgs", "whatrequires", "subpkgs")

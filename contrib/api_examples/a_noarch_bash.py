@@ -5,8 +5,8 @@
 # Roughly equivalent to:
 #     fedrq whatrequires --arch=noarch -b rawhide -r buildroot bash | grep '^a'
 
-from fedrq.config import get_config, RQConfig
 from fedrq.backends.base import RepoqueryBase
+from fedrq.config import RQConfig, get_config
 
 # Load config from filesystem and override some options
 config: RQConfig = get_config(backend="libdnf5")

@@ -885,7 +885,7 @@ class NEVRAForms(int, Enum):
     NAME = libdnf5.rpm.Nevra.Form_NAME
 
 
-class Repoquery(RepoqueryBase[Package]):
+class Repoquery(RepoqueryBase[Package, PackageQuery]):
     def __init__(self, base: libdnf5.base.Base) -> None:
         self.base: libdnf5.base.Base = base
 
@@ -1026,7 +1026,7 @@ def get_changelogs(package: Package) -> Iterator[ChangelogEntry]:
 
 RepoError = RuntimeError
 
-PackageQueryAlias: TypeAlias = PackageQueryCompat[Package]
+PackageQueryAlias: TypeAlias = PackageQuery
 
 __all__ = (
     "BACKEND",

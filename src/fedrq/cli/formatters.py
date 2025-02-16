@@ -81,7 +81,9 @@ _MULTILINE_ATTRS = frozenset(
         "files",
     }
 )
-_ATTRS_SINGLE: tuple[str, ...] = tuple(set(_ATTRS) - _MULTILINE_ATTRS)
+_ATTRS_SINGLE: tuple[str, ...] = tuple(
+    set(_ATTRS) - _MULTILINE_ATTRS  # pyright: ignore[reportOperatorIssue]
+)
 _DEFAULT_MULTILINE_SEPERATOR = "\n---\n"
 
 
@@ -237,7 +239,7 @@ class Formatters(Mapping[str, type[Formatter]]):
         self, other: Mapping[str, Callable | type[Formatter] | str]
     ) -> Formatters:
         fallback: type[Formatter] | None = self.fallback
-        if hasattr(other, "fallback"):
+        if isinstance(other, Formatters):
             fallback = other.fallback
         return type(self)({**self, **other}, fallback)
 
@@ -550,7 +552,7 @@ class RequiresMatchSrcFormatter(RequiresMatchFormatter):
 
 
 class _RequiresMatchPrefixFormatter(RequiresMatchFormatter):
-    PREFIX: ClassVar[str | Callable[[PackageCompat], str]]
+    PREFIX: ClassVar[str | staticmethod[[PackageCompat], str]]
 
     def format(self, packages: Iterable[PackageCompat]) -> Iterator[str]:
         for package in sorted(packages):

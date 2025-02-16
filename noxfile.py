@@ -26,7 +26,8 @@ PINNED = os.environ.get("PINNED", "true").lower() in (
 PROJECT = "fedrq"
 SPECFILE = "fedrq.spec"
 LINT_SESSIONS = ("formatters", "codeqa", "typing", "basedpyright")
-LINT_FILES = (f"src/{PROJECT}", "tests/", "noxfile.py")
+TYPE_FILES = (f"src/{PROJECT}/", "tests/", "contrib/api_examples/")
+LINT_FILES = (f"src/{PROJECT}/", "tests/", "noxfile.py")
 
 nox.options.sessions = ("lint", "covtest", "mkdocs")
 nox.options.reuse_existing_virtualenvs = True
@@ -127,7 +128,7 @@ def alltyping(session: nox.Session):
 @nox.session
 def typing(session: nox.Session):
     install(session, ".[typing]", editable=True, constraint="typing")
-    session.run("mypy", "src/fedrq/", "tests/unit", "tests/integration")
+    session.run("mypy", *TYPE_FILES)
 
 
 @nox.session(venv_params=["--system-site-packages"])
@@ -136,7 +137,7 @@ def basedpyright(session: nox.Session):
     Run basedpyright with system dependencies enabled
     """
     install(session, ".[typing]", editable=True, constraint="typing")
-    session.run("basedpyright", "--project", "custom-basedpyright.toml")
+    session.run("basedpyright", *TYPE_FILES)
 
 
 @nox.session(reuse_venv=False)

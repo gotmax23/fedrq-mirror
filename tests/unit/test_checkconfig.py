@@ -10,6 +10,7 @@ import pytest
 import tomli_w
 
 import fedrq.cli
+import fedrq.cli.base
 
 if sys.version_info < (3, 11):
     import tomli as tomllib

@@ -36,12 +36,12 @@ LOG = logging.getLogger(__name__)
 @contextmanager
 def _get_file(path: str) -> Iterator[str]:
     if path.startswith(("http://", "https://")):
+        LOG.info("Downloading %s", path)
+        req = requests.get(path)
+        if req.status_code != 200:
+            raise ConfigError(f"Failed to download {path}")
+        name = None
         try:
-            name = None
-            LOG.info("Downloading %s", path)
-            req = requests.get(path)
-            if req.status_code != 200:
-                raise ConfigError(f"Failed to download {path}")
             fd, name = tempfile.mkstemp()
             os.write(fd, req.content)
             os.close(fd)

@@ -219,13 +219,13 @@ class NEVRAForms(int, Enum):
 
 # Use PackageCompat as the TypeVar, as the the native dnf objects
 # don't provide typing.
-class Repoquery(RepoqueryBase[PackageCompat]):
+class Repoquery(RepoqueryBase[PackageCompat, PackageQueryCompat[PackageCompat]]):
     def __init__(self, base: dnf.Base) -> None:
         self.base: dnf.Base = base
 
     @property
     def base_arches(self) -> set[str]:
-        return {self.base.conf.arch, self.base.conf.basearch}
+        return t.cast(set[str], {self.base.conf.arch, self.base.conf.basearch})
 
     def _query(self) -> hawkey._hawkey.Query:
         return t.cast("dnf.sack.Sack", self.base.sack).query()

@@ -37,6 +37,7 @@ dependencies = [
     "rpm",
     # Optional dependency for `fedrq check-config --dump`
     # "tomli-w",
+    "typing-extensions",
 ]
 requires-python = ">=3.9"
 
@@ -66,6 +67,7 @@ formatters = [
 typing = [
     "argcomplete",
     "basedpyright",
+    "click",  # for examples
     "fedrq[test]",
     "mypy",
     "tomli-w",
@@ -118,6 +120,7 @@ ignore_missing_imports = true
 
 [tool.basedpyright]
 typeCheckingMode = "standard"
+reportPossiblyUnboundVariable = "warning"
 
 
 [tool.pytest.ini_options]
