@@ -2,15 +2,15 @@
 #    uv pip compile pyproject.toml --universal -o requirements/requirements.txt
 annotated-types==0.7.0
     # via pydantic
-certifi==2024.8.30
+certifi==2025.1.31
     # via requests
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via requests
 idna==3.10
     # via requests
-pydantic==2.10.3
+pydantic==2.10.6
     # via fedrq (pyproject.toml)
-pydantic-core==2.27.1
+pydantic-core==2.27.2
     # via pydantic
 requests==2.32.3
     # via fedrq (pyproject.toml)
@@ -22,5 +22,5 @@ typing-extensions==4.12.2
     # via
     #   pydantic
     #   pydantic-core
-urllib3==2.2.3
+urllib3==2.3.0
     # via requests

@@ -2,19 +2,19 @@
 #    uv pip compile pyproject.toml --universal -o requirements/formatters.txt --extra=formatters
 annotated-types==0.7.0
     # via pydantic
-black==24.10.0
+black==25.1.0
     # via fedrq (pyproject.toml)
-certifi==2024.8.30
+certifi==2025.1.31
     # via requests
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via requests
-click==8.1.7
+click==8.1.8
     # via black
-colorama==0.4.6 ; platform_system == 'Windows'
+colorama==0.4.6 ; sys_platform == 'win32'
     # via click
 idna==3.10
     # via requests
-isort==5.13.2
+isort==6.0.0
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via black
@@ -24,9 +24,9 @@ pathspec==0.12.1
     # via black
 platformdirs==4.3.6
     # via black
-pydantic==2.10.3
+pydantic==2.10.6
     # via fedrq (pyproject.toml)
-pydantic-core==2.27.1
+pydantic-core==2.27.2
     # via pydantic
 requests==2.32.3
     # via fedrq (pyproject.toml)
@@ -41,5 +41,5 @@ typing-extensions==4.12.2
     #   black
     #   pydantic
     #   pydantic-core
-urllib3==2.2.3
+urllib3==2.3.0
     # via requests

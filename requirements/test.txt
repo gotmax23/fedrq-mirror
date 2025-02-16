@@ -2,9 +2,9 @@
 #    uv pip compile pyproject.toml --universal -o requirements/test.txt --extra=test
 annotated-types==0.7.0
     # via pydantic
-certifi==2024.8.30
+certifi==2025.1.31
     # via requests
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via requests
 colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
@@ -18,9 +18,9 @@ packaging==24.2
     # via pytest
 pluggy==1.5.0
     # via pytest
-pydantic==2.10.3
+pydantic==2.10.6
     # via fedrq (pyproject.toml)
-pydantic-core==2.27.1
+pydantic-core==2.27.2
     # via pydantic
 pytest==8.3.4
     # via
@@ -36,11 +36,11 @@ tomli==2.2.1 ; python_full_version < '3.11'
     # via
     #   fedrq (pyproject.toml)
     #   pytest
-tomli-w==1.1.0
+tomli-w==1.2.0
     # via fedrq (pyproject.toml)
 typing-extensions==4.12.2
     # via
     #   pydantic
     #   pydantic-core
-urllib3==2.2.3
+urllib3==2.3.0
     # via requests
