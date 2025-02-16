@@ -93,7 +93,7 @@ def v_add_errors(func: cabc.Callable[..., str | cabc.Iterable | None]) -> cabc.C
 
 
 def v_fatal_error(
-    func: cabc.Callable[..., str | cabc.Iterable | None]
+    func: cabc.Callable[..., str | cabc.Iterable | None],
 ) -> cabc.Callable:
     def wrapper(self: Command, *args, **kwargs) -> None:
         error = func(self, *args, **kwargs)
