@@ -144,7 +144,7 @@ def basedpyright(session: nox.Session):
 def bump(session: nox.Session):
     version = session.posargs[0]
 
-    install(session, "releaserr", "flit", "fclogr")
+    install(session, "releaserr", "flit", "fclogr", "twine")
 
     session.run("releaserr", "check-tag", version)
     session.run("releaserr", "ensure-clean")
