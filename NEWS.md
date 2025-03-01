@@ -1,6 +1,21 @@
 NEWS
 =====
 
+## 1.5.0 - 2025-03-01 <a id='1.5.0'></a>
+
+### Changed
+
+- Improve typing of backend code, again.
+  This mainly affects API users who explicitly opt-in to the libdnf5 backend
+  (using `get_config().get_libdnf5_rq()`) and wish to annotate functions that
+  interact with `Package`, `PackageQuery`, and/or `Repoquery` objects.
+
+    It is now possible to annotate functions either using the libdnf5-specific
+    subclasses (e.g., `fedrq.backends.libdnf5.backend.PackageQuery`)
+    for code that only works with libdnf5 and may access lower-level libdnf5 API
+    or with the baseclasses (e.g., `fedrq.backends.base.backend.PackageQueryCompat`)
+    for code that maintains compatibility with both backends.
+
 ## 1.4.0 - 2024-11-01 <a id='1.4.0'></a>
 
 This release contains mostly backend changes and a fix to the CentOS Stream
