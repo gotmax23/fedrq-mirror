@@ -121,6 +121,7 @@ ignore_missing_imports = true
 [tool.basedpyright]
 typeCheckingMode = "standard"
 reportPossiblyUnboundVariable = "warning"
+pythonVersion = "3.9"
 
 
 [tool.pytest.ini_options]
