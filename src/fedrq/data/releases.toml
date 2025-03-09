@@ -416,6 +416,8 @@ repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/la
 [releases.local]
 matcher = "local"
 version = "$releasever"
+# append_system_repos is an INTERNAL, undocumented option to enable all repos
+# enabled-by-default in the system repo config when the base repo group is set.
 append_system_repos = true
 defs.base = []
 
