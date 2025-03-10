@@ -50,6 +50,7 @@ tomlkit==0.13.2
     # via reuse
 typing-extensions==4.12.2
     # via
+    #   fedrq (pyproject.toml)
     #   pydantic
     #   pydantic-core
 urllib3==2.3.0

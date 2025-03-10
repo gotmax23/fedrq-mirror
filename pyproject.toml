@@ -70,6 +70,7 @@ typing = [
     "click",  # for examples
     "fedrq[test]",
     "mypy",
+    "tomli",
     "tomli-w",
     "types-requests",
     "typing_extensions",

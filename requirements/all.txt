@@ -33,6 +33,7 @@ charset-normalizer==3.4.1
     # via requests
 click==8.1.8
     # via
+    #   fedrq (pyproject.toml)
     #   black
     #   mkdocs
     #   reuse
@@ -221,7 +222,7 @@ sniffio==1.3.1
     # via anyio
 sourcehutx==0.4.0
     # via releaserr
-tomli==2.2.1 ; python_full_version < '3.11'
+tomli==2.2.1
     # via
     #   fedrq (pyproject.toml)
     #   black

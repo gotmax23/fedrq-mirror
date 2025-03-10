@@ -38,6 +38,7 @@ tomli==2.2.1 ; python_full_version < '3.11'
     #   black
 typing-extensions==4.12.2
     # via
+    #   fedrq (pyproject.toml)
     #   black
     #   pydantic
     #   pydantic-core

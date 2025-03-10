@@ -182,6 +182,7 @@ typer==0.15.1
     # via releaserr
 typing-extensions==4.12.2
     # via
+    #   fedrq (pyproject.toml)
     #   anyio
     #   black
     #   mkdocstrings

@@ -20,6 +20,7 @@ tomli==2.2.1 ; python_full_version < '3.11'
     # via fedrq (pyproject.toml)
 typing-extensions==4.12.2
     # via
+    #   fedrq (pyproject.toml)
     #   pydantic
     #   pydantic-core
 urllib3==2.3.0

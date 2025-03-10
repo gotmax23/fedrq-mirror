@@ -10,8 +10,12 @@ certifi==2025.1.31
     # via requests
 charset-normalizer==3.4.1
     # via requests
+click==8.1.8
+    # via fedrq (pyproject.toml)
 colorama==0.4.6 ; sys_platform == 'win32'
-    # via pytest
+    # via
+    #   click
+    #   pytest
 exceptiongroup==1.2.2 ; python_full_version < '3.11'
     # via pytest
 idna==3.10
@@ -42,7 +46,7 @@ requests==2.32.3
     # via fedrq (pyproject.toml)
 rpm==0.3.1
     # via fedrq (pyproject.toml)
-tomli==2.2.1 ; python_full_version < '3.11'
+tomli==2.2.1
     # via
     #   fedrq (pyproject.toml)
     #   mypy
