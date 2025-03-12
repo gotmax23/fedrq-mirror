@@ -7,7 +7,7 @@ from __future__ import annotations
 import abc
 import argparse
 import logging
-from collections.abc import Callable, Container, ItemsView, Iterable, Iterator, Mapping
+from collections.abc import Callable, Iterable, Iterator, Mapping
 from contextlib import suppress
 from functools import partial
 from typing import TYPE_CHECKING, Any, ClassVar, NoReturn, cast
@@ -15,6 +15,8 @@ from typing import TYPE_CHECKING, Any, ClassVar, NoReturn, cast
 from fedrq._utils import get_source_name
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from fedrq.backends.base import PackageCompat, RepoqueryBase
 else:
     ellipsis = type(...)
@@ -192,7 +194,9 @@ def format_line_notimplemented(
 
 
 class Formatters(Mapping[str, type[Formatter]]):
-    __slots__ = ("__data", "fallback")
+    __slots__ = ("__data", "__fallback")
+    __data: dict[str, type[Formatter]]
+    __fallback: type[Formatter] | None
 
     """
     Immutable mapping like class of Formatter classes.
@@ -200,13 +204,19 @@ class Formatters(Mapping[str, type[Formatter]]):
     Allows merging and adding other Formatters.
     """
 
-    def __init__(
-        self,
+    def __new__(
+        cls,
         formatters: Mapping[str, Callable | type[Formatter] | str],
         fallback: type[Formatter] | None = None,
-    ) -> None:
+    ) -> Self:
+        self = super().__new__(cls)
         self.__data = self._formattersv(dict(formatters))
-        self.fallback: type[Formatter] | None = fallback
+        self.__fallback = fallback
+        return self
+
+    @property
+    def fallback(self) -> type[Formatter] | None:
+        return self.__fallback
 
     def get_formatter(
         self,
@@ -235,13 +245,20 @@ class Formatters(Mapping[str, type[Formatter]]):
     def __iter__(self) -> Iterator[str]:
         return iter(self.__data)
 
-    def __or__(
-        self, other: Mapping[str, Callable | type[Formatter] | str]
+    def new(
+        self,
+        other: Mapping[str, Callable | type[Formatter] | str],
+        fallback: type[Formatter] | None | ellipsis = ...,
     ) -> Formatters:
-        fallback: type[Formatter] | None = self.fallback
-        if isinstance(other, Formatters):
+        if fallback is not ...:
+            pass
+        elif isinstance(other, Formatters):
             fallback = other.fallback
+        else:
+            fallback = self.fallback
         return type(self)({**self, **other}, fallback)
+
+    __or__ = new
 
     def __contains__(self, name: object) -> bool:
         if not isinstance(name, str):
@@ -262,14 +279,11 @@ class Formatters(Mapping[str, type[Formatter]]):
             }
         )
 
-    def new(self, other: Mapping[str, str | Callable | type[Formatter]]) -> Formatters:
-        return self | other
-
-    def items(self) -> ItemsView[str, type[Formatter]]:
-        return ItemsView(self)
-
     def __repr__(self) -> str:
         return f"{type(self).__name__}({self.__data!r})"
+
+    def __hash__(self) -> int:
+        return hash(frozenset(self.items()))
 
     def _formattersv(self, formatters) -> dict[str, type[Formatter]]:
         if not formatters:
@@ -339,7 +353,7 @@ class SpecialFormatter(Formatter):
     def _get_attrs(
         self, args: str, allow_multiline: bool = False
     ) -> Iterator[str | Formatter]:
-        attrs: Container[str] = (
+        attrs: Formatters = (
             self.container if allow_multiline else self.container.singleline()
         )
         for attr in args.split(","):
