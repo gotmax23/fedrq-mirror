@@ -11,13 +11,10 @@ import os
 import tempfile
 from collections.abc import (
     Callable,
-    ItemsView,
     Iterable,
     Iterator,
-    KeysView,
     Mapping,
     Sequence,
-    ValuesView,
 )
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, NoReturn
@@ -267,7 +264,7 @@ class Repos(Mapping[str, type[RepoG]]):
                 if isinstance(repos, type) and issubclass(repos, RepoG)
                 else self._FALLBACK_FACTORY(name, repos)
             )
-            for name, repos in ItemsView(repo_classes)
+            for name, repos in repo_classes.items()
         }
 
     def get_repo(self, key: str) -> RepoG:
@@ -298,15 +295,6 @@ class Repos(Mapping[str, type[RepoG]]):
 
     def new(self, other: Mapping[str, Sequence[str] | type[RepoG]]) -> Repos:
         return self | other
-
-    def items(self) -> ItemsView[str, type[RepoG]]:
-        return self.__data.items()
-
-    def keys(self) -> KeysView[str]:
-        return self.__data.keys()
-
-    def values(self) -> ValuesView[type[RepoG]]:
-        return self.__data.values()
 
     def __repr__(self) -> str:
         return f"{type(self).__name__}({self.__data!r})"
