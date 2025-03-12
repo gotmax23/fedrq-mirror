@@ -56,6 +56,10 @@ CONVERT_TO_LIST = (str, int)
 
 
 class _QueryFilterKwargs(t.TypedDict, total=False):
+    """
+    Keyword-arguments accepted by [`Repoquery.query`][(m).].
+    """
+
     name: t.Union[StrIter, libdnf5.rpm.PackageSet]
     name__eq: t.Union[StrIter, libdnf5.rpm.PackageSet]
     name__neq: t.Union[StrIter, libdnf5.rpm.PackageSet]
@@ -194,6 +198,9 @@ class BaseMaker(BaseMakerBase):
     """
 
     base: libdnf5.base.Base
+    """The underlying dnf.base object"""
+    initialized: bool
+    """INTERNAL: Whether the base object has been initialized"""
 
     def __init__(
         self,
@@ -232,6 +239,9 @@ class BaseMaker(BaseMakerBase):
 
     @property
     def conf(self) -> libdnf5.conf.ConfigMain:
+        """
+        Return libdnf5 config object.
+        """
         return self.base.get_config()
 
     # Not part of the BaseMakerBase interface
@@ -249,6 +259,10 @@ class BaseMaker(BaseMakerBase):
     # Not part of the BaseMakerBase interface
     @property
     def vars(self) -> libdnf5.conf.Vars:
+        """
+        Return libdnf5 Vars object.
+        Not part of the BaseMakerBase interface!
+        """
         return self.base.get_vars()
 
     # Not part of the BaseMakerBase interface
@@ -267,6 +281,10 @@ class BaseMaker(BaseMakerBase):
     # Not part of the BaseMakerBase interface
     @property
     def rs(self) -> libdnf5.repo.RepoSackWeakPtr:
+        """
+        Return libdnf5 RepoSack object.
+        Not part of the BaseMakerBase interface!
+        """
         self.setup()
         return self.base.get_repo_sack()
 
@@ -450,6 +468,9 @@ class BaseMaker(BaseMakerBase):
 
     @property
     def backend(self) -> BackendMod:
+        """
+        Return fedrq.backends.libdnf5.backend module
+        """
         return t.cast(BackendMod, sys.modules[__name__])
 
     def repolist(self, enabled: bool | None = None) -> list[str]:
@@ -463,11 +484,12 @@ class BaseMaker(BaseMakerBase):
 
 
 class Package(libdnf5.rpm.Package, PackageCompat):
+    """
+    [libdnf5.rpm.Package][] subclass with strong [dnf.package.Package][] compatability
+    """
+
     DEBUGINFO_SUFFIX = "-debuginfo"
     DEBUGSOURCE_SUFFIX = "-debugsource"
-    """
-    libdnf5.rpm.Package subclass with strong dnf.package.Package compatability
-    """
 
     def __hash__(self) -> int:
         return hash(self.get_id().id)
@@ -483,13 +505,13 @@ class Package(libdnf5.rpm.Package, PackageCompat):
         return self.get_arch() > other.get_arch()
 
     def __ge__(self, other) -> bool:
-        return self > other or self == other
+        return self == other or self > other
 
     def __lt__(self, other) -> bool:
         return not (self > other)
 
     def __le__(self, other) -> bool:
-        return self < other or self == other
+        return self == other or self < other
 
     @property
     def name(self) -> str:
@@ -687,7 +709,7 @@ libdnf5._rpm.Package_swigregister(Package)
 
 class Reldep5(libdnf5.rpm.Reldep):
     """
-    Subclass of libdnf5.rpm.Reldep with a useful __str__() method
+    Subclass of [libdnf5.rpm.Reldep][] with a useful __str__() method
     """
 
     def __str__(self) -> str:
@@ -727,11 +749,11 @@ _sc = _setattr_compat
 
 
 class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
-    __rq__: Repoquery
+    """
+    Subclass of [libdnf5.rpm.PackageQuery][] with [dnf.query.Query][] compatability
+    """
 
-    """
-    Subclass of libdnf5.rpm.PackageQuery with hawkey.Query compatability
-    """
+    __rq__: Repoquery
 
     def _filter(  # type: ignore[override]
         self,
@@ -878,6 +900,10 @@ def _convert_value(key: str, value: _ValT) -> t.Union[list[_ValT], _ValT]:
 
 
 class NEVRAForms(int, Enum):
+    """
+    Enum of NEVRAForms to pass to [`Repoquery.resolve_pkg_specs`][^.]
+    """
+
     NEVRA = libdnf5.rpm.Nevra.Form_NEVRA
     NEVR = libdnf5.rpm.Nevra.Form_NEVR
     NEV = libdnf5.rpm.Nevra.Form_NEV
@@ -886,6 +912,11 @@ class NEVRAForms(int, Enum):
 
 
 class Repoquery(RepoqueryBase[Package, PackageQuery]):
+    """
+    Helpers to query a repository.
+    Provides a unified repoquery interface for different backends.
+    """
+
     def __init__(self, base: libdnf5.base.Base) -> None:
         self.base: libdnf5.base.Base = base
 
@@ -898,11 +929,6 @@ class Repoquery(RepoqueryBase[Package, PackageQuery]):
         obj = PackageQuery(self.base)
         obj.__rq__ = self
         return obj
-
-    def query(
-        self, *, arch: str | Iterable[str] | None = None, **kwargs
-    ) -> PackageQuery:
-        return t.cast(PackageQuery, super().query(arch=arch, **kwargs))
 
     def resolve_pkg_specs(
         self,
@@ -942,10 +968,13 @@ class Repoquery(RepoqueryBase[Package, PackageQuery]):
 
     @property
     def backend(self) -> BackendMod:
+        """
+        Return fedrq.backends.libdnf5.backend module
+        """
         return t.cast(BackendMod, sys.modules[__name__])
 
 
-def _dnf_getreleasever() -> str:  # pragma: no cover
+def _dnf_getreleasever() -> str:
     # This is taken from dnf and slightly modified to fit fedrq's code style standards.
     #
     # SPDX-License-Identifier: GPL-2.0-or-later
@@ -1016,6 +1045,9 @@ def get_releasever() -> str:
 
 
 def get_changelogs(package: Package) -> Iterator[ChangelogEntry]:
+    """
+    Given a Package object, return an iterator of ChangelogEntry objects.
+    """
     entries = package.get_changelogs()
     for entry in entries:
         date_obj = DT.fromtimestamp(_gc(entry, "timestamp"), tz=TZ.utc).date()
@@ -1025,6 +1057,7 @@ def get_changelogs(package: Package) -> Iterator[ChangelogEntry]:
 
 
 RepoError = RuntimeError
+"""Error when loading repositories"""
 
 PackageQueryAlias: TypeAlias = PackageQuery
 

@@ -43,22 +43,33 @@ markdown_extensions:
   - pymdownx.superfences
 plugins:
   - mkdocstrings:
-      default_handler: python
+      default_handler: python_xref
       handlers:
-        python:
+        python_xref:
           options:
+            extensions:
+              # Doesn't work with xref
+              # - griffe_pydantic:
+              #     schema: true
+              - griffe_inherited_docstrings
+            relative_crossrefs: true
             docstring_style: google
+            docstring_section_style: list
             show_if_no_docstring: true
             merge_init_into_class: true
             filters: ["!^__?", "!LOG", "!logger"]
             show_signature_annotations: true
             separate_signature: true
+            show_symbol_type_heading: true
+            summary: true
           paths:
             - src/
           inventories:
             - https://docs.python.org/3/objects.inv
             - https://dnf.readthedocs.io/en/latest/objects.inv
             - https://dnf5.readthedocs.io/en/latest/objects.inv
+            - https://docs.pydantic.dev/latest/objects.inv
+            - https://typing-extensions.readthedocs.io/en/latest/objects.inv
   - gen-files:
       scripts:
         - doc/mkdocs_mangen.py

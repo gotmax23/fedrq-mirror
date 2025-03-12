@@ -51,9 +51,12 @@ if t.TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 Package: type[PackageCompat] = dnf.package.Package
+"""Annotated alias to dnf.package.Package"""
 PackageQueryCompat.register(dnf.query.Query)
 PackageQuery: type[PackageQueryCompat] = dnf.query.Query
+"""Annotated alias to dnf.query.Query"""
 RepoError = dnf.exceptions.RepoError
+"""Error when loading repositories"""
 
 
 class BaseMaker(BaseMakerBase):
@@ -210,6 +213,10 @@ class BaseMaker(BaseMakerBase):
 
 
 class NEVRAForms(int, Enum):
+    """
+    Enum of NEVRAForms to pass to [`Repoquery.resolve_pkg_specs`][^.]
+    """
+
     NEVRA = hawkey.FORM_NEVRA
     NEVR = hawkey.FORM_NEVR
     NEV = hawkey.FORM_NEV
@@ -220,6 +227,11 @@ class NEVRAForms(int, Enum):
 # Use PackageCompat as the TypeVar, as the the native dnf objects
 # don't provide typing.
 class Repoquery(RepoqueryBase[PackageCompat, PackageQueryCompat[PackageCompat]]):
+    """
+    Helpers to query a repository.
+    Provides a unified repoquery interface for different backends.
+    """
+
     def __init__(self, base: dnf.Base) -> None:
         self.base: dnf.Base = base
 
@@ -263,6 +275,9 @@ class Repoquery(RepoqueryBase[PackageCompat, PackageQueryCompat[PackageCompat]])
 
     @property
     def backend(self) -> BackendMod:
+        """
+        Return fedrq.backends.dnf.backend module
+        """
         return t.cast("BackendMod", sys.modules[__name__])
 
 
@@ -275,6 +290,9 @@ def get_releasever():
 
 
 def get_changelogs(package: t.Any) -> Iterator[ChangelogEntry]:
+    """
+    Given a Package object, return an iterator of ChangelogEntry objects.
+    """
     for entry in package.changelogs:
         yield ChangelogEntry(
             text=entry["text"], author=entry["author"], date=entry["timestamp"]

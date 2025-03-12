@@ -33,7 +33,11 @@ ghp-import==2.1.0
 griffe==1.5.7
     # via
     #   fedrq (pyproject.toml)
+    #   griffe-inherited-docstrings
     #   mkdocstrings-python
+    #   mkdocstrings-python-xref
+griffe-inherited-docstrings==1.1.1
+    # via fedrq (pyproject.toml)
 h11==0.14.0
     # via httpcore
 httpcore==1.0.7
@@ -109,7 +113,11 @@ mkdocstrings==0.28.1
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
 mkdocstrings-python==1.15.0
-    # via mkdocstrings
+    # via
+    #   mkdocstrings
+    #   mkdocstrings-python-xref
+mkdocstrings-python-xref==1.14.0
+    # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via black
 packaging==24.2

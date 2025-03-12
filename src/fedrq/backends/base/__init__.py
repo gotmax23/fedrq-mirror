@@ -351,7 +351,6 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         """
         Set configuration options. Must be called before reading repos.
         """
-        ...
 
     @abc.abstractmethod
     def set_var(self, key: str, value: Any) -> None:
@@ -359,7 +358,6 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         Set substitutions (e.g. arch, basearch, releasever).
         Needs to be called before reading repos.
         """
-        ...
 
     # Private for now
     @abc.abstractmethod
@@ -445,14 +443,22 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
                 key-values options that should be set on the Repo object values
                 (like $basearch) will be substituted automatically.
         """
-        ...
 
     @property
     @abc.abstractmethod
-    def backend(self) -> BackendMod: ...
+    def backend(self) -> BackendMod:
+        """
+        Return the backend's module
+        """
 
     @abc.abstractmethod
-    def repolist(self, enabled: bool | None = None) -> list[str]: ...
+    def repolist(self, enabled: bool | None = None) -> list[str]:
+        """
+        List available repoids.
+
+        Args:
+            enabled: Only show enabled repositories
+        """
 
     @abc.abstractmethod
     def enable_source_repos(self) -> None:
@@ -460,7 +466,6 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         Enable the corresponding -source repos of the currently enabled
         repositories
         """
-        ...
 
 
 class NEVRAFormsCompat(Protocol):
@@ -489,7 +494,6 @@ class RepoqueryBase(Generic[_PackageT_co, _PackageQueryT_co], metaclass=abc.ABCM
         """
         Return a set of the system's arch and basearch.
         """
-        ...
 
     def _get_resolve_options(
         self,
@@ -537,7 +541,6 @@ class RepoqueryBase(Generic[_PackageT_co, _PackageQueryT_co], metaclass=abc.ABCM
             with_src:
                 Whether to consider `.src` packages when resolving `specs`
         """
-        ...
 
     def arch_filterm(
         self,
@@ -595,7 +598,6 @@ class RepoqueryBase(Generic[_PackageT_co, _PackageQueryT_co], metaclass=abc.ABCM
         """
         Return the PackageQuery object for this backend
         """
-        return self.base.sack.query()
 
     def query(
         self,
@@ -661,7 +663,10 @@ class RepoqueryBase(Generic[_PackageT_co, _PackageQueryT_co], metaclass=abc.ABCM
 
     @property
     @abc.abstractmethod
-    def backend(self) -> BackendMod: ...
+    def backend(self) -> BackendMod:
+        """
+        Return backend module
+        """
 
 
 RepoqueryAlias: TypeAlias = RepoqueryBase

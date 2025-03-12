@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 BACKEND = "libdnf5"
+"""Name of the backend"""
 NEEDS = ("libdnf5",)
 
 

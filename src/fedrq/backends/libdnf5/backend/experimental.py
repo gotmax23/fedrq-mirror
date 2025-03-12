@@ -3,8 +3,7 @@
 
 
 """
-This module (and the other experimental modules in fedrq) are not meant for
-public use.
+This module (and the other experimental modules in fedrq) are not meant for public use.
 They are subject to breaking changes in minor releases and should not be relied
 on by external code.
 Once the functionality has stabilized, this code will be moved out of the

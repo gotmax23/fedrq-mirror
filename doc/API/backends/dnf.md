@@ -7,6 +7,8 @@ SPDX-License-Identifier: GPL-2.0-or-later
 # fedrq.backends.dnf.backend
 
 ::: fedrq.backends.dnf.backend
+    options:
+        inherited_members: true
 
 ## See also
 

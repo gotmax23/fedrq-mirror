@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 BACKEND = "dnf"
+"""Name of the backend"""
 NEEDS = ("dnf", "hawkey")
 
 
