@@ -6,12 +6,12 @@ ARG IMAGE=registry.fedoraproject.org/fedora:latest
 FROM ${IMAGE}
 
 RUN set -euo pipefail ;\
-    dnf-3 install --disablerepo=\*-modular --disablerepo=fedora-cisco-openh264 -y \
-        dnf-plugins-core ;\
-    dnf-3 copr enable -y gotmax23/fedrq ;\
-    dnf-3 install --disablerepo=\*-modular --disablerepo=fedora-cisco-openh264 -y \
+    dnf5 install --disablerepo=\*-modular --disablerepo=fedora-cisco-openh264 -y \
+        dnf5-plugins ;\
+    dnf5 copr enable -y gotmax23/fedrq ;\
+    dnf5 install --disablerepo=\*-modular --disablerepo=fedora-cisco-openh264 -y \
         fedrq ;\
-    dnf-3 clean all ;
+    dnf5 clean all ;
 
 COPY 000-container.toml /etc/fedrq/000-container.toml
 
