@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml --universal -o requirements/codeqa.txt --extra=codeqa
 annotated-types==0.7.0
     # via pydantic
-attrs==25.1.0
+attrs==25.2.0
     # via reuse
 binaryornot==0.4.4
     # via reuse
@@ -13,18 +13,18 @@ boolean-py==4.0
 certifi==2025.1.31
     # via requests
 chardet==5.2.0
-    # via
-    #   binaryornot
-    #   python-debian
+    # via binaryornot
 charset-normalizer==3.4.1
-    # via requests
+    # via
+    #   python-debian
+    #   requests
 click==8.1.8
     # via reuse
 colorama==0.4.6 ; sys_platform == 'win32'
     # via click
 idna==3.10
     # via requests
-jinja2==3.1.5
+jinja2==3.1.6
     # via reuse
 license-expression==30.4.1
     # via reuse
@@ -34,7 +34,7 @@ pydantic==2.10.6
     # via fedrq (pyproject.toml)
 pydantic-core==2.27.2
     # via pydantic
-python-debian==0.1.49
+python-debian==1.0.1
     # via reuse
 requests==2.32.3
     # via fedrq (pyproject.toml)
@@ -42,7 +42,7 @@ reuse==5.0.2
     # via fedrq (pyproject.toml)
 rpm==0.3.1
     # via fedrq (pyproject.toml)
-ruff==0.9.6
+ruff==0.9.10
     # via fedrq (pyproject.toml)
 tomli==2.2.1 ; python_full_version < '3.11'
     # via fedrq (pyproject.toml)

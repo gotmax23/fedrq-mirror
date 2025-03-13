@@ -14,7 +14,7 @@ colorama==0.4.6 ; sys_platform == 'win32'
     # via click
 idna==3.10
     # via requests
-isort==6.0.0
+isort==6.0.1
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via black
