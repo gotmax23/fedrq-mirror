@@ -54,6 +54,8 @@ packager
 plain
 plainwithrepo
 provides
+qf:
+queryformat:
 r
 reason
 recommends

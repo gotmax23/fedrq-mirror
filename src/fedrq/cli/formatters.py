@@ -7,7 +7,8 @@ from __future__ import annotations
 import abc
 import argparse
 import logging
-from collections.abc import Callable, Iterable, Iterator, Mapping
+import re
+from collections.abc import Callable, Collection, Iterable, Iterator, Mapping
 from contextlib import suppress
 from functools import partial
 from typing import TYPE_CHECKING, Any, ClassVar, NoReturn, cast
@@ -260,6 +261,14 @@ class Formatters(Mapping[str, type[Formatter]]):
 
     __or__ = new
 
+    def without(
+        self,
+        names: Collection[str] = frozenset(),
+        formatters: Collection[type[Formatter]] = frozenset(),
+    ) -> Self:
+        newd = {k: v for k, v in self.items() if k not in names and v not in formatters}
+        return type(self)(newd, self.fallback)
+
     def __contains__(self, name: object) -> bool:
         if not isinstance(name, str):
             raise TypeError
@@ -351,12 +360,12 @@ class SpecialFormatter(Formatter):
     ATTRS: tuple[str, ...] = Formatter.ATTRS
 
     def _get_attrs(
-        self, args: str, allow_multiline: bool = False
+        self, args: str | list[str], allow_multiline: bool = False
     ) -> Iterator[str | Formatter]:
         attrs: Formatters = (
             self.container if allow_multiline else self.container.singleline()
         )
-        for attr in args.split(","):
+        for attr in args.split(",") if isinstance(args, str) else args:
             if attr in self.ATTRS:
                 yield attr
             elif attr in attrs:
@@ -367,6 +376,65 @@ class SpecialFormatter(Formatter):
     def validate(self) -> None:
         if not self.args.strip() or self.args.strip() == ",":
             self.err("received less than 1 argument")
+
+
+class QueryFormatFormatter(SpecialFormatter):
+    """
+    Formatter that accepts dnf-style queryformat string
+    """
+
+    _REGEX = re.compile(r"(?P<leading>%?)%{(?P<macro>[^}]*)}")
+    _INVALID_REGEX = re.compile(r"%{[^}]*$")
+    _ATTRS = _ATTRS_SINGLE
+    MULTILINE = False
+
+    def validate(self) -> None:
+        if self._INVALID_REGEX.search(self.args):
+            self.err("Unterminated query format string")
+        # Don't allow nested queryformat strings
+        self.container = self.container.without(formatters={type(self)})
+        self._matches = list(self._REGEX.finditer(self.args))
+        self._attrs = {
+            macro: next(self._get_attrs([macro], True))
+            for macro in {
+                macro.group("macro")
+                for macro in self._matches
+                if not macro.group("leading")
+            }
+        }
+
+    def format_line(self, package: PackageCompat) -> str:
+        def fmt_part(
+            full_string: str, match_obj: re.Match, package: PackageCompat
+        ) -> str:
+            groups = match_obj.groupdict()
+            leading = groups["leading"]
+            macro = groups["macro"]
+            if leading:
+                return full_string[match_obj.end("leading") :]
+            attr = self._attrs[macro]
+            if isinstance(attr, str):
+                return _stringify(
+                    getattr(package, attr),
+                    multiline_allowed=False,
+                )
+            return attr.format_line(package)
+
+        string = self.args
+        matches = self._matches
+        if not matches:
+            return string
+        parts: list[str] = []
+        for idx, match_obj in enumerate(matches):
+            a, z = match_obj.span()
+            if idx == 0:
+                parts.append(string[:a])
+            parts.append(fmt_part(string, match_obj, package))
+            if idx + 1 < len(matches):
+                parts.append(string[z : matches[idx + 1].start()])
+            else:
+                parts.append(string[z:])
+        return "".join(parts)
 
 
 class AttrFormatter(SpecialFormatter):
@@ -608,6 +676,8 @@ DefaultFormatters = Formatters(
         "nv": "{0.name}-{0.version}",
         "source": SourceFromatter,
         "src": SourceFromatter,
+        "queryformat": QueryFormatFormatter,
+        "qf": QueryFormatFormatter,
         "attr": AttrFormatter,
         "json": JsonFormatter,
         "line": SingleLineFormatter,
