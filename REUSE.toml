@@ -4,7 +4,11 @@
 version = 1
 
 [[annotations]]
-path = ["requirements/**.txt", "requirements/**.in"]
+path = [
+    "requirements/**.txt",
+    "requirements/**.in",
+    ".basedpyright/baseline.json",
+]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "None"
 SPDX-License-Identifier = "Unlicense"

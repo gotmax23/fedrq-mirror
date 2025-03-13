@@ -1,0 +1,50 @@
+{
+    "files": {
+        "./src/fedrq/cli/__init__.py": [
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 8,
+                    "endColumn": 19,
+                    "lineCount": 1
+                }
+            }
+        ],
+        "./src/fedrq/cli/base.py": [
+            {
+                "code": "reportArgumentType",
+                "range": {
+                    "startColumn": 53,
+                    "endColumn": 71,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportArgumentType",
+                "range": {
+                    "startColumn": 53,
+                    "endColumn": 71,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 12,
+                    "endColumn": 19,
+                    "lineCount": 1
+                }
+            }
+        ],
+        "./src/fedrq/cli/commands/whatrequires.py": [
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 16,
+                    "endColumn": 33,
+                    "lineCount": 1
+                }
+            }
+        ]
+    }
+}

@@ -127,7 +127,7 @@ ignore_missing_imports = true
 typeCheckingMode = "standard"
 reportPossiblyUnboundVariable = "warning"
 pythonVersion = "3.9"
-useTypingExtensions = false
+# useTypingExtensions = false
 
 
 [tool.pytest.ini_options]
