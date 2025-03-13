@@ -53,11 +53,11 @@ if TYPE_CHECKING:
         covariant=True,
         default="PackageQueryCompat[PackageCompat]",
     )
-    _RepoqueryT = TypeVar(
-        "_RepoqueryT",
-        bound="RepoqueryBase",
-        default="RepoqueryBase[PackageCompat, PackageQueryCompat[PackageCompat]]",
-    )
+    # _RepoqueryT = TypeVar(
+    #     "_RepoqueryT",
+    #     bound="RepoqueryBase",
+    #     default="RepoqueryBase[PackageCompat, PackageQueryCompat[PackageCompat]]",
+    # )
 else:
     _PackageT = TypeVar("_PackageT", bound="PackageCompat")
     _PackageT_co = TypeVar("_PackageT_co", bound="PackageCompat", covariant=True)
@@ -65,7 +65,7 @@ else:
     _PackageQueryT_co = TypeVar(
         "_PackageQueryT_co", bound="PackageQueryCompat", covariant=True
     )
-    _RepoqueryT = TypeVar("_RepoqueryT", bound="RepoqueryBase")
+    # _RepoqueryT = TypeVar("_RepoqueryT", bound="RepoqueryBase")
 LOG = logging.getLogger("fedrq.backends")
 
 
@@ -543,7 +543,7 @@ class RepoqueryBase(Generic[_PackageT_co, _PackageQueryT_co], metaclass=abc.ABCM
         """
 
     def arch_filterm(
-        self,
+        self: RepoqueryBase[PackageCompat, _PackageQueryT],
         query: _PackageQueryT,
         arch: str | Iterable[str] | None = None,
     ) -> _PackageQueryT:
@@ -569,7 +569,7 @@ class RepoqueryBase(Generic[_PackageT_co, _PackageQueryT_co], metaclass=abc.ABCM
             return query.filterm(arch=arch)
 
     def arch_filter(
-        self,
+        self: RepoqueryBase[PackageCompat, _PackageQueryT],
         query: _PackageQueryT,
         arch: str | Iterable[str] | None = None,
     ) -> _PackageQueryT:
@@ -632,8 +632,10 @@ class RepoqueryBase(Generic[_PackageT_co, _PackageQueryT_co], metaclass=abc.ABCM
         return cast("_PackageT_co", next(iter(query)))
 
     def get_subpackages(
-        self, packages: Iterable[PackageCompat], **kwargs
-    ) -> _PackageQueryT_co:
+        self: RepoqueryBase[_PackageT, _PackageQueryT],
+        packages: Iterable[_PackageT],
+        **kwargs,
+    ) -> _PackageQueryT:
         """
         Return a PackageQuery containing the binary RPMS/subpackages produced
         by {packages}.

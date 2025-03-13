@@ -835,7 +835,7 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
 
     __isub__ = difference
 
-    _pkg_comps: TypeAlias = (
+    _PkgCompsType: TypeAlias = (
         # "t.Union[libdnf5.common.QueryCmp_EQ, libdnf5.common.QueryCmp_NEQ]"
         "int"
     )
@@ -843,7 +843,7 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
     def filter_pkg(
         self,
         pkgs: Iterable[libdnf5.rpm.Package],
-        comp: _pkg_comps = libdnf5.common.QueryCmp_EQ,
+        comp: _PkgCompsType = libdnf5.common.QueryCmp_EQ,
         /,
     ):
         if isinstance(pkgs, (libdnf5.rpm.PackageSet, libdnf5.rpm.PackageQuery)):

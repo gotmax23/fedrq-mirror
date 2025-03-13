@@ -86,14 +86,10 @@ class ReleaseConfig(BaseModel):
     copr_chroot_fmt: t.Optional[str] = None
 
     repo_aliases: dict[str, str] = {}
-    _repogs: Repos = PrivateAttr(DefaultRepoGs)
+    repogs: Repos = Field(DefaultRepoGs, init=False, exclude=True)
 
     class Config:
         arbitrary_types_allowed = True
-
-    @property
-    def repogs(self) -> Repos:
-        return self.repogs
 
     @validator("repogs", always=True)
     def _v_repogs(cls, value: Repos, values: dict[str, t.Any]) -> Repos:

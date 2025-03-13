@@ -15,9 +15,7 @@ from typing import TYPE_CHECKING
 import rpm
 
 if TYPE_CHECKING:
-    from typing import TypeVar
-
-    _ArchiveT = TypeVar("_ArchiveT", bound="RPMArchive")
+    from typing_extensions import Self
 
 
 class RPMArchiveError(Exception):
@@ -83,7 +81,7 @@ class RPMArchive:
                     return self._extract_afile(archive, afile, destdir)
         raise RPMArchiveError("No specfile found in the SRPM")  # pragma: no cover
 
-    def __enter__(self: _ArchiveT) -> _ArchiveT:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *_) -> None:

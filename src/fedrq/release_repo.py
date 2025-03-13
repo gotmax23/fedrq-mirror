@@ -299,6 +299,9 @@ class Repos(Mapping[str, type[RepoG]]):
     def __repr__(self) -> str:
         return f"{type(self).__name__}({self.__data!r})"
 
+    def __hash__(self) -> int:
+        return hash(frozenset(self.items()))
+
 
 DefaultRepoGs = Repos(
     {
