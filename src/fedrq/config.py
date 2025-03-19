@@ -15,8 +15,9 @@ import os
 import re
 import sys
 import typing as t
+import warnings
 import zipfile
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from enum import auto as auto_enum
 from pathlib import Path
 
@@ -469,11 +470,25 @@ def _get_files(
     return sorted(files, key=lambda f: f.name, reverse=reverse)
 
 
+def _warn_extra_configs(config: Mapping[str, t.Any], source: object) -> None:
+    extra_fields: list[str] = []
+    for field in config:
+        if field not in RQConfig.__fields__:
+            extra_fields.append(field)
+    # This would be more efficient but doesn't preserve order.
+    # extra_fields = config.keys() - RQConfig.__fields__.keys()  # type: ignore
+    if extra_fields:
+        warnings.warn(
+            f"Unknown config options found in {source}: {extra_fields}", stacklevel=0
+        )
+
+
 def get_config(**overrides: t.Any) -> RQConfig:
     """
     Retrieve config files from CONFIG_DIRS and fedrq.data.
     Perform naive top-level merging of the 'releases' table.
     """
+    _warn_extra_configs(overrides, "**overrides")
     flog = mklog(__name__, "get_config")
     flog.debug(f"CONFIG_DIRS = {CONFIG_DIRS}")
     config: dict[str, t.Any] = {}
@@ -486,6 +501,7 @@ def get_config(**overrides: t.Any) -> RQConfig:
         flog.debug("Loading config file: %s", path)
         with path.open("rb") as fp:
             data = tomllib.load(t.cast("t.BinaryIO", fp))
+        _warn_extra_configs(data, path)
         merge_dict(data, config)
     merge_dict(overrides, config)
     config["releases"] = _get_releases(config["releases"])

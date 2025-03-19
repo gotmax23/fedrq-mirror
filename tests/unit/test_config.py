@@ -3,8 +3,12 @@
 
 from __future__ import annotations
 
+import re
+
+import pytest
+
 from fedrq.backends.base import BackendMod, PackageCompat, RepoqueryBase
-from fedrq.config import RQConfig
+from fedrq.config import RQConfig, _warn_extra_configs
 
 
 def test_get_rq(
@@ -20,7 +24,7 @@ def test_get_rq(
     assert repo_test_config.backend == default_backend.BACKEND
 
     # Check the backend specific methods, as well
-    rq2 = {
+    rq2: RepoqueryBase = {
         "dnf": repo_test_config.get_dnf_rq,
         "libdnf5": repo_test_config.get_libdnf5_rq,
     }[default_backend.BACKEND]()
@@ -28,3 +32,13 @@ def test_get_rq(
     assert isinstance(rq2, type(repo_test_rq))
     assert isinstance(rq2, RepoqueryBase)
     assert isinstance(rq2, default_backend.Repoquery)
+
+
+def test_warn_extra_configs() -> None:
+    with pytest.warns(
+        UserWarning,
+        match=re.compile(
+            re.escape("Unknown config options found in test: ['abc', 'xyz']")
+        ),
+    ):
+        _warn_extra_configs(dict(abc="value", xyz="value", backend="dnf"), "test")
