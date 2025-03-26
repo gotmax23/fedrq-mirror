@@ -54,6 +54,12 @@ class Subpkgs(Command):
             help="This includes all binary RPMs. Multilib is excluded on x86_64. "
             "Equivalent to --arch=notsrc",
         )
+        arch_group.add_argument(
+            "-I",
+            "--include-src",
+            help="Include the source packages in the query",
+            action="store_true",
+        )
         return parser
 
     def run(self) -> None:
@@ -62,6 +68,8 @@ class Subpkgs(Command):
         self.query = self.rq.get_subpackages(
             srpms, latest=self.args.latest, arch=self.args.arch
         )
+        if self.args.include_src:
+            self.query = self.query.union(srpms)
         if self.args.match:
             self.query.filterm(name__glob=self.args.match)
         for p in self.format():
