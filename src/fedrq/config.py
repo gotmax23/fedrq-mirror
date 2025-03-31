@@ -473,7 +473,7 @@ def _get_files(
 def _warn_extra_configs(config: Mapping[str, t.Any], source: object) -> None:
     extra_fields: list[str] = []
     for field in config:
-        if field not in RQConfig.__fields__:
+        if field not in RQConfig.__fields__:  # type: ignore[operator]
             extra_fields.append(field)
     # This would be more efficient but doesn't preserve order.
     # extra_fields = config.keys() - RQConfig.__fields__.keys()  # type: ignore
