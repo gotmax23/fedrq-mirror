@@ -10,6 +10,7 @@ from contextlib import suppress
 from glob import iglob
 from pathlib import Path
 from shutil import copy2
+from typing import cast
 
 import nox
 
@@ -73,8 +74,20 @@ def test(
     if any(i.startswith("--cov") for i in session.posargs):
         install(session, "coverage[toml]", "pytest-cov")
         env |= {"COVERAGE_FILE": str(tmp / ".coverage")}
+    has_deprecation_warning = session.run(
+        "python",
+        "-c",
+        "import pydantic; print(hasattr(pydantic, 'PydanticDeprecatedSince20'))",
+        silent=True,
+    )
+    extra_args: list[str] = []
+    if cast(str, has_deprecation_warning).strip() == "True":
+        extra_args.extend(("-W", "ignore::pydantic.PydanticDeprecatedSince20"))
     session.run(
-        "pytest", *(posargs if posargs is not None else session.posargs), env=env
+        "pytest",
+        *(posargs if posargs is not None else session.posargs),
+        *extra_args,
+        env=env,
     )
 
 
