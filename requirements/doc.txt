@@ -112,11 +112,11 @@ mkdocstrings==0.29.0
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.16.5
+mkdocstrings-python==1.16.7
     # via
     #   mkdocstrings
     #   mkdocstrings-python-xref
-mkdocstrings-python-xref==1.14.0
+mkdocstrings-python-xref==1.16.2
     # via fedrq (pyproject.toml)
 mypy-extensions==1.0.0
     # via black
