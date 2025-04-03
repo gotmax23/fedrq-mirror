@@ -167,9 +167,10 @@ def _extra_exact(
     """
     Filter factory to ensure exact string matches for whatrequires and whatprovides
     """
+    matches = set(matches)
 
     return filter(
-        lambda package: {str(obj) for obj in getattr(package, attr)} & set(matches),
+        lambda package: {str(obj) for obj in getattr(package, attr)} & matches,
         packages,
     )
 
