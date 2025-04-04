@@ -57,7 +57,7 @@ class Subpkgs(Command):
         arch_group.add_argument(
             "-I",
             "--include-src",
-            help="Include the source packages in the query",
+            help="EXPERIMENTAL: Include the source packages in the query",
             action="store_true",
         )
         return parser
