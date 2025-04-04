@@ -261,6 +261,9 @@ class Formatters(Mapping[str, type[Formatter]]):
 
     __or__ = new
 
+    def with_fallback(self, fallback: type[Formatter] | None) -> Self:
+        return type(self)(self.__data, fallback)
+
     def without(
         self,
         names: Collection[str] = frozenset(),
@@ -362,14 +365,21 @@ class SpecialFormatter(Formatter):
     def _get_attrs(
         self, args: str | list[str], allow_multiline: bool = False
     ) -> Iterator[str | Formatter]:
-        attrs: Formatters = (
-            self.container if allow_multiline else self.container.singleline()
-        )
+        # Don't use the fallback formatter when looking up attributes.
+        # We treat attributes (from ATTRS) that would normally be handled by fallback
+        attrs = self.container.with_fallback(None)
+        if not allow_multiline:
+            attrs = attrs.singleline().new({"attr": _AttrFormatterSingleLine})
         for attr in args.split(",") if isinstance(args, str) else args:
             if attr in self.ATTRS:
                 yield attr
             elif attr in attrs:
-                yield self.container.get_formatter(attr, repoquery=self.rq)
+                yield attrs.get_formatter(attr, repoquery=self.rq)
+            elif attr in _MULTILINE_ATTRS:
+                self.err(
+                    f"Attribute {attr!r} contains multiple lines"
+                    f" which is not allowed by {self.name} formatter"
+                )
             else:
                 self.err(f"invalid argument {attr!r}")
 
@@ -385,7 +395,7 @@ class QueryFormatFormatter(SpecialFormatter):
 
     _REGEX = re.compile(r"(?P<leading>%?)%{(?P<macro>[^}]*)}")
     _INVALID_REGEX = re.compile(r"%{[^}]*$")
-    _ATTRS = _ATTRS_SINGLE
+    ATTRS = _ATTRS_SINGLE
     MULTILINE = False
 
     def validate(self) -> None:
@@ -395,7 +405,7 @@ class QueryFormatFormatter(SpecialFormatter):
         self.container = self.container.without(formatters={type(self)})
         self._matches = list(self._REGEX.finditer(self.args))
         self._attrs = {
-            macro: next(self._get_attrs([macro], True))
+            macro: next(self._get_attrs([macro], False))
             for macro in {
                 macro.group("macro")
                 for macro in self._matches
@@ -440,6 +450,7 @@ class QueryFormatFormatter(SpecialFormatter):
 class AttrFormatter(SpecialFormatter):
     MULTILINE = True
     _MULTILINE_SEPERATOR = _DEFAULT_MULTILINE_SEPERATOR
+    _MULTILINE_ALLOWED = True
 
     def validate(self) -> None:
         super().validate()
@@ -459,11 +470,24 @@ class AttrFormatter(SpecialFormatter):
             result = getattr(p, self.attr)
             if isinstance(result, Iterable) and not isinstance(result, str):
                 yield from map(
-                    partial(_stringify, multiline_seperator=self._MULTILINE_SEPERATOR),
+                    partial(
+                        _stringify,
+                        multiline_allowed=self._MULTILINE_ALLOWED,
+                        multiline_seperator=self._MULTILINE_SEPERATOR,
+                    ),
                     result,
                 )
             else:
-                yield _stringify(result, multiline_seperator=self._MULTILINE_SEPERATOR)
+                yield _stringify(
+                    result,
+                    multiline_allowed=self._MULTILINE_ALLOWED,
+                    multiline_seperator=self._MULTILINE_SEPERATOR,
+                )
+
+
+class _AttrFormatterSingleLine(AttrFormatter):
+    ATTRS = _ATTRS_SINGLE
+    _MULTILINE_ALLOWED = False
 
 
 class AttrFallbackFormatter(AttrFormatter):

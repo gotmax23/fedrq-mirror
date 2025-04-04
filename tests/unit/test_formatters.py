@@ -69,6 +69,7 @@ def test_plain_formatter(patch_config_dirs, target_cpu):
     query = repo_test_rq.query()
     assert formatter(query) == expected
     assert formatter(query, "plain") == expected
+    assert formatter(query, "qf:%{plain}") == expected
 
 
 def test_plainwithrepo_formatter(patch_config_dirs, repo_test_rq, target_cpu):
@@ -426,6 +427,10 @@ def formatter_test_query() -> PackageQueryCompat:
             ["packagea : vpackage(b)"],
             id="source+requiresmatch",
         ),
+        pytest.param(
+            ["qf:%{name} other text %{version}"],
+            ["packagea other text 1", "packageb other text 2"],
+        ),
     ],
 )
 def test_formatter_p(
@@ -441,3 +446,19 @@ def test_formatter_p(
         assert output == [
             item.format(target_cpu=target_cpu) for item in expected_output
         ], fmt
+
+
+@pytest.mark.parametrize(
+    "formatter, error_str",
+    [
+        ("qf:%{", "'qf' FormatterError: Unterminated query format string"),
+        (
+            "queryformat:%{description}",
+            "'queryformat' FormatterError: Attribute 'description' contains multiple lines which is not allowed by queryformat formatter",  # noqa: E501
+        ),
+    ],
+)
+def test_formatter_error(formatter: str, error_str: str) -> None:
+    with pytest.raises(formatters.FormatterError) as err:
+        formatters.DefaultFormatters.get_formatter(formatter)
+    assert str(err.value) == error_str
