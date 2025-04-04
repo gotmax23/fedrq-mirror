@@ -12,22 +12,6 @@
         ],
         "./src/fedrq/cli/base.py": [
             {
-                "code": "reportArgumentType",
-                "range": {
-                    "startColumn": 53,
-                    "endColumn": 71,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportArgumentType",
-                "range": {
-                    "startColumn": 53,
-                    "endColumn": 71,
-                    "lineCount": 1
-                }
-            },
-            {
                 "code": "reportPossiblyUnboundVariable",
                 "range": {
                     "startColumn": 12,

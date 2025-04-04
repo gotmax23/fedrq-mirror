@@ -12,7 +12,7 @@ babel==2.17.0
     # via mkdocs-material
 backrefs==5.8
     # via mkdocs-material
-basedpyright==1.28.1
+basedpyright==1.28.4
     # via fedrq (pyproject.toml)
 binaryornot==0.4.4
     # via reuse
