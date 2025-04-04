@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml --universal -o requirements/doc.txt --extra=doc
 annotated-types==0.7.0
     # via pydantic
-anyio==4.8.0
+anyio==4.9.0
     # via httpx
 babel==2.17.0
     # via mkdocs-material
@@ -32,7 +32,7 @@ exceptiongroup==1.2.2 ; python_full_version < '3.11'
     # via anyio
 ghp-import==2.1.0
     # via mkdocs
-griffe==1.6.0
+griffe==1.7.2
     # via
     #   fedrq (pyproject.toml)
     #   griffe-inherited-docstrings
@@ -104,15 +104,15 @@ mkdocs-gen-files==0.5.0
     # via fedrq (pyproject.toml)
 mkdocs-get-deps==0.2.0
     # via mkdocs
-mkdocs-material==9.6.7
+mkdocs-material==9.6.11
     # via fedrq (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
-mkdocstrings==0.29.0
+mkdocstrings==0.29.1
     # via
     #   fedrq (pyproject.toml)
     #   mkdocstrings-python
-mkdocstrings-python==1.16.7
+mkdocstrings-python==1.16.10
     # via
     #   mkdocstrings
     #   mkdocstrings-python-xref
@@ -130,16 +130,16 @@ pathspec==0.12.1
     # via
     #   black
     #   mkdocs
-platformdirs==4.3.6
+platformdirs==4.3.7
     # via
     #   black
     #   mkdocs-get-deps
-pydantic==2.10.6
+pydantic==2.11.2
     # via
     #   fedrq (pyproject.toml)
     #   releaserr
     #   sourcehutx
-pydantic-core==2.27.2
+pydantic-core==2.33.1
     # via pydantic
 pygments==2.19.1
     # via
@@ -165,7 +165,7 @@ requests==2.32.3
     # via
     #   fedrq (pyproject.toml)
     #   mkdocs-material
-rich==13.9.4
+rich==14.0.0
     # via
     #   releaserr
     #   typer
@@ -186,18 +186,20 @@ tomli==2.2.1 ; python_full_version < '3.11'
     #   sourcehutx
 typer==0.15.2
     # via releaserr
-typing-extensions==4.12.2
+typing-extensions==4.13.1
     # via
     #   fedrq (pyproject.toml)
     #   anyio
     #   black
-    #   mkdocstrings
     #   mkdocstrings-python
     #   pydantic
     #   pydantic-core
     #   releaserr
     #   rich
     #   typer
+    #   typing-inspection
+typing-inspection==0.4.0
+    # via pydantic
 urllib3==2.3.0
     # via requests
 watchdog==6.0.0

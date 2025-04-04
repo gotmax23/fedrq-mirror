@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml --universal -o requirements/typing.txt --extra=typing
 annotated-types==0.7.0
     # via pydantic
-argcomplete==3.6.0
+argcomplete==3.6.2
     # via fedrq (pyproject.toml)
 basedpyright==1.28.4
     # via fedrq (pyproject.toml)
@@ -20,7 +20,7 @@ exceptiongroup==1.2.2 ; python_full_version < '3.11'
     # via pytest
 idna==3.10
     # via requests
-iniconfig==2.0.0
+iniconfig==2.1.0
     # via pytest
 mypy==1.15.0
     # via fedrq (pyproject.toml)
@@ -32,9 +32,9 @@ packaging==24.2
     # via pytest
 pluggy==1.5.0
     # via pytest
-pydantic==2.10.6
+pydantic==2.11.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.27.2
+pydantic-core==2.33.1
     # via pydantic
 pytest==8.3.5
     # via
@@ -53,14 +53,17 @@ tomli==2.2.1
     #   pytest
 tomli-w==1.2.0
     # via fedrq (pyproject.toml)
-types-requests==2.32.0.20250306
+types-requests==2.32.0.20250328
     # via fedrq (pyproject.toml)
-typing-extensions==4.12.2
+typing-extensions==4.13.1
     # via
     #   fedrq (pyproject.toml)
     #   mypy
     #   pydantic
     #   pydantic-core
+    #   typing-inspection
+typing-inspection==0.4.0
+    # via pydantic
 urllib3==2.3.0
     # via
     #   requests

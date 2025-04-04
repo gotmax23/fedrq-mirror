@@ -8,9 +8,9 @@ charset-normalizer==3.4.1
     # via requests
 idna==3.10
     # via requests
-pydantic==2.10.6
+pydantic==2.11.2
     # via fedrq (pyproject.toml)
-pydantic-core==2.27.2
+pydantic-core==2.33.1
     # via pydantic
 requests==2.32.3
     # via fedrq (pyproject.toml)
@@ -18,10 +18,13 @@ rpm==0.3.1
     # via fedrq (pyproject.toml)
 tomli==2.2.1 ; python_full_version < '3.11'
     # via fedrq (pyproject.toml)
-typing-extensions==4.12.2
+typing-extensions==4.13.1
     # via
     #   fedrq (pyproject.toml)
     #   pydantic
     #   pydantic-core
+    #   typing-inspection
+typing-inspection==0.4.0
+    # via pydantic
 urllib3==2.3.0
     # via requests

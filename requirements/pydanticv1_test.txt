@@ -10,7 +10,7 @@ exceptiongroup==1.2.2 ; python_full_version < '3.11'
     # via pytest
 idna==3.10
     # via requests
-iniconfig==2.0.0
+iniconfig==2.1.0
     # via pytest
 packaging==24.2
     # via pytest
@@ -36,7 +36,7 @@ tomli==2.2.1 ; python_full_version < '3.11'
     #   pytest
 tomli-w==1.2.0
     # via fedrq (pyproject.toml)
-typing-extensions==4.12.2
+typing-extensions==4.13.1
     # via
     #   fedrq (pyproject.toml)
     #   pydantic
