@@ -18,7 +18,7 @@ packaging==24.2
     # via pytest
 pluggy==1.5.0
     # via pytest
-pydantic==2.11.2
+pydantic==2.11.3
     # via fedrq (pyproject.toml)
 pydantic-core==2.33.1
     # via pydantic
@@ -30,7 +30,7 @@ pytest-mock==3.14.0
     # via fedrq (pyproject.toml)
 requests==2.32.3
     # via fedrq (pyproject.toml)
-rpm==0.3.1
+rpm==0.4.0
     # via fedrq (pyproject.toml)
 tomli==2.2.1 ; python_full_version < '3.11'
     # via

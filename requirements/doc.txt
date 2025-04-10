@@ -134,7 +134,7 @@ platformdirs==4.3.7
     # via
     #   black
     #   mkdocs-get-deps
-pydantic==2.11.2
+pydantic==2.11.3
     # via
     #   fedrq (pyproject.toml)
     #   releaserr
@@ -169,7 +169,7 @@ rich==14.0.0
     # via
     #   releaserr
     #   typer
-rpm==0.3.1
+rpm==0.4.0
     # via fedrq (pyproject.toml)
 shellingham==1.5.4
     # via typer
