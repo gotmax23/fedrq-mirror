@@ -277,6 +277,9 @@ class PackageQueryCompat(
     @abc.abstractmethod
     def __iter__(self) -> Iterator[_PackageT_co]: ...
 
+    @abc.abstractmethod
+    def __contains__(self, other) -> bool: ...
+
 
 class BaseMakerBase(metaclass=abc.ABCMeta):
     """

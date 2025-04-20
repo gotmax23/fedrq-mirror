@@ -339,9 +339,11 @@ def test_multiline_formatter(patch_config_dirs, target_cpu: str):
 @cache
 def formatter_test_query() -> PackageQueryCompat:
     repo_test_rq = get_rq()
-    return repo_test_rq.resolve_pkg_specs(
+    q = repo_test_rq.resolve_pkg_specs(
         ["packagea-1", "packageb"], with_src=False, latest=1
     )
+    assert next(iter(q)) in q
+    return q
 
 
 @pytest.mark.parametrize(

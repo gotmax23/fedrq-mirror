@@ -835,6 +835,9 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
 
     __isub__ = difference
 
+    def __contains__(self, other: object) -> bool:
+        return self.contains(other)
+
     _PkgCompsType: TypeAlias = (
         # "t.Union[libdnf5.common.QueryCmp_EQ, libdnf5.common.QueryCmp_NEQ]"
         "int"
