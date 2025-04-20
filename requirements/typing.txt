@@ -4,7 +4,7 @@ annotated-types==0.7.0
     # via pydantic
 argcomplete==3.6.2
     # via fedrq (pyproject.toml)
-basedpyright==1.28.5
+basedpyright==1.29.0
     # via fedrq (pyproject.toml)
 certifi==2025.1.31
     # via requests
@@ -28,7 +28,7 @@ mypy-extensions==1.0.0
     # via mypy
 nodejs-wheel-binaries==22.14.0
     # via basedpyright
-packaging==24.2
+packaging==25.0
     # via pytest
 pluggy==1.5.0
     # via pytest
@@ -55,7 +55,7 @@ tomli-w==1.2.0
     # via fedrq (pyproject.toml)
 types-requests==2.32.0.20250328
     # via fedrq (pyproject.toml)
-typing-extensions==4.13.1
+typing-extensions==4.13.2
     # via
     #   fedrq (pyproject.toml)
     #   mypy
@@ -64,7 +64,7 @@ typing-extensions==4.13.1
     #   typing-inspection
 typing-inspection==0.4.0
     # via pydantic
-urllib3==2.3.0
+urllib3==2.4.0
     # via
     #   requests
     #   types-requests

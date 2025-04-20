@@ -14,7 +14,7 @@ idna==3.10
     # via requests
 iniconfig==2.1.0
     # via pytest
-packaging==24.2
+packaging==25.0
     # via pytest
 pluggy==1.5.0
     # via pytest
@@ -38,7 +38,7 @@ tomli==2.2.1 ; python_full_version < '3.11'
     #   pytest
 tomli-w==1.2.0
     # via fedrq (pyproject.toml)
-typing-extensions==4.13.1
+typing-extensions==4.13.2
     # via
     #   fedrq (pyproject.toml)
     #   pydantic
@@ -46,5 +46,5 @@ typing-extensions==4.13.1
     #   typing-inspection
 typing-inspection==0.4.0
     # via pydantic
-urllib3==2.3.0
+urllib3==2.4.0
     # via requests

@@ -18,7 +18,7 @@ rpm==0.4.0
     # via fedrq (pyproject.toml)
 tomli==2.2.1 ; python_full_version < '3.11'
     # via fedrq (pyproject.toml)
-typing-extensions==4.13.1
+typing-extensions==4.13.2
     # via
     #   fedrq (pyproject.toml)
     #   pydantic
@@ -26,5 +26,5 @@ typing-extensions==4.13.1
     #   typing-inspection
 typing-inspection==0.4.0
     # via pydantic
-urllib3==2.3.0
+urllib3==2.4.0
     # via requests
