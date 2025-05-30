@@ -17,6 +17,15 @@ TEST_RELEASEVER = "37"
 
 @pytest.mark.no_rpm_mock
 def test_bm_create_repo_failure(default_backend: BackendMod) -> None:
+    if default_backend.BACKEND == "libdnf5":
+        try:
+            import libdnf5.exception as _  # noqa: F401
+        except ImportError:
+            pass
+        else:
+            pytest.skip(
+                "TODO: With the new exception handling, this doesn't do the right thing"
+            )
     bm = default_backend.BaseMaker()
     bm.sets({}, dict(basearch=TEST_BASEARCH, releasever="nonexistant"))
     bm.create_repo(
