@@ -8,7 +8,7 @@ import re
 import pytest
 
 from fedrq.backends.base import BackendMod, PackageCompat, RepoqueryBase
-from fedrq.config import RQConfig, _warn_extra_configs
+from fedrq.config import RQConfig, _warn_extra_configs, get_config
 
 
 def test_get_rq(
@@ -42,3 +42,16 @@ def test_warn_extra_configs() -> None:
         ),
     ):
         _warn_extra_configs(dict(abc="value", xyz="value", backend="dnf"), "test")
+
+
+def test_envvars(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("FEDRQ_BRANCH", "f42")
+    monkeypatch.setenv("FEDRQ_BACKEND", "libdnf5")
+    config1 = get_config()
+    assert config1.default_branch == "f42"
+    assert config1.backend == "libdnf5"
+
+    # Check overrides
+    config2 = get_config(default_branch="f41", backend="dnf")
+    assert config2.default_branch == "f41"
+    assert config2.backend == "dnf"

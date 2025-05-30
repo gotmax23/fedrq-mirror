@@ -30,7 +30,7 @@ else:
 
     import tomllib
 
-from pydantic import BaseModel, Field, PrivateAttr, root_validator, validator
+from pydantic import BaseModel, Field, PrivateAttr, validator
 
 from fedrq._compat import StrEnum
 from fedrq._config import ConfigError
@@ -343,14 +343,6 @@ class RQConfig(BaseModel):
         }
         validate_assignment = True
 
-    @root_validator(skip_on_failure=True)
-    def _v_envvars(cls, values):
-        if "FEDRQ_BACKEND" in os.environ:
-            values["backend"] = os.environ["FEDRQ_BACKEND"] or None
-        if "FEDRQ_BRANCH" in os.environ:
-            values["branch"] = os.environ["FEDRQ_BRANCH"]
-        return values
-
     @validator("backend")
     def _v_backend(cls, value) -> str:
         assert (
@@ -412,7 +404,8 @@ class RQConfig(BaseModel):
 
         Args:
             branch:
-                branch name
+                Branch name.
+                Defaults to self.default_branch.
             repo:
                 repo class. defaults to 'base'.
             base_conf:
@@ -485,8 +478,12 @@ def _warn_extra_configs(config: Mapping[str, t.Any], source: object) -> None:
 
 def get_config(**overrides: t.Any) -> RQConfig:
     """
-    Retrieve config files from CONFIG_DIRS and fedrq.data.
-    Perform naive top-level merging of the 'releases' table.
+    Retrieve config files from CONFIG_DIRS and fedrq.data
+    and merge configuration sources.
+    Read supported environment variables ($FEDRQ_BRANCH and $FEDRQ_BACKEND)
+    and allow them to override config file values if set.
+    Config options passed as keyword-arguments to this function override both
+    config file values and environment variables.
     """
     _warn_extra_configs(overrides, "**overrides")
     flog = mklog(__name__, "get_config")
@@ -503,6 +500,11 @@ def get_config(**overrides: t.Any) -> RQConfig:
             data = tomllib.load(t.cast("t.BinaryIO", fp))
         _warn_extra_configs(data, path)
         merge_dict(data, config)
+    # Env vars should override config file but NOT manually specified overrides.
+    if "FEDRQ_BACKEND" in os.environ:
+        config["backend"] = os.environ["FEDRQ_BACKEND"] or None
+    if "FEDRQ_BRANCH" in os.environ:
+        config["default_branch"] = os.environ["FEDRQ_BRANCH"]
     merge_dict(overrides, config)
     config["releases"] = _get_releases(config["releases"])
     flog.debug("Final config: %s", config)

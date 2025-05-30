@@ -306,7 +306,15 @@ The following generic repo class macros are available for Fedora and EPEL releas
 	for tags other than *rawhide* and *eln-build*.
 	For rawhide, see the preconfigured *@buildroot* repository group.
 
+# ENVIRONMENT VARIABLES
 
+*$FEDRQ_BRANCH*
+	See *--branch*.
+	This sets the default branch if it is not specified via CLI.
+
+*$FEDRQ_BACKEND*
+	See *--backend*.
+	This sets the default backend if it is not specified via the CLI.
 
 # BUILTIN RELEASES
 
