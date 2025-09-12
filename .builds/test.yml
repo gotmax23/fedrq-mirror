@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 ---
-image: fedora/rawhide
+image: fedora/latest
 packages:
   - createrepo_c
   - python3-devel
@@ -12,9 +12,6 @@ packages:
 sources:
   - https://git.sr.ht/~gotmax23/fedrq
 tasks:
-  - setup-dnf5-hotfix:
-      # https://github.com/rpm-software-management/dnf5/issues/1080
-      sudo mkdir -p /usr/lib/sysimage/libdnf5
   - test: |
       cd fedrq
       nox -e testa -- -v --durations=7

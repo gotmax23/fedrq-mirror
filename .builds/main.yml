@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 ---
-image: fedora/rawhide
+image: fedora/latest
 packages:
   - hut
   - pandoc
