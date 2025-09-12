@@ -46,6 +46,9 @@ ignore = [
     # Line with empty comment
     # I occassionally use these on purpose for sorting/formatting reasons
     "PLR2044",
+    # `import` should be at the top-level of a file
+    # This is used several places on purpose.
+    "PLC0415",
 ]
 
 
