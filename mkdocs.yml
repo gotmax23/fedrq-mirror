@@ -4,6 +4,7 @@
 
 site_name: fedrq
 site_description: "fedrq — Fedora repository querying tool"
+site_url: "https://fedrq.gtmx.me"
 repo_url: "https://git.sr.ht/~gotmax23/fedrq/tree/main"
 edit_uri: "item/doc"
 repo_name: "sr.ht/~gotmax23/fedrq"
@@ -43,6 +44,9 @@ markdown_extensions:
   - pymdownx.magiclink
   - pymdownx.superfences
 plugins:
+  - social:
+      cards_layout_options:
+        font_family: Lato
   - mkdocstrings:
       default_handler: python_xref
       handlers:

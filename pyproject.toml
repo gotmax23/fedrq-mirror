@@ -58,7 +58,7 @@ doc = [
     "mkdocs",
     "mkdocs-exclude",
     "mkdocs-gen-files",
-    "mkdocs-material",
+    "mkdocs-material[imaging]",
     "mkdocstrings[python]>=0.18",
     "mkdocstrings-python-xref",
     "releaserr",
