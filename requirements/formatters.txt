@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml --universal -o requirements/formatters.txt --extra=formatters
 annotated-types==0.7.0
     # via pydantic
-black==25.1.0
+black==25.9.0
     # via fedrq (pyproject.toml)
 certifi==2025.8.3
     # via requests
@@ -10,13 +10,15 @@ charset-normalizer==3.4.3
     # via requests
 click==8.1.8 ; python_full_version < '3.10'
     # via black
-click==8.2.1 ; python_full_version >= '3.10'
+click==8.3.0 ; python_full_version >= '3.10'
     # via black
 colorama==0.4.6 ; sys_platform == 'win32'
     # via click
 idna==3.10
     # via requests
-isort==6.0.1
+importlib-metadata==8.7.0 ; python_full_version < '3.10'
+    # via isort
+isort==6.1.0
     # via fedrq (pyproject.toml)
 mypy-extensions==1.1.0
     # via black
@@ -26,10 +28,12 @@ pathspec==0.12.1
     # via black
 platformdirs==4.4.0
     # via black
-pydantic==2.11.7
+pydantic==2.11.9
     # via fedrq (pyproject.toml)
 pydantic-core==2.33.2
     # via pydantic
+pytokens==0.1.10
+    # via black
 requests==2.32.5
     # via fedrq (pyproject.toml)
 rpm==0.4.0
@@ -45,7 +49,9 @@ typing-extensions==4.15.0
     #   pydantic
     #   pydantic-core
     #   typing-inspection
-typing-inspection==0.4.1
+typing-inspection==0.4.2
     # via pydantic
 urllib3==2.5.0
     # via requests
+zipp==3.23.0 ; python_full_version < '3.10'
+    # via importlib-metadata
