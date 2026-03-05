@@ -230,6 +230,10 @@ This list is non-exhaustive. See *fedrq formatters --attrs*.
 	Display two package attributes together.++
 	(example call: -F multiline:name,files)++
 	(example line: _yt-dlp : /usr/bin/yt-dlp_)
+*-F* queryformat:_[format string]_
+	Formatter that accepts queryformat string like *dnf repoquery --qf*
+*-F* qf:_[format string]_
+	Alias to queryformat formatter
 *-F* plainwithrepo
 	Show default format and repoid separated by space: ++
 	(example line: *yt-dlp-2023.01.06-2.fc38.noarch rawhide*)
