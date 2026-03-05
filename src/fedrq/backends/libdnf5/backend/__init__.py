@@ -821,6 +821,13 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
         def __len__(self) -> int:
             return self.size()
 
+    # Convince type checkers that __iter__ yields Package subclasses.
+    # Don't actually override __iter__.
+    if t.TYPE_CHECKING:
+
+        def __iter__(self) -> Iterator[Package]:
+            return t.cast(Iterator[Package], libdnf5.rpm.PackageQuery.__iter__(self))
+
     def union(self, other) -> PackageQuery:
         self.update(other)
         return self
