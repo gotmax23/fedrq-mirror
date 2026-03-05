@@ -19,7 +19,7 @@ def main() -> None:
         files, Path(editor.directory), to="markdown_strict+pipe_tables+smart"
     )
     for file in new_files:
-        editor._get_file(str(file.relative_to(editor.directory)), True)
+        editor._get_file(str(file.relative_to(editor.directory)), new=True)
 
 
 main()

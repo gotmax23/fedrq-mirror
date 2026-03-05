@@ -55,7 +55,8 @@ doc = [
     # Not compatible with python-xref
     # "griffe-pydantic",
     "griffe-inherited-docstrings",
-    "mkdocs",
+    # TODO: Investigate https://squidfunk.github.io/mkdocs-material/blog/2026/02/18/mkdocs-2.0/
+    "mkdocs > 1, < 2",
     "mkdocs-exclude",
     "mkdocs-gen-files",
     "mkdocs-material[imaging]",
