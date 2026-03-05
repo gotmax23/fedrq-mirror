@@ -448,6 +448,8 @@ class BaseMaker(BaseMakerBase):
         repo = self.rs.create_repo(repoid)
         config = repo.get_config()
         for key, value in kwargs.items():
+            if key == "gpgcheck":
+                key = "pkg_gpgcheck"
             value = self._substitute(value)
             self._set(config, key, value)
 
