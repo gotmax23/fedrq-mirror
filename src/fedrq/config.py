@@ -339,7 +339,7 @@ class RQConfig(BaseModel):
     class Config:
         json_encoders: dict[t.Any, Callable[[t.Any], str]] = {
             re.Pattern: lambda pattern: pattern.pattern,
-            zipfile.Path: lambda path: str(path),
+            zipfile.Path: str,
         }
         validate_assignment = True
 

@@ -3,6 +3,7 @@
 """
 Generic tests for fedrq.cli.Command
 """
+
 from __future__ import annotations
 
 import os
