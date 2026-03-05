@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 ---
-image: fedora/rawhide
+image: fedora/43
 packages:
   - mock
   - mock-core-configs
