@@ -15,10 +15,13 @@ SPDX-License-Identifier: GPL-2.0-or-later
             - PackageQuery
             - RepoError
             - Repoquery
+            - StrIter
+            - IntIter
             - _QueryFilterKwargs
             - NEVRAForms
             - get_releasever
         inherited_members: true
+        group_by_category: false
 
 ## See also
 

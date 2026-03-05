@@ -51,7 +51,9 @@ except ImportError as exc:
 LOG = logging.getLogger(__name__)
 Priority_RUNTIME = libdnf5.conf.Option.Priority_RUNTIME
 StrIter = t.Union[list[str], tuple[str], str]
+"""INTERNAL type alias used to represent a string or list of strings"""
 IntIter = t.Union[list[int], tuple[int], int]
+"""INTERNAL type alias used to represent an int or list of ints"""
 CONVERT_TO_LIST = (str, int)
 
 
