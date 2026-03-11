@@ -15,7 +15,7 @@ import argparse
 from fedrq.backends.base import PackageCompat, PackageQueryCompat, RepoqueryBase
 from fedrq.config import RQConfig, get_config
 
-DEFAULT_RELEASES = ".fc36", ".fc37", ".fc38", ".fc39"
+DEFAULT_RELEASES = "fc45", "fc44", "fc43", "fc42"
 DEFAULT_IGNORES = (
     "dummy-test-package",
     "fedora-obsolete-packages",
