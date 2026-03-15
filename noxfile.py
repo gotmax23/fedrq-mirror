@@ -192,7 +192,7 @@ def publish(session: nox.Session):
 
     # Push to git, publish artifacts to sourcehut, and release to copr
     if not session.interactive or input(
-        "Push to Sourcehut and copr build (Y/n)"
+        "Push to Sourcehut and copr build (Y/n) "
     ).lower() in ("", "y"):
         git(session, "push", "--follow-tags")
         session.run("hut", "git", "artifact", "upload", *iglob("dist/*"), external=True)
