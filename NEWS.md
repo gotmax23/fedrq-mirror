@@ -1,33 +1,6 @@
 NEWS
 =====
 
-## 0.16.0 - 2026-03-15 <a id='0.16.0'></a>
-
-### CLI
-
-- Add `queryformat` / `qf` formatter that works like `dnf repoquery --qf`
-
-### General
-
-- Fix handling of `-r` / `--repo` with the `local` branch.
-If `-r` / `--repo` is set, only the selected repository or repository group will be enabled.
-Before this change, all default system repositories (i.e., those with `enabled=1`) would
-always get enabled regardless of the value of `--repo`.
-- Warn about invalid keys in the configuration file
-- Officially document and test `$FEDRQ_BRANCH` and `$FEDRQ_BACKEND` env vars.
-- In the libdnf5 backend, replace `gpgcheck` with `pkg_gpgcheck` in generated
-repo configs to avoid warnings
-
-### API
-
-- PackageQueryCompat: add `__contains__()` to interface
-- libdnf5 PackageQuery: fix type checking for `__iter__()` method for our custom `Package` subclass
-
-### Looking ahead
-
-- Support for recursive reverse dependency querying is being worked on for the
-`fedrq whatrequires` and `fedrq whatrequires-src` commands on the `_dev` branch.
-
 ## 1.5.0 - 2025-03-01 <a id='1.5.0'></a>
 
 ### Changed
