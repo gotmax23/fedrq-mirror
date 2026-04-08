@@ -210,7 +210,7 @@ defs.base = ["amazonlinux", "amazonlinux-source"]
 defpaths = ["amazonlinux.repo"]
 
 [releases.almalinux]
-matcher = '^al(9|1\d)$'
+matcher = '^al(9|1[\d.]+)$'
 copr_chroot_fmt = "epel-{version}"
 defpaths = [
     "almalinux.repo",
