@@ -3,29 +3,29 @@
 
 [epel]
 name = "epel"
-metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel-$releasever&arch=$basearch"
-gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
+metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel${releasever_minor:+-z}-$releasever&arch=$basearch"
+gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL-$releasever_major"
 gpgcheck = True
 enabled = False
 
 [epel-source]
 name = "epel-source"
-metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel-source-$releasever&arch=$basearch"
-gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
+metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel${releasever_minor:+-z}-source-$releasever&arch=source"
+gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL-$releasever_major"
 gpgcheck = True
 enabled = False
 
 [epel-testing]
 name = "epel-testing"
-metalink = "https://mirrors.fedoraproject.org/metalink?repo=testing-epel$releasever&arch=$basearch"
-gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
+metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel${releasever_minor:+-z}-testing-$releasever&arch=$basearch"
+gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL-$releasever_major"
 gpgcheck = True
 enabled = False
 
 [epel-testing-source]
 name = "epel-testing-source"
-metalink = "https://mirrors.fedoraproject.org/metalink?repo=testing-source-epel$releasever&arch=$basearch"
-gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL$releasever"
+metalink = "https://mirrors.fedoraproject.org/metalink?repo=epel${releasever_minor:+-z}-testing-source-$releasever&arch=source"
+gpgkey = "file:///usr/share/distribution-gpg-keys/epel/RPM-GPG-KEY-EPEL-$releasever_major"
 gpgcheck = True
 enabled = False
 

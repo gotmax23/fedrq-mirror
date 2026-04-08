@@ -43,7 +43,7 @@ repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/la
 
 [releases.epel]
 # e.g. epel8, epel9, epel10
-matcher = "^epel(\\d{1,2})$"
+matcher = '^epel([\d\.]+)$'
 koschei_collection = "EPEL {version}"
 copr_chroot_fmt = "epel-{version}"
 defpaths = ["epel.repo"]
@@ -58,7 +58,7 @@ repo_aliases.koji = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest
 repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/latest/src"
 
 [releases.epel_next]
-matcher = "^epel(\\d{1,2})-next$"
+matcher = "^epel([89])-next$"
 koschei_collection = "EPEL {version}"
 copr_chroot_fmt = "centos-stream+epel-next-{version}"
 defpaths = ["epel.repo"]
