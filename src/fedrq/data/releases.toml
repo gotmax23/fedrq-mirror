@@ -265,7 +265,7 @@ defs.no-powertools = [
 
 
 [releases.rocky]
-matcher = '^rl(9|1\d)$'
+matcher = '^rl(9|1[\d.]+)$'
 copr_chroot_fmt = "epel-{version}"
 defpaths = [
     "rocky.repo",
@@ -313,7 +313,7 @@ defs.epel = [
 ]
 
 [releases.ubi]
-matcher = '^ubi(\d+)$'
+matcher = '^ubi(\d[\d.]*)$'
 copr_chroot_fmt = "epel-{version}"
 defpaths = [
     "ubi.repo",

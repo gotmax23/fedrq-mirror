@@ -2,72 +2,72 @@
 # SPDX-FileCopyrightText: None
 
 [ubi-baseos-rpms]
-name = Red Hat Universal Base Image ${releasever} (RPMs) - BaseOS
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/baseos/os
+name = Red Hat Universal Base Image ${releasever_major} (RPMs) - BaseOS
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/baseos/os
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 [ubi-baseos-debug-rpms]
-name = Red Hat Universal Base Image ${releasever} (Debug RPMs) - BaseOS
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/baseos/debug
+name = Red Hat Universal Base Image ${releasever_major} (Debug RPMs) - BaseOS
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/baseos/debug
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 [ubi-baseos-source]
-name = Red Hat Universal Base Image ${releasever} (Source RPMs) - BaseOS
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/baseos/source/SRPMS
+name = Red Hat Universal Base Image ${releasever_major} (Source RPMs) - BaseOS
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/baseos/source/SRPMS
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 [ubi-appstream-rpms]
-name = Red Hat Universal Base Image ${releasever} (RPMs) - AppStream
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/appstream/os
+name = Red Hat Universal Base Image ${releasever_major} (RPMs) - AppStream
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/appstream/os
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 [ubi-appstream-debug-rpms]
-name = Red Hat Universal Base Image ${releasever} (Debug RPMs) - AppStream
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/appstream/debug
+name = Red Hat Universal Base Image ${releasever_major} (Debug RPMs) - AppStream
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/appstream/debug
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 [ubi-appstream-source]
-name = Red Hat Universal Base Image ${releasever} (Source RPMs) - AppStream
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/appstream/source/SRPMS
+name = Red Hat Universal Base Image ${releasever_major} (Source RPMs) - AppStream
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/appstream/source/SRPMS
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 [ubi-codeready-builder-rpms]
-name = Red Hat Universal Base Image ${releasever} (RPMs) - CodeReady Builder
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/codeready-builder/os
+name = Red Hat Universal Base Image ${releasever_major} (RPMs) - CodeReady Builder
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/codeready-builder/os
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 [ubi-codeready-builder]
-name = Red Hat Universal Base Image ${releasever} (RPMs) - CodeReady Builder
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/codeready-builder/os
+name = Red Hat Universal Base Image ${releasever_major} (RPMs) - CodeReady Builder
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/codeready-builder/os
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 
 [ubi-codeready-builder-debug-rpms]
-name = Red Hat Universal Base Image ${releasever} (Debug RPMs) - CodeReady Builder
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/codeready-builder/debug
+name = Red Hat Universal Base Image ${releasever_major} (Debug RPMs) - CodeReady Builder
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/codeready-builder/debug
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
 
 [ubi-codeready-builder-source]
-name = Red Hat Universal Base Image ${releasever} (Source RPMs) - CodeReady Builder
-baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever}/${releasever}/$basearch/codeready-builder/source/SRPMS
+name = Red Hat Universal Base Image ${releasever_major} (Source RPMs) - CodeReady Builder
+baseurl = https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi${releasever_major}/${releasever_major}/$basearch/codeready-builder/source/SRPMS
 enabled = 0
-gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever}-release
+gpgkey = file:///usr/share/distribution-gpg-keys/redhat/RPM-GPG-KEY-redhat${releasever_major}-release
 gpgcheck = 1
