@@ -344,10 +344,9 @@ class RQConfig(BaseModel):
         validate_assignment = True
 
     @validator("backend")
-    def _v_backend(cls, value) -> str:
-        assert (
-            value is None or value in BACKENDS
-        ), f"Valid backends are: {', '.join(BACKENDS)}"
+    def _v_backend(cls, value: str | None) -> str | None:
+        if not (value is None or value in BACKENDS):
+            raise ValueError(f"Valid backends are: {', '.join(BACKENDS)}")
         return value
 
     @property
