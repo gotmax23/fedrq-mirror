@@ -1,0 +1,81 @@
+#!/usr/bin/env -S hut builds submit
+# SPDX-FileCopyrightText: 2022 Maxwell G <gotmax@e.email>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# This is a builds.sr.ht job to build documentation and push to the Github mirror.
+# It can only be run by gotmax23.
+---
+image: fedora/latest
+packages:
+  - hut
+  - pandoc
+  - python3-devel
+  - python3-libdnf5
+  - python3.11-devel
+  - nox
+  - rsync
+  - scd2html
+  - tar
+secrets:
+  # fedrq.gtmx.me
+  - 1ec4d132-f9e9-4e00-9ba6-eb5528e6945e
+  # sourcehut-github-mirror
+  - 37d31b1c-0e98-48d0-86b1-43796005fd14
+  # builds.sr.ht-fedrq-deploy-key
+  - bb52c241-0acc-4b10-9a12-f0d4bb6914bd
+oauth: pages.sr.ht/PAGES:RW
+sources:
+  - https://forge.fedoraproject.org/packaging/fedrq
+tasks:
+  - mirror: |
+      cd fedrq/
+      if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]
+      then
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        ssh-keyscan git.sr.ht >> ~/.ssh/known_hosts
+        eval "$(ssh-agent)"
+        ssh-add ~/.ssh/37d31b1c-0e98-48d0-86b1-43796005fd14 &>/dev/null
+        ssh-add ~/.ssh/bb52c241-0acc-4b10-9a12-f0d4bb6914bd &>/dev/null
+        git remote add --fetch github git@github.com:gotmax23/fedrq-mirror.git
+        git remote add --fetch srht 'git@git.sr.ht:~gotmax23/fedrq'
+        git push --force --follow-tags github main
+        git push --force --follow-tags srht main
+      else
+        echo "Not mirroring. Branch is not main."
+        exit
+      fi
+  - submit-docs: |
+      cd fedrq
+      nox -e mkdocs -- build
+      if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
+        echo "Submitting docs for main branch"
+        ssh-keyscan fedrq.gtmx.me | tee -a ~/.ssh/known_hosts
+        rsync -Pr site/. deploy@fedrq.gtmx.me:/var/www/fedrq
+      fi
+  - submit-man: |
+      cd fedrq/doc
+      scd2html < fedrq.1.scd > fedrq.1.html
+      scd2html < fedrq.5.scd > fedrq.5.html
+      sed -i 's|\(code{white-space: \)pre-wrap;}|\1pre;}|' fedrq.?.html
+      sed -i '/hyphens: auto;/d' fedrq.?.html
+
+      set +x
+      if [ -z "${OAUTH2_TOKEN-}" ]
+      then
+        echo "Not submitting manpage build. Secrets are disabled"
+        exit
+      fi
+      set -x
+      if [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ]; then
+        echo "Submitting build for main branch"
+        site="fedrq"
+      elif [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/_dev)" ]; then
+        echo "Submitting build for _dev branch"
+        site="fedrq_dev"
+      else
+        echo "Not submitting manpage build. Branch is not main or _dev."
+        exit
+      fi
+
+      tar czvf fedrq.tar.gz *.html
+      hut pages publish fedrq.tar.gz -d gotmax23.srht.site -s "${site}"

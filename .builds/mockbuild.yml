@@ -10,7 +10,7 @@ packages:
   - rpmlint
   - rpm-build
 sources:
-  - https://git.sr.ht/~gotmax23/fedrq
+  - https://forge.fedoraproject.org/packaging/fedrq
 environment:
   CHROOT: fedora-rawhide
   nox: ./venv/bin/nox
@@ -21,7 +21,7 @@ tasks:
       sudo usermod -aG mock $USER
   - setup-venv: |
       cd fedrq
-      python3.11 -m venv venv
+      python3.14 -m venv venv
       ./venv/bin/pip install nox
   - mockbuild-rawhide: |
       cd fedrq
