@@ -17,8 +17,8 @@ Summary:        A tool to query the Fedora and EPEL repositories
 # - PSF-2.0 code copied from Cpython 3.11 for older Python versions
 License:        GPL-2.0-or-later AND Unlicense AND MIT AND PSF-2.0
 URL:            https://fedrq.gtmx.me
-%global furl    https://git.sr.ht/~gotmax23/fedrq
-Source0:        %{furl}/refs/download/v%{version}/fedrq-%{version}.tar.gz
+%global furl    https://forge.fedoraproject.org/packaging/fedrq
+Source0:        %{furl}/archive/v%{version}.tar.gz#/fedrq-%{version}.tar.gz
 
 BuildArch:      noarch
 
@@ -49,7 +49,7 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n fedrq
 
 
 %generate_buildrequires
