@@ -2,21 +2,23 @@
 #    uv pip compile pyproject.toml --universal -o requirements/requirements.txt
 annotated-types==0.7.0
     # via pydantic
-certifi==2026.2.25
+certifi==2026.5.20
     # via requests
-charset-normalizer==3.4.4
+charset-normalizer==3.4.7
     # via requests
-idna==3.11
+idna==3.17
     # via requests
-pydantic==2.12.5
+pydantic==2.13.4
     # via fedrq (pyproject.toml)
-pydantic-core==2.41.5
+pydantic-core==2.46.4
     # via pydantic
-requests==2.32.5
+requests==2.32.5 ; python_full_version < '3.10'
+    # via fedrq (pyproject.toml)
+requests==2.34.2 ; python_full_version >= '3.10'
     # via fedrq (pyproject.toml)
 rpm==0.4.0
     # via fedrq (pyproject.toml)
-tomli==2.4.0 ; python_full_version < '3.11'
+tomli==2.4.1 ; python_full_version < '3.11'
     # via fedrq (pyproject.toml)
 typing-extensions==4.15.0
     # via
@@ -26,5 +28,7 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-urllib3==2.6.3
+urllib3==2.6.3 ; python_full_version < '3.10'
+    # via requests
+urllib3==2.7.0 ; python_full_version >= '3.10'
     # via requests
