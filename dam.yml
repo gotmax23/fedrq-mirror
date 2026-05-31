@@ -4,6 +4,8 @@
 
 # This is a builds.sr.ht job to build documentation and push to the Github mirror.
 # It can only be run by gotmax23.
+# Usage: ./dam.yml
+# DAM = Docs And Mirror
 ---
 image: fedora/latest
 packages:
@@ -22,7 +24,7 @@ secrets:
   # sourcehut-github-mirror
   - 37d31b1c-0e98-48d0-86b1-43796005fd14
   # builds.sr.ht-fedrq-deploy-key
-  - bb52c241-0acc-4b10-9a12-f0d4bb6914bd
+  - 7f17c966-0aa0-4b02-90f7-9d564906a08a
 oauth: pages.sr.ht/PAGES:RW
 sources:
   - https://forge.fedoraproject.org/packaging/fedrq
@@ -35,7 +37,7 @@ tasks:
         ssh-keyscan git.sr.ht >> ~/.ssh/known_hosts
         eval "$(ssh-agent)"
         ssh-add ~/.ssh/37d31b1c-0e98-48d0-86b1-43796005fd14 &>/dev/null
-        ssh-add ~/.ssh/bb52c241-0acc-4b10-9a12-f0d4bb6914bd &>/dev/null
+        ssh-add ~/.ssh/7f17c966-0aa0-4b02-90f7-9d564906a08a &>/dev/null
         git remote add --fetch github git@github.com:gotmax23/fedrq-mirror.git
         git remote add --fetch srht 'git@git.sr.ht:~gotmax23/fedrq'
         git push --force --follow-tags github main
