@@ -90,9 +90,9 @@ fedrq-0.9.0-1.fc39.src rawhide-source
 
 ## Versioning
 
-This project is in beta and its versioning scheme follows semver.
+This project's versioning scheme follows semver.
 
-See [NEWS.md](https://git.sr.ht/~gotmax23/fedrq/tree/main/NEWS.md).
+See [NEWS].
 
 ## Python API
 
@@ -149,8 +149,9 @@ SPDX-License-Identifier: GPL-2.0-or-later AND Unlicense AND MIT AND PSF-2.0
 ```
 
 
-[CONTRIBUTING.md]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/CONTRIBUTING.md
-[api-examples]: https://git.sr.ht/~gotmax23/fedrq/tree/main/item/contrib/api_examples
+[NEWS]: https://fedrq.gtmx.me/News/
+[CONTRIBUTING.md]: https://forge.fedoraproject.org/packaging/fedrq/src/branch/main/CONTRIBUTING.md
+[api-examples]: https://forge.fedoraproject.org/packaging/fedrq/src/branch/main/contrib/api_examples
 [badge-copr]: https://copr.fedorainfracloud.org/coprs/gotmax23/fedrq/package/fedrq/status_image/last_build.png
 [link-copr]: https://copr.fedorainfracloud.org/coprs/gotmax23/fedrq/
 [badge-copr-dev]: https://copr.fedorainfracloud.org/coprs/gotmax23/fedrq-dev/package/fedrq/status_image/last_build.png

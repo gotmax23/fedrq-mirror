@@ -5,15 +5,15 @@
 site_name: fedrq
 site_description: "fedrq — Fedora repository querying tool"
 site_url: "https://fedrq.gtmx.me"
-repo_url: "https://git.sr.ht/~gotmax23/fedrq/tree/main"
-edit_uri: "item/doc"
-repo_name: "sr.ht/~gotmax23/fedrq"
+repo_url: "https://forge.fedoraproject.org/packaging/fedrq/"
+edit_uri: "src/branch/main/doc"
+repo_name: "packaging/fedrq (Fedora Forge)"
 docs_dir: doc
 theme:
   name: material
   font: false
   icon:
-    repo: "fontawesome/regular/circle"
+    repo: "fontawesome/brands/fedora"
     edit: "material/eye"
   features:
     - content.code.copy

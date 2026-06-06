@@ -33,3 +33,6 @@ or run `nox -e mockbuild` to preform a build in mock.
 builds.sr.ht runs CI for Fedora Forge pull requests,
 but please run the tests locally before submitting your changes.
 See the `.builds` directory for the CI workflow configuration.
+
+[mailto]: mailto:~gotmax23/fedrq@lists.sr.ht
+[archives]: https://lists.sr.ht/~gotmax23/fedrq
