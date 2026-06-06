@@ -28,6 +28,10 @@ secrets:
 oauth: pages.sr.ht/PAGES:RW
 sources:
   - https://forge.fedoraproject.org/packaging/fedrq
+triggers:
+  - action: email
+    condition: failure
+    to: "maxwell@gtmx.me"
 tasks:
   - mirror: |
       cd fedrq/
@@ -41,7 +45,7 @@ tasks:
         git remote add --fetch github git@github.com:gotmax23/fedrq-mirror.git
         git remote add --fetch srht 'git@git.sr.ht:~gotmax23/fedrq'
         git push --force --follow-tags github main
-        git push --force --follow-tags srht main
+        git push --force --follow-tags -o skip-ci srht main
       else
         echo "Not mirroring. Branch is not main."
         exit
