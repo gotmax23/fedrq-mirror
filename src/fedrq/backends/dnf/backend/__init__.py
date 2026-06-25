@@ -111,13 +111,17 @@ class BaseMaker(BaseMakerBase):
         *,
         from_cache: bool = False,
         load_system_repo: bool = False,
+        force_refresh: bool = False,
     ) -> dnf.Base:
         """
         Fill the sack and returns the dnf.Base object.
         The repository configuration shouldn't be manipulated after this.
-
-        Note that the `_cachedir` arg is private and subject to removal.
         """
+        if {from_cache, force_refresh} == {True}:
+            raise ValueError("from_cache and force_refresh are mutually exclusive")
+        if force_refresh:
+            for repo in self._repos.iter_enabled():
+                repo._repo.expire()
         if from_cache:
             self.base.fill_sack_from_repos_in_cache(load_system_repo=load_system_repo)
         else:

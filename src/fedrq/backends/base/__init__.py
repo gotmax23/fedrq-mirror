@@ -305,6 +305,7 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         *,
         from_cache: bool = False,
         load_system_repo: bool = False,
+        force_refresh: bool = False,
     ) -> Any:
         """
         Fill the sack and returns the Base object.

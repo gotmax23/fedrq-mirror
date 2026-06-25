@@ -295,15 +295,19 @@ class BaseMaker(BaseMakerBase):
         *,
         from_cache: bool = False,
         load_system_repo: bool = False,
+        force_refresh: bool = False,
     ) -> libdnf5.base.Base:
         """
         Fill the sack and returns the Base object.
         The repository configuration shouldn't be manipulated after this.
-
-        Note that the `_cachedir` arg is private and subject to removal.
         """
         if from_cache:
             raise NotImplementedError
+        if force_refresh:
+            repoq = libdnf5.repo.RepoQuery(self.base)
+            repoq.filter_enabled(True)
+            for repo in repoq:
+                repo.expire()
         try:
             self.rs.load_repos(  # pyright: ignore[reportAttributeAccessIssue]
                 libdnf5.repo.Repo.Type_SYSTEM
