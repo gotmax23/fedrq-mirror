@@ -137,6 +137,8 @@ These options have the same meaning across multiple subcommands.
 	only applies when using the libdnf5 backend or newer versions of dnf4,
 	which do not load filelists by default to save memory and bandwidth.
 	*dnf < 4.19.0* always loads filelists.
+*--refresh*
+	Force refresh repository metadata
 
 ## whatrequires, whatrecommends, whatsuggests
 

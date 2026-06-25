@@ -322,6 +322,9 @@ class Command(metaclass=abc.ABCMeta):
             dest="smartcache",
             const="always",
         )
+        parser.add_argument(
+            "--refresh", action="store_true", help="Force refresh repository metadata"
+        )
         # This is mutually exclusive with --smartcache. It's still undocumented
         # and subject to change.
         cachedir_group.add_argument("--cachedir", help=argparse.SUPPRESS, type=Path)
@@ -479,7 +482,7 @@ class Command(metaclass=abc.ABCMeta):
         except ConfigError as exc:
             return str(exc)
         try:
-            filled = bm.fill_sack()
+            filled = bm.fill_sack(force_refresh=self.args.refresh)
         except self.backend.RepoError as exc:
             flog.debug("RepoError: ", exc_info=exc)
             return str(exc)
