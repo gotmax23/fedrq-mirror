@@ -62,7 +62,7 @@ def test_local_release(
     parser = fedrq.cli.Pkgs.make_parser()
     namespace = parser.parse_args(args)
     # Calling fill_sack() is expensive and not necessary here
-    monkeypatch.setattr(backend.BaseMaker, "fill_sack", lambda self: self.base)
+    monkeypatch.setattr(backend.BaseMaker, "fill_sack", lambda self, **_: self.base)
     obj = fedrq.cli.Pkgs(namespace)
     base_maker = backend.BaseMaker(obj.rq.base)
     assert sorted(base_maker.repolist()) == sorted(repolist)
