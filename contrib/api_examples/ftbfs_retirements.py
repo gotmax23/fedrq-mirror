@@ -8,21 +8,25 @@ It searches the Fedora repositories for packages that haven't been rebuilt
 in the last few releases (i.e. Long Term FTBFS packages).
 Based on https://github.com/hroncok/fedora-report-ftbfs-retirements.
 """
+
 from __future__ import annotations
 
 import argparse
+from fnmatch import fnmatch
 
 from fedrq.backends.base import PackageCompat, PackageQueryCompat, RepoqueryBase
 from fedrq.config import RQConfig, get_config
 
-DEFAULT_RELEASES = "fc45", "fc44", "fc43", "fc42"
+DEFAULT_RELEASES = "fc45", "fc44", "fc43"
 DEFAULT_IGNORES = (
     "dummy-test-package",
     "fedora-obsolete-packages",
     "fedora-release",
     "fedora-repos",
     "generic-release",
-    "shim",
+    "shim*",
+    # I think these portable Java packages are supposed to have out-of-date disttags :/
+    "java-*-openjdk-portable",
 )
 
 
@@ -68,7 +72,7 @@ def main(*, releases: list[str]):
 
     for package in query:
         if (
-            not any(package.name.startswith(i) for i in DEFAULT_IGNORES) and
+            not any(fnmatch(package.name, pat) for pat in DEFAULT_IGNORES) and
             not any(i in package.release for i in releases)
         ):
             packages.append(package)
