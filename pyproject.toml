@@ -137,6 +137,7 @@ addopts = [
     "--import-mode=importlib",
 ]
 pythonpath = ["."]
+testpaths = ["tests"]
 
 
 [tool.isort]
