@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: MIT
 # License text: https://spdx.org/licenses/MIT.html
 
-%bcond libdnf5 %[0%{?fedora} >= 38]
+%bcond libdnf5 %[ %{undefined rhel} || 0%{?rhel} >= 11 ]
+%define min_libdnf5_version 5.2.0
 
 Name:           fedrq
 Version:        1.6.0
@@ -29,13 +30,14 @@ BuildRequires:  distribution-gpg-keys
 BuildRequires:  python3-argcomplete
 BuildRequires:  python3-dnf
 %if %{with libdnf5}
-BuildRequires:  python3-libdnf5
+BuildRequires:  python3-libdnf5 >= %{min_libdnf5_version}
 %endif
 # Manpage
 BuildRequires:  scdoc
 
 Requires:       (python3-dnf or python3-libdnf5)
 Suggests:       (python3-libdnf5 if dnf5)
+Requires:       (python3-libdnf5 >= %{min_libdnf5_version} if python3-libdnf5)
 Requires:       distribution-gpg-keys
 Recommends:     fedora-repos-rawhide
 Recommends:     python3-argcomplete

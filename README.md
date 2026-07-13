@@ -44,7 +44,7 @@ The following additional system package is required for the dnf backend:
 
 The following additional system packages are required for the libdnf5 backend:
 
-- python3-libdnf5
+- python3-libdnf5 (>= `5.2.0`)
 
 The following additional system packages are always required:
 
