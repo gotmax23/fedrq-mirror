@@ -183,6 +183,10 @@ def bump(session: nox.Session):
 
 @nox.session(reuse_venv=False)
 def publish(session: nox.Session):
+    """
+    External dependencies:
+        - forgejo-cli (https://crates.io/crates/forgejo-cli)
+    """
     # Setup
     install(session, "releaserr", "twine")
     session.run("releaserr", "ensure-clean")
@@ -192,10 +196,23 @@ def publish(session: nox.Session):
 
     # Push to git, publish artifacts to sourcehut, and release to copr
     if not session.interactive or input(
-        "Push to Sourcehut and copr build (Y/n) "
+        "Push to Forgejo and copr build (Y/n) "
     ).lower() in ("", "y"):
         git(session, "push", "--follow-tags")
-        session.run("hut", "git", "artifact", "upload", *iglob("dist/*"), external=True)
+        version = cast(
+            str, session.run("releaserr", "get-version", "--source=file", silent=True)
+        ).strip()
+        tag = f"v{version}"
+        artifacts = (f"--attach={dist}" for dist in iglob("dist/*"))
+        # fmt: off
+        session.run(
+            "fj", "release", "create",
+            tag, "--tag", tag,
+            "--repo", f"packaging/{PROJECT}",
+            *artifacts,
+            external=True,
+        )
+        # fmt: on
         copr_release(session)
 
     # Post-release bump

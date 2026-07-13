@@ -19,7 +19,9 @@ Summary:        A tool to query the Fedora and EPEL repositories
 License:        GPL-2.0-or-later AND Unlicense AND MIT AND PSF-2.0
 URL:            https://fedrq.gtmx.me
 %global furl    https://forge.fedoraproject.org/packaging/fedrq
-Source0:        %{furl}/archive/v%{version}.tar.gz#/fedrq-%{version}.tar.gz
+%dnl Use pre-generated sdist archive instead of forgejo archive
+%dnl Source0:        %{furl}/archive/v%{version}.tar.gz#/fedrq-%{version}.tar.gz
+Source0:        %{furl}/releases/download/v%{version}/fedrq-%{version}.tar.gz
 
 BuildArch:      noarch
 
@@ -51,7 +53,7 @@ fedrq is a tool to query the Fedora and EPEL repositories.
 
 
 %prep
-%autosetup -p1 -n fedrq
+%autosetup -p1
 
 
 %generate_buildrequires
