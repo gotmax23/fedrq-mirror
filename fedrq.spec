@@ -36,6 +36,8 @@ BuildRequires:  python3-libdnf5 >= %{min_libdnf5_version}
 %endif
 # Manpage
 BuildRequires:  scdoc
+# gpgverify
+BuildRequires:  gnupg2
 
 Requires:       (python3-dnf or python3-libdnf5)
 Suggests:       (python3-libdnf5 if dnf5)
