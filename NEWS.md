@@ -1,6 +1,26 @@
 NEWS
 =====
 
+## 1.7.0 - 2026-07-13 <a id='1.7.0'></a>
+
+### Project changes
+
+- Set minimum libdnf5 version to 5.2.0 and improve performance
+- Migrate upstream to Fedora Forge
+
+### New CLI features
+
+- Add `--refresh` flag to all relevant commands to force refresh repository metadata
+
+### Distribution release config changes
+
+- Update fedora-eln.repo for compose changes (thanks Yaakov Selkowitz!)
+- Fix repository configuration for EPEL minor versions (thanks Michel Lind for testing!)
+
+### New API features
+
+- `BaseMaker.fill_sack()`: add `force_refresh` option
+
 ## 1.6.0 - 2026-03-15 <a id='1.6.0'></a>
 
 ### CLI
