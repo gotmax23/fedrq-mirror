@@ -222,17 +222,13 @@ class BaseMaker(BaseMakerBase):
                 Set to True if `base.setup()` has already been called. Only
                 applies when `base` is passed.
             config_loaded:
-                Set to True if base.load_config_from_file() has already been
+                Set to True if base.load_config() has already been
                 called. Only applies when `base` is passed.
         """
         self.base = base or libdnf5.base.Base()
         self.initialized = initialized if base else False
         if not base or not config_loaded:
-            # dnf 5.2.0
-            try:
-                self.base.load_config()
-            except AttributeError:
-                self.base.load_config_from_file()
+            self.base.load_config()
 
     def setup(self) -> None:
         if not self.initialized:
@@ -729,12 +725,10 @@ libdnf5._rpm.Reldep_swigregister(Reldep5)
 
 def _getattr_compat(obj: t.Any, attr: str, /) -> t.Any:
     """
-    Compatability with `get_foo()` methods from dnf 5.2.0
+    Shortcut for libdnf5 `get_foo()` methods
     """
     meth_name = f"get_{attr}"
-    if meth := getattr(obj, meth_name, None):
-        return meth()
-    return getattr(obj, attr)
+    return getattr(obj, meth_name)()
 
 
 _gc = _getattr_compat
@@ -742,15 +736,11 @@ _gc = _getattr_compat
 
 def _setattr_compat(obj: t.Any, attr: str, value: t.Any, /) -> None:
     """
-    Compatability with `set_foo()` methods from dnf 5.2.0
+    Shortcut for libdnf5 `set_foo()` methods
     """
     meth_name = f"set_{attr}"
-    if meth := getattr(obj, meth_name, None):
-        meth(value)
-    elif hasattr(obj, attr):
-        setattr(obj, attr, value)
-    else:
-        raise AttributeError(attr)
+    meth = getattr(obj, meth_name)
+    meth(value)
 
 
 _sc = _setattr_compat
@@ -798,10 +788,7 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
         for key, value in kwargs.items():
             split = key.rsplit("__", 1)
             name = "filter_" + filter_mapping.get(split[0], split[0])
-            # TODO: Remove _convert_value once we drop support for libdnf5
-            # 5.2.0 and can rely on support for passing plain strings to query
-            # functions.
-            args = [_convert_value(key, value)]
+            args = [value]
             if len(split) == 2:
                 args.append(comp_mapping[split[1]])
             getattr(self, name)(*args)
@@ -884,37 +871,6 @@ class PackageQuery(libdnf5.rpm.PackageQuery, PackageQueryCompat[Package]):
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}<{tuple(self)}>"
-
-
-_ValT = t.TypeVar("_ValT")
-
-
-def _convert_value(key: str, value: _ValT) -> t.Union[list[_ValT], _ValT]:
-    """
-    Overkill code to normalize single strings or ints that libdnf5 requires to
-    be a list based on type annotations.
-    """
-    d_annotations = t.get_type_hints(_QueryFilterKwargs)
-    annotation = d_annotations[key]
-    if t.get_origin(annotation) is not t.Union or not any(
-        isinstance(value, typ) for typ in CONVERT_TO_LIST
-    ):
-        return value
-    union_types = t.get_args(annotation)
-    pairs = [(t.get_origin(arg), t.get_args(arg)) for arg in union_types]
-    for origin, sargs in pairs:
-        assert isinstance(origin, type)
-        if not issubclass(origin, list):
-            continue
-        if t.get_origin(sargs[0]) is t.Union:
-            pairs = [(t.get_origin(arg), t.get_args(arg)) for arg in union_types]
-            for origin, sargs in pairs:
-                assert isinstance(origin, type)
-                if issubclass(origin, list) and isinstance(value, sargs[0]):
-                    return [value]
-        if isinstance(value, sargs[0]):
-            return [value]
-    return value
 
 
 class NEVRAForms(int, Enum):
