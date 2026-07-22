@@ -41,6 +41,7 @@ try:
     import dnf.subject
     import hawkey
     import hawkey._hawkey
+    import libdnf  # type: ignore[import]
 except ImportError:
     raise MissingBackendError from None
 
@@ -87,6 +88,9 @@ class BaseMaker(BaseMakerBase):
         if key not in self.base.conf.substitutions:
             raise KeyError(f"{key} is not a valid substitution")
         self.set(key, value)
+
+    def substitute(self, value: str, /) -> str:
+        return libdnf.conf.ConfigParser.substitute(value, self.conf.substitutions)
 
     def load_filelists(self, enable: bool = True) -> None:
         # Old versions of dnf always load filelists

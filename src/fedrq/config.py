@@ -70,6 +70,8 @@ class ReleaseConfig(BaseModel):
     name: str = Field(exclude=True)
     defs: dict[str, list[str]]
     version: t.Optional[str] = None
+    # dnf_vars is PRIVATE and only intended for internal usage.
+    dnf_vars: dict[str, str] = {}
     matcher: t.Pattern
     repo_dirs: list[Path] = Field(
         default_factory=lambda: [

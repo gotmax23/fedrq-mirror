@@ -84,6 +84,7 @@ repo_aliases.koji-src = "@baseurl:https://kojipkgs.fedoraproject.org/repos/{}/la
 
 [releases.centos-stream]
 matcher = '^c(1\d)s'
+dnf_vars.stream = "$releasever-stream"
 copr_chroot_fmt = "centos-stream-{version}"
 defpaths = [
     "centos-stream.repo",

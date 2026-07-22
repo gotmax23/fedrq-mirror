@@ -37,6 +37,7 @@ def test_checkconfig_dump(run_command2, patch_config_dirs):
         "append_system_repos": False,
         "matcher": "^(tester)$",
         "repo_aliases": {},
+        "dnf_vars": {},
         "defpaths": ["testrepo1.repo"],
         "system_repos": False,
         "defs": defs,

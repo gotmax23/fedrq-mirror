@@ -276,6 +276,9 @@ class BaseMaker(BaseMakerBase):
     def set_var(self, key: str, value: t.Any) -> None:
         self.vars.set(key, value)
 
+    def substitute(self, value: str, /) -> str:
+        return self.vars.substitute(value)
+
     # Not part of the BaseMakerBase interface
     @property
     def rs(self) -> libdnf5.repo.RepoSackWeakPtr:

@@ -363,6 +363,12 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         Needs to be called before reading repos.
         """
 
+    @abc.abstractmethod
+    def substitute(self, value: str, /) -> str:
+        """
+        Substitute $var_name in `value`
+        """
+
     # Private for now
     @abc.abstractmethod
     def _read_repofile_new(self, file: StrPath, ensure_enabled: bool = False) -> None:
@@ -422,6 +428,8 @@ class BaseMakerBase(metaclass=abc.ABCMeta):
         """
         if set_releasever:
             self.set_var("releasever", release.version)
+        for k, v in release.release_config.dnf_vars.items():
+            self.set_var(k, self.substitute(v))
         if release.release_config.system_repos:
             self.read_system_repos(
                 disable=not (
