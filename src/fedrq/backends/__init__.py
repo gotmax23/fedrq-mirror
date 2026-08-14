@@ -26,8 +26,8 @@ class MissingBackendError(Exception):
 
 
 BACKENDS: dict[str, ModuleType] = {
-    "dnf": dnf,
     "libdnf5": libdnf5,
+    "dnf": dnf,
 }
 DEFAULT_BACKEND = "dnf"
 LOG = logging.getLogger(__name__)
