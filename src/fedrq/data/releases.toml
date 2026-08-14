@@ -406,6 +406,11 @@ defs.base = [
     "eln-crb",
     "eln-crb-source",
 ]
+defs.extras = [
+    "@base",
+    "eln-extras",
+    "eln-extras-source",
+]
 defs.buildroot = [
     "koji-eln",
     "koji-eln-source",
