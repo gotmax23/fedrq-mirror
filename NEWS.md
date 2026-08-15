@@ -1,6 +1,11 @@
 NEWS
 =====
 
+## 1.8.0 - 2026-08-15 <a id='1.8.0'></a>
+
+- Default to libdnf5 backend when available
+- Add `--branch eln --repo @extras` config for ELN Extras
+
 ## 1.7.0 - 2026-07-13 <a id='1.7.0'></a>
 
 ### Project changes
