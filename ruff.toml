@@ -53,4 +53,5 @@ ignore = [
 
 
 [lint.extend-per-file-ignores]
-"tests/*" = ["ARG"]
+# PLR0917: Too many positional arguments
+"tests/*" = ["ARG", "PLR0917"]
