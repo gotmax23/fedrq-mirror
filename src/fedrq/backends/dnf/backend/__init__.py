@@ -85,8 +85,6 @@ class BaseMaker(BaseMakerBase):
         setattr(self.conf, key, value)
 
     def set_var(self, key: str, value: t.Any) -> None:
-        if key not in self.base.conf.substitutions:
-            raise KeyError(f"{key} is not a valid substitution")
         self.set(key, value)
 
     def substitute(self, value: str, /) -> str:
