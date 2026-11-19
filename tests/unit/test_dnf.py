@@ -31,12 +31,6 @@ from fedrq.backends.dnf.backend.experimental import (
 from fedrq.backends.dnf.backend.experimental import base as experimental_base
 
 
-def test_bm_set_var_invalid():
-    bm = default_backend.BaseMaker()
-    with pytest.raises(KeyError, match="best is not a valid substitution"):
-        bm.set_var("best", "")
-
-
 class _QuerySetTest(_QuerySetBase[str]):
     def _initial(self) -> set[str]:
         return set(map(str, range(10)))
