@@ -1,6 +1,10 @@
 NEWS
 =====
 
+## 1.9.1 - 2026-11-19 <a id='1.9.1'></a>
+
+- Fix broken unit test with dnf4 backend
+
 ## 1.9.0 - 2026-11-19 <a id='1.9.0'></a>
 
 - packaging: allow building with flit-core v4
