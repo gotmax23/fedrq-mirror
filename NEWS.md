@@ -1,6 +1,20 @@
 NEWS
 =====
 
+## 1.9.0 - 2026-11-19 <a id='1.9.0'></a>
+
+- packaging: allow building with flit-core v4
+- Allow querying CentOS Stream 10 + EPEL properly after [changes to the EPEL
+metalink format].
+Note that `fedrq ... --branch epel10` now queries the latest stable EPEL 10
+branch — i.e., `epel10.3`, as of 2026-11-18 — and not the leading `epel10`
+branch as it did prior to these changes.
+
+    To query the leading EPEL 10 branch, use `fedrq ... --branch c10s --repo @epel`, instead,
+which enables CentOS 10 Stream repos and the leading EPEL 10 branch together.
+
+[changes to the EPEL metalink format]: https://discussion.fedoraproject.org/t/looking-back-at-epel-10-and-forward-to-epel-11/197373
+
 ## 1.8.0 - 2026-08-15 <a id='1.8.0'></a>
 
 - Default to libdnf5 backend when available
